@@ -1,0 +1,21 @@
+/* Lightweight seasonal skins: only colors and decoration, never layout or portrait. */
+.theme-picker{left:12px;right:auto}
+.theme-picker summary{width:40px;padding:6px}
+.theme-options{left:0;right:auto;min-width:136px}
+.theme-options button{cursor:pointer}
+.theme-options button[aria-pressed=true]{background:#ffffff20}
+.theme-options button:hover{background:#ffffff30}
+.theme-options button:focus-visible{outline:2px solid white;outline-offset:-2px}
+html[data-theme=winter]{background:#173a55}
+html[data-theme=winter] .landscape{background-image:radial-gradient(ellipse at 20% 15%,#d3eaf8 0,transparent 50%),linear-gradient(150deg,#729bb9,#234560 65%,#d7e8ed);background-size:cover;filter:none}
+html[data-theme=winter] body::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg fill='white' opacity='.4'%3E%3Ccircle cx='32' cy='40' r='2'/%3E%3Ccircle cx='160' cy='165' r='3'/%3E%3Ccircle cx='220' cy='80' r='2'/%3E%3C/g%3E%3Cg stroke='white' opacity='.32' stroke-width='1.5' transform='translate(90 115)'%3E%3Cpath d='M-10 0h20M-5-9 5 9M-5 9 5-9M-10-4l4 4-4 4M10-4 6 0l4 4'/%3E%3C/g%3E%3C/svg%3E")}
+html[data-theme=winter] .profile{background:linear-gradient(140deg,#accbdf70,#244860c9);border-color:#effaff}
+html[data-theme=winter] .link{background:#d4ebf12e}
+html[data-theme=winter] .profile::after{content:"";position:absolute;pointer-events:none;left:8px;bottom:4px;width:25px;height:42px;opacity:.65;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 50'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='15' cy='35' r='13'/%3E%3Ccircle cx='15' cy='15' r='9'/%3E%3C/g%3E%3Cpath fill='%23274359' d='M7 5h16v3H7zM10 0h10v6H10z'/%3E%3Cpath stroke='%239d4e4e' stroke-width='4' d='M7 23h16'/%3E%3Cpath fill='%23eaa05a' d='m15 15 8 2-8 2Z'/%3E%3Ccircle cx='12' cy='13' r='1'/%3E%3C/svg%3E") center/contain no-repeat}
+html[data-theme=spring]{background:#234c3b}
+html[data-theme=spring] .landscape{background-image:radial-gradient(ellipse at 12% 15%,#dbe7af 0,transparent 55%),linear-gradient(145deg,#729b73,#315e4b 65%,#88aa72);background-size:cover;filter:none}
+html[data-theme=spring] body::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cg opacity='.32'%3E%3Cpath fill='%23bbd894' d='M230 240q-35-50 20-60 12 40-20 60M30 70Q15 35 55 20q5 35-25 50'/%3E%3Cg fill='%23fce8ef' transform='translate(125 140)'%3E%3Cellipse cy='-8' rx='5' ry='8'/%3E%3Cellipse cy='8' rx='5' ry='8'/%3E%3Cellipse cx='-8' rx='8' ry='5'/%3E%3Cellipse cx='8' rx='8' ry='5'/%3E%3Ccircle r='4' fill='%23ffe09a'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+html[data-theme=spring] .profile{background:linear-gradient(140deg,#bfd3a970,#264e3dd9);border-color:#eef8df}
+html[data-theme=spring] .link{background:#d9e9b92b}
+html[data-theme=spring] .language-picker summary,html[data-theme=spring] .language-options{background:#2b5846}
+@media(max-width:360px){.theme-picker{left:9px;right:auto}}

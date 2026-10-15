@@ -83,3 +83,31 @@ dialog h2{font-size:23px;margin:8px 0 16px}dialog p{line-height:1.5}.close{posit
   h2{margin-bottom:8px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+/* Fluid spacing: only the space between sections grows, never the buttons. */
+:root{background:#123951}
+body{padding:72px 16px 24px;min-height:100svh}
+.profile{display:flex;flex-direction:column;justify-content:space-between;gap:24px;min-height:min(780px,calc(100svh - 96px));padding-bottom:24px}
+.profile>header,.profile>nav,.profile>.socials{flex:none}
+.profile>header .intro{margin-bottom:0}
+.profile>.socials{margin-top:0}
+.link{height:48px;min-height:48px;padding:8px 12px}
+.links{grid-auto-rows:48px;gap:10px}
+/* Reserved for a future language menu; no inactive control is shown. */
+.language-slot{position:absolute;top:14px;right:14px;width:64px;height:44px;pointer-events:none}
+@media(min-width:601px) and (max-width:1000px){
+  .profile{max-width:520px;padding-left:30px;padding-right:30px}
+  .intro{font-size:17px;line-height:1.45}
+  h1{font-size:28px}
+}
+@media(min-width:1001px){.profile{max-width:440px;min-height:min(740px,calc(100svh - 96px))}}
+@media(max-width:600px){.profile{min-height:calc(100svh - 96px);gap:24px}}
+@media(max-height:740px){
+  body{padding-top:52px;padding-bottom:16px}
+  .profile{min-height:calc(100svh - 68px);gap:16px;padding-bottom:18px}
+}
+@media(max-width:360px) and (max-height:600px){
+  body{padding-top:36px;padding-bottom:10px}
+  .profile{min-height:calc(100svh - 46px);gap:12px;padding-bottom:14px}
+  .link{height:44px;min-height:44px}
+  .links{grid-auto-rows:44px;gap:8px}
+}

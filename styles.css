@@ -1,11 +1,11 @@
 :root{color-scheme:dark;font-family:Arial,Helvetica,sans-serif;color:#fff;background:#2486bb;font-synthesis:none}
 *{box-sizing:border-box}
 body{margin:0;min-height:100svh;padding:clamp(124px,24.8vw,234px) 5.1% 64px;isolation:isolate}
-.landscape{position:fixed;inset:-14px;z-index:-2;background-image:url('portrait-sea.png');background-repeat:no-repeat;background-size:600% 100%;background-position:left top;filter:blur(9px)}
+.landscape{position:fixed;inset:-14px;z-index:-2;background-image:url('portrait-sea.webp');background-repeat:no-repeat;background-size:600% 100%;background-position:left top;filter:blur(9px)}
 body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(74,178,240,.08),rgba(0,70,121,.12) 50%,rgba(9,45,49,.16))}
 .profile{position:relative;max-width:846px;margin:auto;border:1.5px solid rgba(255,255,255,.9);border-radius:50px;background:linear-gradient(135deg,rgba(192,222,244,.32),rgba(24,94,149,.34) 45%,rgba(190,215,222,.30));box-shadow:inset 0 0 20px #ffffff0a,0 15px 45px #143b5712;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:clamp(178px,38.5vw,362px) clamp(20px,6.4vw,60px) 64px;text-align:center}
 .portrait{position:absolute;top:clamp(-96px,-10.2vw,-48px);left:50%;transform:translateX(-50%);width:46%;aspect-ratio:1;border:3px solid #fff;border-radius:50%;overflow:hidden;box-shadow:0 20px 28px #103e5866;background:#41a1da}
-.portrait img{position:absolute;width:145%;height:145%;max-width:none;left:-22.5%;top:-3%;object-fit:cover}
+.portrait img{position:absolute;width:145%;height:145%;max-width:none;left:-22.5%;top:-3%;object-fit:cover;transform:scaleX(.96);transform-origin:center}
 h1{font-size:clamp(25px,5.32vw,50px);line-height:1.14;margin:0 0 24px;font-weight:700;letter-spacing:-.025em}
 .intro{font-size:clamp(16px,3.19vw,30px);line-height:1.32;margin:0 auto 44px;color:#f1f7fd;text-wrap:pretty}
 .links{display:grid;gap:20px}

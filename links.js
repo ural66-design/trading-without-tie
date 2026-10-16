@@ -21,4 +21,22 @@ document.querySelectorAll('[data-link]').forEach(button => {
   }
 });
 notice.querySelectorAll('button').forEach(button => button.addEventListener('click', () => notice.close()));
+// Native details keeps keyboard activation; dismiss on leaving the whole menu.
+const languagePicker = document.querySelector('.language-picker');
+const languageTrigger = languagePicker.querySelector('summary');
+languagePicker.addEventListener('pointerleave', event => {
+  if (event.pointerType === 'mouse') languagePicker.open = false;
+});
+document.addEventListener('pointerdown', event => {
+  if (!languagePicker.contains(event.target)) languagePicker.open = false;
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && languagePicker.open) {
+    languagePicker.open = false;
+    languageTrigger.focus();
+  }
+});
+languagePicker.addEventListener('focusout', event => {
+  if (!languagePicker.contains(event.relatedTarget)) languagePicker.open = false;
+});
 notice.addEventListener('click', event => { if (event.target === notice) { const r = notice.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) notice.close(); } });

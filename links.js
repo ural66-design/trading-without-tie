@@ -1,8 +1,8 @@
 // Add the owner's real destination URLs here. Empty entries show a clear notice.
 const destinations = {
   trading: '',
-  connect: '',
-  results: '',
+  connect: 'https://ural66-design.github.io/tcapinstruction/',
+  results: 'https://www.myfxbook.com/ru/portfolio/t-capital/12155631',
   robots: '',
   youtube: 'http://www.youtube.com/@vladimir.lifestyle',
   instagram: 'https://www.instagram.com/vladimir.lifestyle'

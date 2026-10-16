@@ -15,7 +15,6 @@ document.querySelectorAll('[data-link]').forEach(button => {
     link.className = button.className;
     link.href = url;
     link.innerHTML = button.innerHTML;
-    link.target = '_blank';
     link.rel = 'noopener noreferrer';
     button.replaceWith(link);
   } else {

@@ -1,19 +1,20 @@
-# Трейдинг без галстука
+# Trading without a tie / Трейдинг без галстука
 
-Первая страница личного сайта Владимира: трейдинг, автоматизация торговли и путешествия.
+Static personal hub and copy-trading guide: 11 languages, no framework, external fonts or analytics.
 
-Адаптивная страница на HTML, CSS и JavaScript, без сборки и внешних зависимостей.
+## Deployment
 
-## Публикация
+GitHub Pages uses GitHub Actions, not the repository root. The workflow .github/workflows/pages.yml publishes the contents of trading-without-tie.zip. Older loose HTML/CSS files in the repository are historical and are not deployed. Do not edit those files to update the live website.
 
-GitHub Pages: ветка `main`, папка `/ (root)`.
+Build and check the local project, run prepare_release.py (or prepare_github.py), then replace trading-without-tie.zip on main. The workflow automatically publishes it at the existing URL. Do not flatten the archive: language and instruction directories must remain intact.
 
-## Ссылки
+Russian at root; English /en/, Spanish /es/, Brazilian Portuguese /pt-br/, Turkish /tr/, Hindi /hi/, Vietnamese /vi/, Thai /th/, Filipino /fil/, Malay /ms/, Indonesian /id/.
 
-Адреса кнопок находятся в `links.js`. YouTube и Instagram подключены. Раздел «Трейдинг» находится в trading.html. «Торговые роботы» готовятся. «Подключиться» ведёт на https://ural66-design.github.io/tcapinstruction/ , «Результаты торговли» — на https://www.myfxbook.com/ru/portfolio/t-capital/12155631 . Смешанная навигация: главная → Трейдинг → инструкция в той же вкладке; Myfxbook, YouTube и Instagram — в новой.
+Each language has a home page, trading.html, instructions/, instructions/step-1/ through step-3/, privacy/, terms/, risks/, and legal/. Internal links keep the tab; broker and other external links open a new tab. Step progress stays in sessionStorage in that tab. No data is submitted by the guide.
 
-## Оформление
+Each language has a 1200x630 JPEG social banner, static Open Graph/Twitter metadata, canonical URL and hreflang links. Favicon adapts to light/dark mode. Language switching preserves the page and supported step fragments.
 
-Оформление меняет только владелец: атрибут `data-theme` у `<html>` в index.html, значения sea / winter / spring. Стили и декор в themes.css. У посетителей нет переключателя; старые сохранённые настройки игнорируются.
+Current base: https://ural66-design.github.io/trading-without-tie/
+Future base: https://www.vladimir1.com/ (domain/DNS are not configured by this update).
 
-Меню RU — только визуальный макет. Переводов и переходов пока нет. При добавлении языковых страниц каждой нужен собственный статический og:title, og:description и баннер на её языке. Сейчас страница русскоязычная, баннер social-preview-ru-v3.jpg. Баннер ссылки общий для текущего языка.
+The static generator is maintained locally: build_site.py, locales.py, locales_extra.py, privacy_details.py and site-config.json. For custom-domain release, generate with --production-domain to update metadata/sitemap, then configure the verified domain in Pages. Relative navigation requires no rewrite.

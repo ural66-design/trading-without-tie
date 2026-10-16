@@ -10,7 +10,7 @@ GitHub Pages: ветка `main`, папка `/ (root)`.
 
 ## Ссылки
 
-Адреса кнопок находятся в `links.js`. YouTube и Instagram подключены. Раздел «Трейдинг» находится в trading.html. «Торговые роботы» готовятся. «Подключиться» ведёт на https://ural66-design.github.io/tcapinstruction/ , «Результаты торговли» — на https://www.myfxbook.com/ru/portfolio/t-capital/12155631 . Все ссылки визитки открываются в той же вкладке; возврат — кнопкой браузера «Назад».
+Адреса кнопок находятся в `links.js`. YouTube и Instagram подключены. Раздел «Трейдинг» находится в trading.html. «Торговые роботы» готовятся. «Подключиться» ведёт на https://ural66-design.github.io/tcapinstruction/ , «Результаты торговли» — на https://www.myfxbook.com/ru/portfolio/t-capital/12155631 . Смешанная навигация: главная → Трейдинг → инструкция в той же вкладке; Myfxbook, YouTube и Instagram — в новой.
 
 ## Оформление
 

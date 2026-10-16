@@ -15,7 +15,11 @@ document.querySelectorAll('[data-link]').forEach(button => {
     link.className = button.className;
     link.href = url;
     link.innerHTML = button.innerHTML;
-    link.rel = 'noopener noreferrer';
+    // Keep the connection flow linear; external resources retain the site tab.
+    if (['results', 'youtube', 'instagram'].includes(button.dataset.link)) {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    }
     button.replaceWith(link);
   } else {
     button.addEventListener('click', () => notice.showModal());

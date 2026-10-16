@@ -1,6 +1,8 @@
 // Add the owner's real destination URLs here. Empty entries show a clear notice.
 const destinations = {
   trading: '',
+  connect: '',
+  results: '',
   robots: '',
   youtube: 'http://www.youtube.com/@vladimir.lifestyle',
   instagram: 'https://www.instagram.com/vladimir.lifestyle'

@@ -1,0 +1,43 @@
+name: Publish multilingual site
+on:
+  push:
+    branches: [main]
+    paths: [trading-without-tie.zip, .github/workflows/pages.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Unpack verified static site
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          target = Path('_site').resolve()
+          with ZipFile('trading-without-tie.zip') as archive:
+              for item in archive.infolist():
+                  destination = (target / item.filename).resolve()
+                  if not destination.is_relative_to(target):
+                      raise ValueError('Unsafe archive path')
+              archive.extractall(target)
+          assert (target / 'index.html').is_file()
+          assert (target / 'instructions' / 'index.html').is_file()
+          PY
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -10,7 +10,7 @@ Build and check the local project, run prepare_release.py (or prepare_github.py)
 
 Russian at root; English /en/, Spanish /es/, Brazilian Portuguese /pt-br/, Turkish /tr/, Hindi /hi/, Vietnamese /vi/, Thai /th/, Filipino /fil/, Malay /ms/, Indonesian /id/.
 
-Each language has a home page, trading.html, instructions/, instructions/step-1/ through step-3/, privacy/, terms/, risks/, and legal/. Internal links keep the tab; broker and other external links open a new tab. Step progress stays in sessionStorage in that tab. No data is submitted by the guide.
+Each language has a home page, trading.html, instructions/, instructions/step-1/ through step-3/, privacy/, terms/, risks/, and legal/. Internal links keep the tab; broker and other external links open a new tab. Steps unlock sequentially; progress exists only in the open guide. No data is submitted by the guide. Individual step URLs remain available but are not advertised inside the sequential guide.
 
 Each language has a 1200x630 JPEG social banner, static Open Graph/Twitter metadata, canonical URL and hreflang links. Favicon adapts to light/dark mode. Language switching preserves the page and supported step fragments.
 

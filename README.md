@@ -1,20 +1,11 @@
-# Trading without a tie / Трейдинг без галстука
+# Vladimir1 — GitHub Pages test version
 
-Static personal hub and copy-trading guide: 11 languages, no framework, external fonts or analytics.
+Published for device testing on 21 October 2026 at https://ural66-design.github.io/trading-without-tie/ . The custom domain vladimir1.com is not connected.
 
-## Deployment
+GitHub Actions publishes only the contents of `trading-without-tie.zip`. Loose HTML/CSS files elsewhere in this repository are historical and are not deployed.
 
-GitHub Pages uses GitHub Actions, not the repository root. The workflow .github/workflows/pages.yml publishes the contents of trading-without-tie.zip. Older loose HTML/CSS files in the repository are historical and are not deployed. Do not edit those files to update the live website.
+The archive includes 11 languages, the home page, T-Capital, Fast Money Bot, the sequential T-Capital guide, the FMB instruction placeholder, legal pages, four shared social images, and local fonts. Internal links stay in the same tab. External links open a separate tab. Guide progress is saved in the browser.
 
-Build and check the local project, run prepare_release.py (or prepare_github.py), then replace trading-without-tie.zip on main. The workflow automatically publishes it at the existing URL. Do not flatten the archive: language and instruction directories must remain intact.
+Language routes: ru, en, es, pt-BR, tr, fil, id, ms, th, vi, hi. The root selects the saved or browser language. Existing instruction and trading URLs redirect to their replacement pages. FMB instructions remain in development.
 
-Russian at root; English /en/, Spanish /es/, Brazilian Portuguese /pt-br/, Turkish /tr/, Hindi /hi/, Vietnamese /vi/, Thai /th/, Filipino /fil/, Malay /ms/, Indonesian /id/.
-
-Each language has a home page, trading.html, instructions/, instructions/step-1/ through step-3/, privacy/, terms/, risks/, and legal/. Internal links keep the tab; broker and other external links open a new tab. Steps unlock sequentially; progress exists only in the open guide. No data is submitted by the guide. Individual step URLs remain available but are not advertised inside the sequential guide.
-
-Each language has a 1200x630 JPEG social banner, static Open Graph/Twitter metadata, canonical URL and hreflang links. Favicon adapts to light/dark mode. Language switching preserves the page and supported step fragments.
-
-Current base: https://ural66-design.github.io/trading-without-tie/
-Future base: https://www.vladimir1.com/ (domain/DNS are not configured by this update).
-
-The static generator is maintained locally: build_site.py, locales.py, locales_extra.py, privacy_details.py and site-config.json. For custom-domain release, generate with --production-domain to update metadata/sitemap, then configure the verified domain in Pages. Relative navigation requires no rewrite.
+Metadata and sitemap use the GitHub Pages address. No CNAME, DNS or mail changes are part of this deployment.

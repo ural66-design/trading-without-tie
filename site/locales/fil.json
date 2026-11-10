@@ -1,0 +1,301 @@
+{
+  "ui": {
+    "home": "Home",
+    "trading": "Trading",
+    "robots": "Mga trading robot",
+    "socials": "Aking social media",
+    "connect": "Kumonekta",
+    "results": "Mga resulta ng trading",
+    "telegram": "Telegram bot",
+    "language": "Wika",
+    "done": "Tapos na",
+    "progress": "Iyong progreso",
+    "faq": "Mga karaniwang tanong",
+    "support": "Teknikal na suporta",
+    "close": "Isara",
+    "continue": "Magpatuloy",
+    "restart": "Magsimulang muli",
+    "already": "Nakakonekta na ako",
+    "confirm": "Oo, tapos na ang pagkonekta",
+    "return": "Bumalik",
+    "restoreTitle": "Ituloy ang pagkonekta?",
+    "restoreStep": "Huminto ka sa hakbang {n} sa 3",
+    "confirmTitle": "Natapos mo na ba ang pagkonekta sa T-Capital sa broker?",
+    "introLabel": "Paunang impormasyon",
+    "howtoLabel": "Paano gamitin ang gabay",
+    "riskLabel": "Babala sa panganib",
+    "legal": "Legal na impormasyon",
+    "privacy": "Patakaran sa privacy",
+    "risks": "Babala sa panganib",
+    "portraitAlt": "Vladimir",
+    "storageError": "Hindi ma-save ang progreso sa browser. Maaari mong ipagpatuloy ang pagkonekta sa pahinang ito.",
+    "chooseLanguage": "Pumili ng wika",
+    "placeholderTitle": "Ginagawa pa ang gabay",
+    "placeholderText": "Malapit nang maging available ang gabay sa pagkonekta sa Fast Money Bot."
+  },
+  "home": {
+    "title": "Trading nang walang kurbata",
+    "paragraphs": [
+      "Ako si Vladimir. Hilig ko ang trading at pag-automate nito — gumagawa ako ng mga bagay na ginagamit ko mismo.",
+      "Sa libreng oras, mas gusto kong bumiyahe nang sariling plano sa Russia at sa buong mundo, sakay ng anumang gumagalaw, at kahit naglalakad."
+    ]
+  },
+  "trading": {
+    "title": "Trading",
+    "paragraphs": [
+      "Ang trading ay pagsasagawa ng mga transaksyon sa mga salapi, cryptocurrency, shares ng mga kompanya, government bonds at iba pang instrumentong pinansyal sa pamamagitan ng isang brokerage company sa mga elektronikong trading platform.",
+      "Layunin ng mga transaksyong ito na kumita mula sa pagbabago ng presyo.",
+      "Ang trader ay taong nagsasagawa ng mga transaksyong ito at sariling nagpapasya sa pagbili at pagbenta ng mga instrumentong pinansyal.",
+      "Sa copy trading, awtomatikong naiuulit ang mga trade ng isang trader sa iyong brokerage account, kahit wala kang karanasan sa trading.",
+      "Pagkatapos kumonekta sa pagkopya ng mga trade, awtomatikong nagbubukas at nagsasara ng mga trade ang sistema ng broker sa iyong account. Hindi mo kailangang mag-analisa ng mga chart, humanap ng tamang pagkakataon at magpasya para sa bawat trade nang mag-isa.",
+      "Maaari kang kumonekta sa loob ng 15 minuto."
+    ]
+  },
+  "fmb": {
+    "title": "Mga trading robot",
+    "paragraphs": [
+      "Nilikha ang mga trading robot bilang paraan ng pag-automate sa mga gawaing ginagawa ng tao sa trading — ang trader.",
+      "Ang trading ay pagsasagawa ng mga transaksyon sa mga salapi, shares ng mga kompanya at iba pang instrumentong pinansyal sa pamamagitan ng isang brokerage company upang kumita mula sa pagbabago ng presyo.",
+      "Ang mga trading robot ay mga computer program na awtomatikong gumagawa ng trabaho ng trader, mahigpit na sumusunod sa isang itinakdang algorithm.",
+      "Hindi natutulog, napapagod o nadadala ng emosyon ang robot. Kaya nitong bantayan ang pagbabago ng presyo buong araw at magsagawa ng mga trade kapag bukas ang kalakalan, nang walang palagiang pakikilahok ng tao.",
+      "Nasa Telegram bot ang lahat ng detalyadong impormasyon tungkol sa mga trading robot, kabilang ang mga abiso, balita ng proyekto, monitoring, trading statistics, artikulo, rekomendasyon, kondisyon ng subscription, social media ng proyekto at marami pang iba."
+    ]
+  },
+  "guide": {
+    "title": "T-Capital — gabay sa pagkonekta sa copy trading",
+    "intro": "Para kumonekta sa serbisyo ng pagkopya ng mga trade, gawin ang ilang simpleng hakbang: magrehistro sa broker, itakda ang mga patakaran ng pagkopya, gumawa ng account at pondohan ito ng hindi bababa sa $1000. Awtomatikong magsisimula ang pagkopya pagkatapos mapondohan.",
+    "howto": "Gawin ang mga hakbang nang sunod-sunod. Kapag natapos ang bawat hakbang, lagyan ng tsek ang “Tapos na” sa pamagat nito — awtomatikong bubukas ang susunod na hakbang.",
+    "risk": "May panganib na mawala ang bahagi o lahat ng iyong pondo sa pagkopya ng mga trade. Hindi garantiya ng kaparehong resulta sa hinaharap ang mga nakaraang resulta ng trading. Ikaw mismo ang magpapasya kung kokonekta sa pagkopya ng mga trade at kung magkano ang gagamiting pondo.",
+    "steps": [
+      {
+        "title": "Pagrehistro sa broker",
+        "items": [
+          "Ilagay ang bansang tinitirhan at email address, at gumawa ng bagong matibay na password.",
+          "O mag-sign in gamit ang iyong Google/Facebook account.",
+          "Mahalaga: wala sa listahan ang iyong bansa? Piliin ang pinakamalapit; itatakda ng sistema ang tamang bansa habang sinusuri ang mga dokumento."
+        ],
+        "action": "Pumunta sa pagpaparehistro"
+      },
+      {
+        "title": "Beripikasyon",
+        "items": [
+          "Mahalaga: nakadepende sa bansa ang mga kinakailangan sa beripikasyon: sa ilan ay kailangan agad, sa iba naman ay kapag nagpopondo na. Kung walang lumabas matapos buksan ang link, huwag mag-alala — sa iyong kaso, gagawin ang beripikasyon sa yugto ng pagpopondo.",
+          "Patunayan ang iyong pagkakakilanlan: pasaporte o pambansang ID card.",
+          "Patunayan ang iyong address: anumang dokumentong may buong pangalan at address (bill ng utility, internet, mobile phone o bank statement)."
+        ],
+        "action": "Kumpletuhin ang beripikasyon"
+      },
+      {
+        "title": "Pag-set up ng pagkopya at pagpopondo",
+        "items": [
+          "Pindutin ang “Kopyahin” sa profile ng lider na T-Capital.",
+          "Sa bubukas na window, itakda ang multiplier ng pagkopya = 1 (isa).",
+          "Buksan ang “Higit pang setting” → i-on ang “Isagawa ang scaling matapos isara ng lider ang kaniyang mga trade” (huwag baguhin ang ibang parameter).",
+          "Mag-scroll pababa → sa “Account”: “Gumawa ng bagong account” → “Kopyahin” — bubukas ang pahina ng pagpopondo.",
+          "Pondohan ang account ng hindi bababa sa $1000.",
+          "Pumili ng paraan: bank card o cryptocurrency.",
+          "Kung wala ang kailangan mong paraan, kumpletuhin ang beripikasyon para ma-unlock ito.",
+          "Awtomatikong magsisimula ang pagkopya pagkatapos mapondohan."
+        ],
+        "action": "Buksan ang profile ng lider"
+      }
+    ],
+    "complete": [
+      "Tapos na ang lahat ng hakbang ng gabay!",
+      "Maaari mo nang subaybayan ang mga resulta ng trading sa website ng broker o sa MetaTrader 4 app."
+    ],
+    "faq": [
+      {
+        "q": "Ano ang multiplier ng pagkopya? Bakit ito kailangang itakda sa 1?",
+        "a": [
+          "Ang multiplier ng pagkopya ay coefficient na ginagamit upang kalkulahin ang volume ng mga kinokopyang trade, batay sa proporsyon ng mga deposito ng trader (lider) at ng iyong account.",
+          "Kapag kumokonekta, itakda ang multiplier sa 1 (isa). Sa ganitong paraan, hindi mo kailangang kalkulahin ang coefficient nang mag-isa at mangambang magkamali sa mga setting.",
+          "Pagkatapos magsara ang trade ng lider, muling kakalkulahin ng naka-on na automatic scaling ang volume ng pagkopya ayon sa mekanismo ng broker.",
+          "Kaya mahalagang itakda ang multiplier sa 1 at i-on ang “Isagawa ang scaling matapos isara ng lider ang kaniyang mga trade”."
+        ]
+      },
+      {
+        "q": "Ano ang gagawin kung hindi dumating ang email na may mga detalye ng account?",
+        "a": [
+          "Tingnan ang Spam folder at iba pang folder ng email.",
+          "Kung hindi makita ang email, makipag-ugnayan sa suporta ng broker para maibalik o malinawan ang mga detalye ng pag-access sa account.",
+          "Kung kailangan, maaari kang humingi ng tulong sa pakikipag-ugnayan sa suporta ng broker."
+        ]
+      },
+      {
+        "q": "Saan ko masusubaybayan ang mga resulta ng trading?",
+        "a": [
+          "Maaari mong subaybayan ang trading sa personal na account area ng broker na Markets4you.",
+          "Maaari mo ring gamitin ang MetaTrader 4 sa pamamagitan ng pagkonekta sa trading account gamit ang investor password.",
+          "Sa ilang bansa, available din ang mobile app ng Markets4you."
+        ]
+      },
+      {
+        "q": "Ano ang mga alternatibong paraan ng pagpopondo?",
+        "a": [
+          "Nakadepende ang mga available na paraan ng pagpopondo sa bansa at mga setting ng iyong broker account area.",
+          "Bukod sa mga bank card, maaaring available ang mga electronic wallet at iba pang paraan, kabilang ang cryptocurrency.",
+          "Kung hindi lumilitaw ang kinakailangang paraan, kumpletuhin ang beripikasyon. Maaaring mabuksan ang karagdagang mga opsyon sa pagpopondo pagkatapos nito."
+        ]
+      },
+      {
+        "q": "Bakit hindi gumagana ang pagkopya?",
+        "a": [
+          "Hindi tuloy-tuloy buong araw ang trading; ginagawa ito kapag may kinakailangang kondisyon ng merkado at mga trading signal. Minsan ay ilang araw o linggo ang pagitan ng mga trade. Wala ring trading tuwing weekend.",
+          "Para matiyak na tama ang koneksyon ng pagkopya, mag-sign in sa personal na account area ng broker na Markets4you.",
+          "Sa side menu, buksan ang “Copy trading” → “Mga patakaran ng pagkopya”.",
+          "Dapat nasa listahan ang patakaran ng pagkopya na ginawa mo. Bilang default, pinapangalanan ng broker ang mga patakaran na Rule 1, Rule 2, Rule 3 at iba pa.",
+          "Kung marami kang patakaran, tiyaking ang kailangan mong patakaran ay para sa lider na T-Capital, kung ipinapakita ang impormasyong iyon sa account area.",
+          "Kung wala ang patakaran, ulitin ang proseso ng pagkonekta ayon sa gabay.",
+          "Kung wala pa rin ang patakaran matapos muling kumonekta, makipag-ugnayan sa teknikal na suporta sa support@vladimir1.com o sa suporta ng broker na Markets4you."
+        ]
+      },
+      {
+        "q": "Ano ang “investor password”?",
+        "a": [
+          "Ang investor password ay espesyal na password para tingnan ang trading account sa MetaTrader 4.",
+          "Nagagamit ito upang obserbahan ang mga bukas at saradong trade, balanse at mga resulta ng trading.",
+          "Hindi nito pinapayagang magsagawa ka ng mga trade o mag-withdraw ng pondo mula sa account."
+        ]
+      },
+      {
+        "q": "Maaari ba akong mag-withdraw ng pondo anumang oras?",
+        "a": [
+          "Maaari kang magsumite ng kahilingan sa withdrawal anumang oras.",
+          "Kung hindi pa nabeberipika ang iyong pagkakakilanlan, maaaring hingin ng broker ang beripikasyon bago ang unang withdrawal. Karaniwang hindi na ito inuulit sa bawat withdrawal.",
+          "Kapag aktibo ang pagkopya, para sa karaniwang withdrawal, kailangan munang ihinto ang pagkopya at ikonekta itong muli pagkatapos mag-withdraw.",
+          "Eksepsyon ang mga araw ng pagsingil ng komisyon na itinakda ng broker, dalawang beses bawat buwan. Sa mga araw na iyon, maaaring mag-withdraw nang hindi inihihinto ang pagkopya.",
+          "Nakadepende ang oras ng pagproseso sa broker at sa piniling paraan ng withdrawal."
+        ]
+      },
+      {
+        "q": "Ano ang leverage at anong uri ng account ang kailangan para sa pagkopya?",
+        "a": [
+          "Classic Pro account na may leverage na 1:2000 ang ginagamit sa pagkopya.",
+          "Itinatakda ng leverage ang proporsyon ng laki ng trading position at ng kinakailangang garantiya.",
+          "Sa mataas na leverage, mas maliit na halaga ang maaaring gamitin bilang margin para sa position na may takdang laki.",
+          "Sa parehong laki ng position, pareho ang pinansyal na resulta ng pagbabago ng presyo, anuman ang piniling leverage.",
+          "Gayunman, hindi inaalis ng leverage ang mga panganib sa merkado o ang panganib ng kakulangan sa margin."
+        ]
+      }
+    ]
+  },
+  "legal": {
+    "legal": [
+      "Pangkalahatang mga probisyon",
+      "Ang Vladimir1.com ay personal na mapagkukunan ng impormasyon tungkol sa mga interes at libangan ng may-akda sa paglalakbay, trading at algorithmic trading.",
+      "Ang trading at algorithmic trading ay dalawang larangan ng personal na pagsasanay ng may-akda, na isinasagawa sa pamamagitan ng sariling pag-aaral, paggamit at pagpapahusay ng mga pamamaraan at teknolohiya ng trading.",
+      "Dalawang proyekto ang ipinapakita sa website:",
+      "T-Capital — sariling trading sa mga pamilihang pinansyal.",
+      "Fast Money Bot — pagbuo at paggamit ng mga awtomatikong trading algorithm.",
+      "Pagpapakita ng personal na trading practice",
+      "Inilalathala ang mga trading statistics, monitoring, paglalarawan ng mga algorithm at link sa mga trading profile upang ipakita ang personal na karanasan ng may-akda, mga pamamaraang ginagamit at mga resulta ng praktikal na paggamit ng mga ito, kabilang ang real time.",
+      "Maaaring sariling pag-aralan ng mga bisita ang materyales at, kung may angkop na teknikal na kakayahan ang mga platform ng third party, obserbahan ang paggana ng mga pamamaraan ng trading, kopyahin o subukan ang mga ito sa sariling pagkukusa.",
+      "Ang mga inilathalang materyales ay para sa impormasyon, pagpapakilala at demonstrasyon; hindi ito indibidwal na rekomendasyon sa pamumuhunan o alok ng mga serbisyo ng pamamahala ng pondong ipinagkatiwala.",
+      "Mga mapagkukunan ng impormasyon ng third party",
+      "Maaaring maglaman ang Vladimir1.com ng mga link sa third-party resources, kabilang ang Myfxbook, Markets4you, Telegram at iba pang platform ng impormasyon, brokerage at teknolohiya.",
+      "Maaaring may mga alok sa naturang resources ng mga serbisyong pinansyal, estratehiya sa trading, produktong pamumuhunan at iba pang serbisyong ibinibigay ng mga independiyenteng third party.",
+      "Ang mga alok ng third party ay hindi mga alok ng may-akda ng Vladimir1.com. Ang nilalaman at mga kondisyon nito ay direktang itinatakda ng mga kaugnay na partido at operator ng third-party platforms.",
+      "Sariling nagpapasya ang mga bisita kung pupunta sa mga third-party resource at gagamitin ang mga pagkakataong iniaalok doon.",
+      "Walang brokerage services o transaksyon gamit ang pondo ng mga bisita",
+      "Hindi nagbibigay ang Vladimir1.com ng brokerage services, nagbubukas o nangangasiwa ng brokerage account ng mga bisita, tumatanggap ng trading deposit, nag-iingat ng pondo ng mga kliyente o nagsasagawa ng mga transaksyon gamit ang mga iyon.",
+      "Ang pagpaparehistro, pagkilala at beripikasyon ng mga user, serbisyo sa brokerage account, pagkonekta sa pagkopya ng mga trade, pagdeposito at pag-withdraw ay isinasagawa sa mga kaugnay na third-party organization ayon sa kanilang mga kondisyon.",
+      "Ang mga usaping may kinalaman sa brokerage account, pagpapatupad ng mga trade at financial settlement ay direktang pinangangasiwaan ng mga kaugnay na broker.",
+      "Walang direktang pagtanggap ng bayad para sa mga produkto at serbisyo sa Vladimir1.com.",
+      "Mga affiliate link",
+      "Maaaring may affiliate identifier ang ilang link na inilathala sa website.",
+      "Intelektuwal na ari-arian",
+      "Ang mga karapatan sa mga teksto, larawan, software material at iba pang protektadong bunga ng gawaing intelektuwal na inilathala sa Vladimir1.com ay pag-aari ng kani-kanilang may-hawak ng karapatan.",
+      "Pinapayagan ang paggamit ng third party sa mga kasong itinakda ng batas o may pahintulot ng may-hawak ng karapatan.",
+      "Impormasyon sa pakikipag-ugnayan",
+      "Para sa mga usapin sa pagpapatakbo ng website, teknikal na suporta at mga pakikipag-ugnayang may legal na kahalagahan:",
+      "support@vladimir1.com"
+    ],
+    "privacy": [
+      "Pangkalahatang mga probisyon",
+      "Itinatakda ng Patakaran sa privacy na ito kung paano pinoproseso ang impormasyong kaugnay ng paggamit ng Vladimir1.com, kabilang ang T-Capital at Fast Money Bot.",
+      "Paggamit ng website",
+      "Walang pagpaparehistro ng mga bisita, paggawa ng personal na account o pagbibigay ng personal na datos sa mga built-in form sa Vladimir1.com.",
+      "Hindi gumagamit ang website ng advertising pixels o third-party system sa pagsubaybay ng asal ng mga bisita.",
+      "Direktang sine-save sa browser ng user, gamit ang local storage, ang piniling wika ng interface at progreso sa mga gabay.",
+      "Hindi ipinapadala ang mga setting na ito sa sariling database ng website at maaaring burahin ng user gamit ang mga tool ng browser.",
+      "Email",
+      "Sa pag-email sa support@vladimir1.com, maaaring iproseso ang email address ng nagpadala, nilalaman ng mensahe at impormasyong kusang ibinigay.",
+      "Ginagamit ang natanggap na impormasyon upang suriin ang kahilingan at maghanda ng sagot.",
+      "Maaaring maging legal na batayan ng pagprosesong ito ang pagtugon sa lehitimong interes na kaugnay ng pagsusuri sa mga natanggap na kahilingan, basta iginagalang ang mga karapatan at kalayaan ng taong may-ari ng personal na datos.",
+      "Hindi inilalathala ang korespondensiya, ginagamit sa mga email na patalastas o ibinibigay sa third-party organization para sa marketing.",
+      "Gumagamit ng imprastraktura ng email sa pagtanggap at pag-iimbak ng elektronikong korespondensiya.",
+      "Huwag ipadala sa support address ang mga detalye ng pasaporte, password, detalye ng pagbabayad, numero ng brokerage account o iba pang kumpidensiyal na impormasyong pinansyal.",
+      "Para sa mga usapin sa brokerage account at transaksyong pinansyal, direktang makipag-ugnayan sa suporta ng kaugnay na broker.",
+      "Iniimbak ang korespondensiya sa panahong kailangan upang suriin ang kahilingan o kung may iba pang legal na batayan para sa pagpapanatili nito.",
+      "Teknikal na impormasyon",
+      "Sa pagbisita sa website, maaaring iproseso ng mga tagapagbigay ng hosting at teknikal na imprastraktura ang IP address, impormasyon sa browser at device at mga parameter ng teknikal na request na kailangan upang ma-access ang mga pahina.",
+      "Hindi ginagamit ng Vladimir1.com ang impormasyong ito upang sariling gumawa ng advertising profile ng mga bisita.",
+      "Mga third-party resource",
+      "Kapag sinusundan ang mga link sa third-party resource, pinoproseso ang impormasyon ayon sa mga kondisyon at patakaran ng kani-kanilang serbisyo.",
+      "Hindi itinatakda ng Vladimir1.com kung paano pinoproseso ng mga independiyenteng third-party organization ang personal na datos.",
+      "Fast Money Bot sa Telegram",
+      "Para sa paggana ng Telegram bot na Fast Money Bot, tanging mga identifier ng user ng Telegram (Telegram ID) ang iniimbak sa sariling database nito.",
+      "Hindi iniimbak sa sariling database ng bot ang mga pangalan ng user, palayaw, numero ng telepono at nilalaman ng mga mensahe.",
+      "Isang awtomatikong sistema ng pagsagot sa mga karaniwang tanong at teknolohiya ng artificial intelligence gamit ang OpenAI API ang ginagamit sa pagproseso ng mga tanong ng user.",
+      "Kapag bumubuo ng mga sagot gamit ang artificial intelligence, ipinapadala sa OpenAI API ang nilalaman ng kaugnay na mga request upang iproseso at makabuo ng sagot.",
+      "Maaari ring direktang makipag-ugnayan ang mga user sa suporta sa pamamagitan ng Telegram.",
+      "Ang pagproseso ng impormasyon ng mismong Telegram platform ay saklaw ng mga kondisyon at patakaran sa privacy ng serbisyong iyon.",
+      "Proteksyon ng impormasyon",
+      "Sa pagproseso ng natanggap na impormasyon, ginagamit ang mga hakbang na pang-organisasyon at teknikal upang maiwasan ang labag sa batas na pag-access, pagbabago, pagpapakalat o pagsira sa impormasyon.",
+      "Mga kahilingan tungkol sa personal na datos",
+      "Ang mga kahilingan para sa impormasyong kaugnay ng pagproseso ng personal na datos, pagwawasto nito, paglilimita sa pagproseso o pagbura ay sinusuri alinsunod sa naaangkop na batas.",
+      "Contact para sa mga kahilingan:",
+      "support@vladimir1.com"
+    ],
+    "risks": [
+      "Pangkalahatang mga probisyon",
+      "Ang trading ng mga instrumentong pinansyal, pagkopya ng mga trade at paggamit ng mga trading robot ay may panganib na mawala ang bahagi o lahat ng pondo.",
+      "Hindi ginagarantiya ng mga nakaraang resulta ng trading, monitoring indicator at resulta ng pagsusuri ng mga algorithm ang kaparehong pinansyal na resulta sa hinaharap.",
+      "Mga panganib sa pagkopya ng mga trade",
+      "Maaaring magkaiba ang resulta ng mga kinopyang trade at ng pinagmulang account dahil sa pagkakaiba sa mga kondisyon ng execution, halaga ng kapital, mga setting ng pagkopya at iba pang kalagayan.",
+      "Mga panganib sa algorithmic trading",
+      "Nagsasagawa ng mga trade ang mga robot ayon sa kanilang nakaprogramang algorithm at maaaring magkaroon ng mga trade na kumikita o nalulugi.",
+      "Nakadepende ang bisa ng mga trading algorithm sa kondisyon ng merkado, mga parameter ng setting, katangian ng ginagamit na platform at kalidad ng pagpapatupad ng mga trade.",
+      "Karagdagang mga salik ng panganib",
+      "Pinapataas ng leverage ang potensyal na kita at ang laki ng posibleng pagkalugi.",
+      "Ang pagbabago-bago ng mga pamilihang pinansyal, kakulangan sa liquidity, slippage, teknikal na pagkabigo at pagkaantala sa execution ng mga order ay maaaring makabuluhang makaapekto sa resulta ng trading.",
+      "Malayang pagpapasya",
+      "Ang mga desisyong magrehistro sa broker, pumili ng trading platform, estratehiya at partikular na kalahok na kokopyahan ng mga trade, kumonekta sa mga serbisyo ng pagkopya, gumamit ng trading robots, at tukuyin ang mga parameter ng trading at halaga ng pondong gagamitin ay sariling ginagawa ng user, sa kaniyang pagpapasya, batay sa sariling pagsusuri sa mga kondisyon ng paggamit ng kaugnay na serbisyo at mga kaakibat na panganib sa pananalapi."
+    ]
+  },
+  "meta": {
+    "home": {
+      "title": "www.Vladimir1.com",
+      "description": "Paglalakbay, trading at mga trading robot."
+    },
+    "trading": {
+      "title": "T-Capital",
+      "description": "Proyekto ng copy trading."
+    },
+    "fmb": {
+      "title": "Fast Money Bot",
+      "description": "Mga trading robot at copy trading."
+    },
+    "guide": {
+      "title": "T-Capital — Gabay sa pagkonekta",
+      "description": "Gabay na sunod-sunod. Kumonekta sa loob ng 15 minuto."
+    },
+    "placeholder": {
+      "title": "Fast Money Bot — Ginagawa pa ang gabay",
+      "description": "Malapit nang maging available ang gabay sa pagkonekta sa Fast Money Bot."
+    },
+    "legal": {
+      "title": "Legal na impormasyon — Vladimir1.com",
+      "description": "Legal na impormasyon tungkol sa Vladimir1.com at mga proyekto nito."
+    },
+    "privacy": {
+      "title": "Patakaran sa privacy — Vladimir1.com",
+      "description": "Paggamit ng impormasyon at local storage sa Vladimir1.com."
+    },
+    "risks": {
+      "title": "Babala sa panganib — Vladimir1.com",
+      "description": "Mga panganib sa trading, pagkopya ng mga trade at paggamit ng trading robots."
+    }
+  }
+}

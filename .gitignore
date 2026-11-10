@@ -1,0 +1,8 @@
+# Local archives and transient files
+/*.zip
+*.tmp
+*.log
+__pycache__/
+.DS_Store
+Thumbs.db
+Desktop.ini

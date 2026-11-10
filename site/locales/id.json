@@ -1,0 +1,301 @@
+{
+  "ui": {
+    "home": "Beranda",
+    "trading": "Trading",
+    "robots": "Robot trading",
+    "socials": "Media sosial saya",
+    "connect": "Hubungkan",
+    "results": "Hasil trading",
+    "telegram": "Bot Telegram",
+    "language": "Pilihan bahasa",
+    "done": "Selesai",
+    "progress": "Progres Anda",
+    "faq": "Pertanyaan umum",
+    "support": "Dukungan teknis",
+    "close": "Tutup",
+    "continue": "Lanjutkan",
+    "restart": "Mulai lagi",
+    "already": "Saya sudah terhubung",
+    "confirm": "Ya, koneksi sudah selesai",
+    "return": "Kembali",
+    "restoreTitle": "Lanjutkan proses koneksi?",
+    "restoreStep": "Anda berhenti di langkah {n} dari 3",
+    "confirmTitle": "Apakah Anda sudah menyelesaikan koneksi ke T-Capital di broker?",
+    "introLabel": "Informasi pengantar",
+    "howtoLabel": "Cara menggunakan panduan",
+    "riskLabel": "Peringatan risiko",
+    "legal": "Informasi hukum",
+    "privacy": "Kebijakan privasi",
+    "risks": "Peringatan risiko",
+    "portraitAlt": "Vladimir",
+    "storageError": "Progres tidak dapat disimpan di browser. Anda dapat melanjutkan proses koneksi di halaman ini.",
+    "chooseLanguage": "Pilih bahasa",
+    "placeholderTitle": "Panduan sedang disusun",
+    "placeholderText": "Panduan koneksi Fast Money Bot akan segera tersedia."
+  },
+  "home": {
+    "title": "Trading tanpa dasi",
+    "paragraphs": [
+      "Nama saya Vladimir. Saya menekuni trading dan otomatisasi perdagangan — saya membuat apa yang saya gunakan sendiri.",
+      "Di waktu luang, saya lebih suka bepergian secara mandiri di Rusia dan seluruh dunia, menggunakan apa pun yang bergerak, bahkan berjalan kaki."
+    ]
+  },
+  "trading": {
+    "title": "Trading",
+    "paragraphs": [
+      "Trading adalah melakukan transaksi mata uang, mata uang kripto, saham perusahaan, obligasi pemerintah, dan instrumen keuangan lainnya melalui perusahaan broker di platform perdagangan elektronik.",
+      "Tujuan transaksi tersebut adalah memperoleh keuntungan dari perubahan harga.",
+      "Trader adalah orang yang melakukan transaksi tersebut dengan mengambil keputusan sendiri mengenai pembelian dan penjualan instrumen keuangan.",
+      "Copy trading memungkinkan Anda menyalin transaksi seorang trader secara otomatis di akun broker Anda, bahkan tanpa pengalaman trading.",
+      "Setelah terhubung ke penyalinan transaksi, sistem broker secara otomatis membuka dan menutup transaksi di akun Anda. Anda tidak perlu menganalisis grafik, mencari momen yang tepat, atau mengambil keputusan untuk setiap transaksi sendiri.",
+      "Anda dapat terhubung dalam 15 menit."
+    ]
+  },
+  "fmb": {
+    "title": "Robot trading",
+    "paragraphs": [
+      "Robot trading muncul sebagai cara untuk mengotomatiskan tindakan yang dilakukan manusia dalam trading — yaitu trader.",
+      "Trading adalah melakukan transaksi mata uang, saham perusahaan, dan instrumen keuangan lainnya melalui perusahaan broker untuk memperoleh keuntungan dari perubahan harga.",
+      "Robot trading adalah program komputer yang secara otomatis menjalankan pekerjaan trader dengan mengikuti algoritma yang telah ditentukan secara ketat.",
+      "Robot tidak tidur, tidak lelah, dan tidak terbawa emosi. Robot dapat memantau perubahan harga sepanjang waktu dan melakukan transaksi saat perdagangan tersedia, tanpa keterlibatan manusia secara terus-menerus.",
+      "Semua informasi terperinci tentang robot trading, termasuk pemberitahuan, berita proyek, pemantauan, statistik trading, artikel, rekomendasi, ketentuan langganan, media sosial proyek, dan banyak lagi, tersedia di bot Telegram."
+    ]
+  },
+  "guide": {
+    "title": "T-Capital — panduan koneksi copy trading",
+    "intro": "Untuk terhubung ke layanan penyalinan transaksi, lakukan beberapa tindakan sederhana: daftar di broker, atur aturan penyalinan, buat akun, dan isi dana minimal $1000. Setelah pengisian dana, penyalinan akan dimulai secara otomatis.",
+    "howto": "Ikuti langkah-langkah secara berurutan. Setelah menyelesaikan setiap langkah, centang “Selesai” pada judulnya — langkah berikutnya akan terbuka secara otomatis.",
+    "risk": "Penyalinan transaksi mengandung risiko kehilangan sebagian atau seluruh dana. Hasil trading pada periode sebelumnya tidak menjamin hasil serupa di masa depan. Anda mengambil keputusan sendiri untuk terhubung ke penyalinan transaksi dan menentukan jumlah dana yang digunakan.",
+    "steps": [
+      {
+        "title": "Pendaftaran di broker",
+        "items": [
+          "Masukkan negara tempat tinggal dan alamat email, lalu buat kata sandi baru yang kuat.",
+          "Atau masuk melalui akun Google/Facebook.",
+          "Penting: negara Anda tidak ada dalam daftar? Pilih negara terdekat; saat pemeriksaan dokumen, sistem akan menetapkan negara yang benar."
+        ],
+        "action": "Buka pendaftaran"
+      },
+      {
+        "title": "Verifikasi",
+        "items": [
+          "Penting: persyaratan verifikasi bergantung pada negara: di sebagian negara harus dilakukan segera, di negara lain hanya saat mengisi dana. Jika tidak ada yang muncul setelah membuka tautan, jangan khawatir — untuk Anda, verifikasi dilakukan pada tahap pengisian dana.",
+          "Verifikasi identitas: paspor atau kartu identitas nasional.",
+          "Verifikasi alamat: dokumen apa pun yang mencantumkan nama lengkap dan alamat (tagihan utilitas, internet, ponsel, atau rekening koran)."
+        ],
+        "action": "Lakukan verifikasi"
+      },
+      {
+        "title": "Pengaturan penyalinan dan pengisian dana",
+        "items": [
+          "Klik “Salin” pada profil pemimpin T-Capital.",
+          "Pada jendela yang terbuka, tetapkan pengali penyalinan = 1 (satu).",
+          "Buka “Pengaturan lainnya” → aktifkan “Lakukan penskalaan setelah pemimpin menutup transaksinya” (jangan ubah parameter lainnya).",
+          "Gulir ke bawah → pada bagian “Akun”: “Buat akun baru” → “Salin” — halaman pengisian dana akan terbuka.",
+          "Isi akun dengan dana minimal $1000.",
+          "Pilih metode: kartu bank atau mata uang kripto.",
+          "Jika metode yang diperlukan tidak tersedia, lakukan verifikasi untuk membukanya.",
+          "Setelah pengisian dana, penyalinan akan dimulai secara otomatis."
+        ],
+        "action": "Buka profil pemimpin"
+      }
+    ],
+    "complete": [
+      "Semua langkah panduan selesai!",
+      "Sekarang Anda dapat memantau hasil trading di situs broker atau aplikasi MetaTrader 4."
+    ],
+    "faq": [
+      {
+        "q": "Apa itu pengali penyalinan? Mengapa harus ditetapkan ke 1?",
+        "a": [
+          "Pengali penyalinan adalah koefisien untuk menghitung volume transaksi yang disalin dengan memperhitungkan perbandingan besarnya deposit trader (pemimpin) dan akun Anda.",
+          "Saat terhubung, tetapkan pengali ke 1 (satu). Dengan begitu, Anda tidak perlu menghitung koefisien sendiri dan mengambil risiko salah mengatur parameter.",
+          "Setelah transaksi pemimpin ditutup, fungsi penskalaan otomatis yang diaktifkan akan menghitung ulang volume penyalinan sesuai mekanisme broker.",
+          "Karena itu, penting untuk menetapkan pengali ke 1 dan mengaktifkan “Lakukan penskalaan setelah pemimpin menutup transaksinya”."
+        ]
+      },
+      {
+        "q": "Apa yang harus dilakukan jika email berisi detail akun belum diterima?",
+        "a": [
+          "Periksa folder Spam dan folder email lainnya.",
+          "Jika email tidak ditemukan, hubungi dukungan broker untuk memulihkan atau memperjelas detail akses akun.",
+          "Jika perlu, Anda dapat meminta bantuan untuk menghubungi dukungan broker."
+        ]
+      },
+      {
+        "q": "Di mana saya dapat memantau hasil trading?",
+        "a": [
+          "Anda dapat memantau trading di area pribadi broker Markets4you.",
+          "Anda juga dapat menggunakan MetaTrader 4 dengan menghubungkan akun trading menggunakan kata sandi investor.",
+          "Di beberapa negara, aplikasi seluler Markets4you juga tersedia."
+        ]
+      },
+      {
+        "q": "Apa saja metode pengisian dana alternatif?",
+        "a": [
+          "Metode pengisian dana yang tersedia bergantung pada negara dan pengaturan area pribadi broker Anda.",
+          "Selain kartu bank, dompet elektronik dan metode lain, termasuk mata uang kripto, mungkin tersedia.",
+          "Jika metode yang dibutuhkan tidak muncul, lakukan verifikasi. Setelah selesai, opsi pengisian dana tambahan mungkin tersedia."
+        ]
+      },
+      {
+        "q": "Mengapa penyalinan tidak berjalan?",
+        "a": [
+          "Trading tidak berlangsung sepanjang waktu, melainkan saat kondisi pasar dan sinyal trading yang diperlukan tersedia. Terkadang ada jeda beberapa hari atau minggu antartransaksi. Selain itu, tidak ada trading pada akhir pekan.",
+          "Untuk memastikan penyalinan terhubung dengan benar, masuk ke area pribadi broker Markets4you.",
+          "Pada menu samping, buka “Copy trading” → “Aturan penyalinan”.",
+          "Daftar tersebut harus memuat aturan penyalinan yang Anda buat. Secara default, broker memberi nama Rule 1, Rule 2, Rule 3, dan seterusnya.",
+          "Jika Anda memiliki beberapa aturan, pastikan aturan yang dimaksud terkait dengan pemimpin T-Capital, apabila informasi tersebut ditampilkan di area pribadi.",
+          "Jika aturan tidak ada, ulangi prosedur koneksi sesuai panduan.",
+          "Jika aturan tetap tidak muncul setelah koneksi ulang, hubungi dukungan teknis di support@vladimir1.com atau dukungan broker Markets4you."
+        ]
+      },
+      {
+        "q": "Apa itu “kata sandi investor”?",
+        "a": [
+          "Kata sandi investor adalah kata sandi khusus untuk melihat akun trading di MetaTrader 4.",
+          "Kata sandi ini memungkinkan Anda memantau transaksi terbuka dan tertutup, saldo, serta hasil trading.",
+          "Kata sandi ini tidak memungkinkan Anda melakukan transaksi sendiri atau menarik dana dari akun."
+        ]
+      },
+      {
+        "q": "Bisakah saya menarik dana kapan saja?",
+        "a": [
+          "Permintaan penarikan dana dapat diajukan sepanjang waktu.",
+          "Jika verifikasi identitas belum pernah dilakukan, broker dapat mewajibkan verifikasi sebelum penarikan pertama. Biasanya verifikasi tidak perlu diulang untuk setiap penarikan.",
+          "Saat penyalinan aktif, penarikan biasa mengharuskan Anda menonaktifkan penyalinan terlebih dahulu, lalu menghubungkannya kembali setelah dana ditarik.",
+          "Pengecualiannya adalah hari pemotongan komisi yang ditetapkan broker, dua kali dalam sebulan. Pada hari tersebut, penarikan dapat dilakukan tanpa menonaktifkan penyalinan.",
+          "Waktu pemrosesan permintaan bergantung pada broker dan metode penarikan yang dipilih."
+        ]
+      },
+      {
+        "q": "Apa itu leverage dan jenis akun apa yang diperlukan untuk penyalinan?",
+        "a": [
+          "Penyalinan menggunakan akun Classic Pro dengan leverage 1:2000.",
+          "Leverage menentukan perbandingan antara ukuran posisi trading dan jaminan yang diperlukan.",
+          "Leverage tinggi memungkinkan penggunaan dana yang lebih kecil sebagai margin untuk posisi dengan ukuran tertentu.",
+          "Pada ukuran posisi yang sama, perubahan harga menghasilkan hasil finansial yang sama, terlepas dari leverage yang dipilih.",
+          "Namun, leverage tidak menghilangkan risiko pasar maupun risiko kekurangan margin."
+        ]
+      }
+    ]
+  },
+  "legal": {
+    "legal": [
+      "Ketentuan umum",
+      "Vladimir1.com merupakan sumber informasi pribadi mengenai minat dan hobi penulis dalam perjalanan, trading, serta perdagangan algoritmik.",
+      "Trading dan perdagangan algoritmik adalah dua bidang praktik pribadi penulis yang dijalankan melalui pembelajaran mandiri, penerapan, dan penyempurnaan metode serta teknologi perdagangan.",
+      "Situs ini menampilkan dua proyek:",
+      "T-Capital — perdagangan mandiri di pasar keuangan.",
+      "Fast Money Bot — pengembangan dan penerapan algoritma perdagangan otomatis.",
+      "Demonstrasi praktik trading pribadi",
+      "Statistik trading, pemantauan, uraian algoritma, dan tautan profil trading dipublikasikan untuk menunjukkan pengalaman pribadi penulis, pendekatan yang digunakan, serta hasil penerapannya dalam praktik, termasuk secara langsung.",
+      "Pengunjung dapat mempelajari materi secara mandiri dan, jika platform pihak ketiga memiliki kemampuan teknis yang sesuai, mengamati cara kerja pendekatan perdagangan, meniru atau mengujinya atas inisiatif sendiri.",
+      "Materi yang dipublikasikan bersifat informatif, pengenalan, dan demonstrasi; bukan rekomendasi investasi individual ataupun penawaran layanan pengelolaan dana secara amanah.",
+      "Sumber informasi pihak ketiga",
+      "Vladimir1.com dapat memuat tautan ke sumber pihak ketiga, termasuk Myfxbook, Markets4you, Telegram, serta platform informasi, broker, dan teknologi lainnya.",
+      "Sumber tersebut dapat memuat penawaran layanan keuangan, strategi perdagangan, produk investasi, dan layanan lain yang disediakan pihak ketiga independen.",
+      "Penawaran pihak ketiga tersebut bukan penawaran penulis Vladimir1.com. Isi dan ketentuannya ditetapkan langsung oleh pihak terkait dan pengelola platform pihak ketiga.",
+      "Pengunjung mengambil keputusan sendiri untuk mengunjungi sumber pihak ketiga dan menggunakan fasilitas yang ditawarkan.",
+      "Tidak ada layanan broker atau transaksi dengan dana pengunjung",
+      "Vladimir1.com tidak menyediakan layanan broker, membuka atau mengelola akun broker pengunjung, menerima deposit trading, menyimpan dana pelanggan, ataupun melakukan transaksi dengan dana tersebut.",
+      "Pendaftaran, identifikasi dan verifikasi pengguna, layanan akun broker, koneksi ke layanan penyalinan transaksi, pengisian serta penarikan dana dilakukan melalui organisasi pihak ketiga terkait sesuai ketentuan mereka.",
+      "Masalah terkait akun broker, pelaksanaan transaksi, dan penyelesaian keuangan ditangani langsung oleh broker terkait.",
+      "Pembayaran barang dan jasa tidak diterima langsung di Vladimir1.com.",
+      "Tautan afiliasi",
+      "Tautan tertentu yang dipublikasikan di situs dapat memuat identitas afiliasi.",
+      "Kekayaan intelektual",
+      "Hak atas teks, gambar, materi perangkat lunak, dan hasil kegiatan intelektual lain yang dilindungi serta dipublikasikan di Vladimir1.com dimiliki pemegang hak masing-masing.",
+      "Penggunaan oleh pihak ketiga diperbolehkan dalam keadaan yang ditentukan undang-undang atau dengan izin pemegang hak.",
+      "Informasi kontak",
+      "Untuk urusan pengoperasian situs, dukungan teknis, dan permohonan yang memiliki kepentingan hukum:",
+      "support@vladimir1.com"
+    ],
+    "privacy": [
+      "Ketentuan umum",
+      "Kebijakan Privasi ini menetapkan tata cara pemrosesan informasi terkait penggunaan Vladimir1.com, termasuk T-Capital dan Fast Money Bot.",
+      "Penggunaan situs",
+      "Vladimir1.com tidak menyediakan pendaftaran pengunjung, pembuatan akun pribadi, atau pengiriman data pribadi melalui formulir bawaan.",
+      "Situs tidak menggunakan piksel iklan atau sistem pihak ketiga untuk melacak perilaku pengunjung.",
+      "Bahasa antarmuka yang dipilih dan progres panduan disimpan langsung di browser pengguna melalui penyimpanan lokal.",
+      "Pengaturan tersebut tidak dikirim ke basis data milik situs dan dapat dihapus pengguna melalui fasilitas browser.",
+      "Email",
+      "Saat menghubungi support@vladimir1.com, alamat email pengirim, isi pesan, serta informasi yang diberikan secara sukarela dapat diproses.",
+      "Informasi yang diterima digunakan untuk menelaah permohonan dan menyiapkan jawaban.",
+      "Dasar hukum pemrosesan tersebut dapat berupa pelaksanaan kepentingan sah terkait penelaahan permohonan yang masuk, dengan tetap menghormati hak dan kebebasan subjek data pribadi.",
+      "Korespondensi tidak dipublikasikan, digunakan untuk email iklan, atau diberikan kepada organisasi pihak ketiga untuk tujuan pemasaran.",
+      "Penerimaan dan penyimpanan korespondensi elektronik dilakukan menggunakan infrastruktur email.",
+      "Jangan mengirim data paspor, kata sandi, detail pembayaran, nomor akun broker, atau informasi keuangan rahasia lainnya ke alamat dukungan.",
+      "Untuk masalah akun broker dan transaksi keuangan, hubungi langsung dukungan broker terkait.",
+      "Korespondensi disimpan selama diperlukan untuk menelaah permohonan atau jika ada dasar hukum lain untuk menyimpannya.",
+      "Informasi teknis",
+      "Saat situs dikunjungi, penyedia hosting dan infrastruktur teknis dapat memproses alamat IP, informasi browser dan perangkat, serta parameter permintaan teknis yang diperlukan untuk menyediakan akses ke halaman.",
+      "Vladimir1.com tidak menggunakan informasi tersebut untuk membentuk profil iklan pengunjung secara mandiri.",
+      "Sumber pihak ketiga",
+      "Saat mengikuti tautan ke sumber pihak ketiga, informasi diproses sesuai ketentuan dan kebijakan layanan masing-masing.",
+      "Vladimir1.com tidak menentukan tata cara pemrosesan data pribadi oleh organisasi pihak ketiga independen.",
+      "Bot Telegram Fast Money Bot",
+      "Untuk pengoperasian bot Telegram Fast Money Bot, hanya identitas pengguna Telegram (Telegram ID) yang disimpan dalam basis data milik bot.",
+      "Nama pengguna, nama panggilan, nomor telepon, dan isi pesan tidak disimpan dalam basis data milik bot.",
+      "Sistem jawaban otomatis untuk pertanyaan umum dan teknologi kecerdasan buatan menggunakan OpenAI API digunakan untuk menangani permintaan pengguna.",
+      "Saat jawaban dibuat menggunakan kecerdasan buatan, isi permintaan terkait dikirim melalui OpenAI API untuk diproses dan dibuatkan jawaban.",
+      "Pengguna juga dapat menghubungi dukungan secara langsung melalui Telegram.",
+      "Pemrosesan informasi oleh platform Telegram sendiri diatur oleh ketentuan dan kebijakan privasi layanan tersebut.",
+      "Perlindungan informasi",
+      "Saat memproses informasi yang diterima, diterapkan langkah organisasi dan teknis untuk mencegah akses, perubahan, penyebaran, atau pemusnahan informasi secara tidak sah.",
+      "Permohonan terkait data pribadi",
+      "Permintaan informasi terkait pemrosesan data pribadi, perbaikan, pembatasan pemrosesan, atau penghapusan ditelaah sesuai prosedur hukum yang berlaku.",
+      "Kontak untuk permohonan:",
+      "support@vladimir1.com"
+    ],
+    "risks": [
+      "Ketentuan umum",
+      "Perdagangan instrumen keuangan, penyalinan transaksi, dan penggunaan robot trading mengandung risiko kehilangan sebagian atau seluruh dana.",
+      "Hasil perdagangan sebelumnya, indikator pemantauan, dan hasil pengujian algoritma perdagangan tidak menjamin hasil finansial serupa di masa depan.",
+      "Risiko penyalinan transaksi",
+      "Hasil transaksi yang disalin dapat berbeda dari hasil akun sumber karena perbedaan kondisi pelaksanaan, jumlah modal, pengaturan penyalinan, dan keadaan lain.",
+      "Risiko perdagangan algoritmik",
+      "Robot trading melakukan transaksi sesuai algoritma yang diprogram dan dapat menghasilkan transaksi yang untung maupun rugi.",
+      "Efektivitas algoritma perdagangan bergantung pada kondisi pasar, parameter pengaturan, karakteristik platform yang digunakan, serta kualitas pelaksanaan transaksi.",
+      "Faktor risiko tambahan",
+      "Penggunaan leverage meningkatkan potensi keuntungan maupun besarnya kemungkinan kerugian.",
+      "Volatilitas pasar keuangan, likuiditas yang tidak memadai, slippage, kegagalan teknis, serta keterlambatan pelaksanaan order dapat memengaruhi hasil trading secara signifikan.",
+      "Pengambilan keputusan mandiri",
+      "Keputusan untuk mendaftar di broker, memilih platform, strategi perdagangan dan peserta tertentu yang transaksinya akan disalin, terhubung ke layanan penyalinan, menggunakan robot trading, serta menentukan parameter perdagangan dan jumlah dana yang digunakan diambil pengguna secara mandiri, atas pertimbangannya sendiri, berdasarkan penilaian sendiri atas ketentuan penggunaan layanan terkait dan risiko keuangannya."
+    ]
+  },
+  "meta": {
+    "home": {
+      "title": "www.Vladimir1.com",
+      "description": "Perjalanan, trading, dan robot trading."
+    },
+    "trading": {
+      "title": "T-Capital",
+      "description": "Proyek copy trading."
+    },
+    "fmb": {
+      "title": "Fast Money Bot",
+      "description": "Robot trading dan copy trading."
+    },
+    "guide": {
+      "title": "T-Capital — Panduan koneksi",
+      "description": "Panduan langkah demi langkah. Terhubung dalam 15 menit."
+    },
+    "placeholder": {
+      "title": "Fast Money Bot — Panduan sedang disusun",
+      "description": "Panduan koneksi Fast Money Bot akan segera tersedia."
+    },
+    "legal": {
+      "title": "Informasi hukum — Vladimir1.com",
+      "description": "Informasi hukum tentang Vladimir1.com dan proyeknya."
+    },
+    "privacy": {
+      "title": "Kebijakan privasi — Vladimir1.com",
+      "description": "Penggunaan informasi dan penyimpanan lokal di Vladimir1.com."
+    },
+    "risks": {
+      "title": "Peringatan risiko — Vladimir1.com",
+      "description": "Risiko perdagangan, penyalinan transaksi, dan penggunaan robot trading."
+    }
+  }
+}

@@ -1,0 +1,301 @@
+{
+  "ui": {
+    "home": "Trang chủ",
+    "trading": "Giao dịch",
+    "robots": "Robot giao dịch",
+    "socials": "Mạng xã hội của tôi",
+    "connect": "Kết nối",
+    "results": "Kết quả giao dịch",
+    "telegram": "Bot Telegram",
+    "language": "Chọn ngôn ngữ",
+    "done": "Đã hoàn thành",
+    "progress": "Tiến độ của bạn",
+    "faq": "Câu hỏi thường gặp",
+    "support": "Hỗ trợ kỹ thuật",
+    "close": "Đóng",
+    "continue": "Tiếp tục",
+    "restart": "Bắt đầu lại",
+    "already": "Tôi đã kết nối",
+    "confirm": "Có, đã kết nối xong",
+    "return": "Quay lại",
+    "restoreTitle": "Tiếp tục kết nối?",
+    "restoreStep": "Bạn đã dừng ở bước {n} trên 3",
+    "confirmTitle": "Bạn đã hoàn tất kết nối với T-Capital tại nhà môi giới chưa?",
+    "introLabel": "Thông tin mở đầu",
+    "howtoLabel": "Cách sử dụng hướng dẫn",
+    "riskLabel": "Cảnh báo rủi ro",
+    "legal": "Thông tin pháp lý",
+    "privacy": "Chính sách quyền riêng tư",
+    "risks": "Cảnh báo rủi ro",
+    "portraitAlt": "Vladimir",
+    "storageError": "Không thể lưu tiến độ trong trình duyệt. Bạn có thể tiếp tục kết nối trên trang này.",
+    "chooseLanguage": "Chọn ngôn ngữ",
+    "placeholderTitle": "Hướng dẫn đang được biên soạn",
+    "placeholderText": "Hướng dẫn kết nối Fast Money Bot sẽ sớm được cung cấp."
+  },
+  "home": {
+    "title": "Giao dịch không cà vạt",
+    "paragraphs": [
+      "Tôi tên là Vladimir. Tôi đam mê giao dịch và tự động hóa giao dịch — tôi tạo ra những gì chính mình sử dụng.",
+      "Khi rảnh rỗi, tôi thích du lịch tự túc khắp nước Nga và thế giới bằng mọi phương tiện di chuyển, thậm chí cả đi bộ."
+    ]
+  },
+  "trading": {
+    "title": "Giao dịch",
+    "paragraphs": [
+      "Giao dịch là thực hiện các giao dịch tiền tệ, tiền mã hóa, cổ phiếu công ty, trái phiếu chính phủ và các công cụ tài chính khác thông qua công ty môi giới trên các nền tảng giao dịch điện tử.",
+      "Mục tiêu của các giao dịch này là kiếm lợi nhuận từ biến động giá.",
+      "Nhà giao dịch là người thực hiện các giao dịch đó và tự quyết định việc mua bán các công cụ tài chính.",
+      "Giao dịch sao chép cho phép tự động lặp lại các giao dịch của một nhà giao dịch trên tài khoản môi giới của bạn, ngay cả khi bạn chưa có kinh nghiệm giao dịch.",
+      "Sau khi kết nối dịch vụ sao chép, hệ thống của nhà môi giới tự động mở và đóng giao dịch trên tài khoản của bạn. Bạn không cần tự phân tích biểu đồ, tìm thời điểm phù hợp hay quyết định từng giao dịch.",
+      "Bạn có thể kết nối trong 15 phút."
+    ]
+  },
+  "fmb": {
+    "title": "Robot giao dịch",
+    "paragraphs": [
+      "Robot giao dịch ra đời để tự động hóa các thao tác mà con người — nhà giao dịch — thực hiện khi giao dịch.",
+      "Giao dịch là thực hiện các giao dịch tiền tệ, cổ phiếu công ty và các công cụ tài chính khác thông qua công ty môi giới nhằm kiếm lợi nhuận từ biến động giá.",
+      "Robot giao dịch là các chương trình máy tính tự động thực hiện công việc của nhà giao dịch, tuân thủ nghiêm ngặt một thuật toán đã được thiết lập trước.",
+      "Robot không ngủ, không mệt mỏi và không bị cảm xúc chi phối. Nó có thể theo dõi biến động giá suốt ngày đêm và thực hiện giao dịch khi thị trường cho phép, mà không cần con người liên tục tham gia.",
+      "Tất cả thông tin chi tiết về robot giao dịch, bao gồm thông báo, tin tức dự án, dữ liệu theo dõi, thống kê giao dịch, bài viết, khuyến nghị, điều kiện đăng ký, mạng xã hội của dự án và nhiều nội dung khác, đều được tập hợp trong bot Telegram."
+    ]
+  },
+  "guide": {
+    "title": "T-Capital — hướng dẫn kết nối giao dịch sao chép",
+    "intro": "Để kết nối dịch vụ sao chép giao dịch, bạn cần thực hiện vài thao tác đơn giản: đăng ký với nhà môi giới, thiết lập quy tắc sao chép, tạo tài khoản và nạp ít nhất $1000. Sau khi nạp tiền, việc sao chép sẽ tự động bắt đầu.",
+    "howto": "Thực hiện các bước theo thứ tự. Sau khi xong mỗi bước, đánh dấu “Đã hoàn thành” ở tiêu đề — bước tiếp theo sẽ tự động mở.",
+    "risk": "Sao chép giao dịch có rủi ro mất một phần hoặc toàn bộ số tiền. Kết quả giao dịch trong quá khứ không bảo đảm kết quả tương tự trong tương lai. Bạn tự quyết định việc kết nối sao chép giao dịch và số tiền sử dụng.",
+    "steps": [
+      {
+        "title": "Đăng ký với nhà môi giới",
+        "items": [
+          "Nhập quốc gia cư trú, địa chỉ email và tạo mật khẩu mới đủ mạnh.",
+          "Hoặc đăng nhập bằng tài khoản Google/Facebook.",
+          "Quan trọng: quốc gia của bạn không có trong danh sách? Chọn quốc gia gần nhất; hệ thống sẽ xác định quốc gia đúng khi kiểm tra giấy tờ."
+        ],
+        "action": "Đến trang đăng ký"
+      },
+      {
+        "title": "Xác minh",
+        "items": [
+          "Quan trọng: yêu cầu xác minh tùy theo quốc gia: có nơi cần làm ngay, có nơi chỉ cần khi nạp tiền. Nếu mở liên kết mà không thấy gì, đừng lo — trường hợp của bạn sẽ xác minh ở bước nạp tiền.",
+          "Xác minh danh tính: hộ chiếu hoặc thẻ căn cước quốc gia.",
+          "Xác minh địa chỉ: bất kỳ giấy tờ nào có họ tên đầy đủ và địa chỉ (hóa đơn tiện ích, internet, điện thoại di động hoặc sao kê ngân hàng)."
+        ],
+        "action": "Thực hiện xác minh"
+      },
+      {
+        "title": "Thiết lập sao chép và nạp tiền",
+        "items": [
+          "Nhấn “Sao chép” trên hồ sơ nhà cung cấp tín hiệu T-Capital.",
+          "Trong cửa sổ mở ra, đặt hệ số nhân sao chép = 1 (một).",
+          "Mở “Cài đặt thêm” → bật “Thực hiện điều chỉnh tỷ lệ sau khi nhà cung cấp tín hiệu đóng các giao dịch” (không thay đổi các thông số khác).",
+          "Cuộn xuống → trong mục “Tài khoản”: “Tạo tài khoản mới” → “Sao chép” — trang nạp tiền sẽ mở.",
+          "Nạp ít nhất $1000 vào tài khoản.",
+          "Chọn phương thức: thẻ ngân hàng hoặc tiền mã hóa.",
+          "Nếu không có phương thức cần dùng, hãy xác minh để mở khóa.",
+          "Sau khi nạp tiền, việc sao chép sẽ tự động bắt đầu."
+        ],
+        "action": "Mở hồ sơ nhà cung cấp tín hiệu"
+      }
+    ],
+    "complete": [
+      "Đã hoàn thành tất cả các bước hướng dẫn!",
+      "Giờ bạn có thể theo dõi kết quả giao dịch trên trang của nhà môi giới hoặc ứng dụng MetaTrader 4."
+    ],
+    "faq": [
+      {
+        "q": "Hệ số nhân sao chép là gì? Vì sao cần đặt bằng 1?",
+        "a": [
+          "Hệ số nhân sao chép là hệ số dùng để tính khối lượng giao dịch được sao chép, có xét đến tỷ lệ giữa tiền gửi của nhà giao dịch (nhà cung cấp tín hiệu) và tài khoản của bạn.",
+          "Khi kết nối, đặt hệ số nhân bằng 1 (một). Như vậy bạn không cần tự tính hệ số và tránh nguy cơ cài đặt sai.",
+          "Sau khi giao dịch của nhà cung cấp tín hiệu đóng, chức năng tự động điều chỉnh tỷ lệ đã bật sẽ tính lại khối lượng sao chép theo cơ chế của nhà môi giới.",
+          "Vì vậy, cần đặt hệ số nhân bằng 1 và bật “Thực hiện điều chỉnh tỷ lệ sau khi nhà cung cấp tín hiệu đóng các giao dịch”."
+        ]
+      },
+      {
+        "q": "Phải làm gì nếu chưa nhận được email chứa thông tin tài khoản?",
+        "a": [
+          "Kiểm tra thư mục Spam và các thư mục email khác.",
+          "Nếu không tìm thấy email, hãy liên hệ bộ phận hỗ trợ của nhà môi giới để khôi phục hoặc làm rõ thông tin truy cập tài khoản.",
+          "Nếu cần, bạn có thể nhờ hỗ trợ liên hệ với bộ phận hỗ trợ của nhà môi giới."
+        ]
+      },
+      {
+        "q": "Tôi có thể theo dõi kết quả giao dịch ở đâu?",
+        "a": [
+          "Bạn có thể theo dõi giao dịch trong khu vực tài khoản cá nhân của nhà môi giới Markets4you.",
+          "Bạn cũng có thể dùng MetaTrader 4, kết nối vào tài khoản giao dịch bằng mật khẩu nhà đầu tư.",
+          "Tại một số quốc gia, ứng dụng di động Markets4you cũng được cung cấp."
+        ]
+      },
+      {
+        "q": "Có những phương thức nạp tiền thay thế nào?",
+        "a": [
+          "Các phương thức nạp tiền phụ thuộc vào quốc gia và cài đặt khu vực tài khoản của bạn tại nhà môi giới.",
+          "Ngoài thẻ ngân hàng, có thể có ví điện tử và các phương thức khác, bao gồm tiền mã hóa.",
+          "Nếu không thấy phương thức cần dùng, hãy xác minh. Sau khi hoàn tất, các phương thức nạp tiền bổ sung có thể được mở."
+        ]
+      },
+      {
+        "q": "Tại sao việc sao chép không hoạt động?",
+        "a": [
+          "Giao dịch không diễn ra suốt ngày đêm mà chỉ khi có điều kiện thị trường và tín hiệu giao dịch cần thiết. Đôi khi giữa các giao dịch có thể cách nhau vài ngày hoặc vài tuần. Ngoài ra, không giao dịch vào cuối tuần.",
+          "Để kiểm tra việc sao chép đã được kết nối đúng, hãy đăng nhập khu vực tài khoản của nhà môi giới Markets4you.",
+          "Trong menu bên, mở “Giao dịch sao chép” → “Quy tắc sao chép”.",
+          "Danh sách phải có quy tắc sao chép bạn đã tạo. Mặc định, nhà môi giới đặt tên Rule 1, Rule 2, Rule 3, v.v.",
+          "Nếu có nhiều quy tắc, hãy kiểm tra quy tắc cần dùng thuộc về nhà cung cấp tín hiệu T-Capital, nếu thông tin này được hiển thị trong khu vực tài khoản.",
+          "Nếu không có quy tắc, hãy làm lại quy trình kết nối theo hướng dẫn.",
+          "Nếu sau khi kết nối lại vẫn không thấy quy tắc, hãy liên hệ hỗ trợ kỹ thuật qua support@vladimir1.com hoặc bộ phận hỗ trợ của nhà môi giới Markets4you."
+        ]
+      },
+      {
+        "q": "“Mật khẩu nhà đầu tư” là gì?",
+        "a": [
+          "Mật khẩu nhà đầu tư là mật khẩu đặc biệt để xem tài khoản giao dịch trong MetaTrader 4.",
+          "Nó cho phép theo dõi các giao dịch đang mở và đã đóng, số dư và kết quả giao dịch.",
+          "Nó không cho phép bạn tự thực hiện giao dịch hoặc rút tiền khỏi tài khoản."
+        ]
+      },
+      {
+        "q": "Tôi có thể rút tiền bất cứ lúc nào không?",
+        "a": [
+          "Bạn có thể gửi yêu cầu rút tiền bất cứ lúc nào.",
+          "Nếu chưa xác minh danh tính trước đó, nhà môi giới có thể yêu cầu xác minh trước lần rút tiền đầu tiên. Thông thường không cần làm lại ở mỗi lần rút.",
+          "Khi đang sao chép, để rút tiền thông thường, trước tiên cần tắt sao chép và kết nối lại sau khi rút.",
+          "Ngoại lệ là những ngày thu phí hoa hồng do nhà môi giới quy định, hai lần mỗi tháng. Vào những ngày này, có thể rút tiền mà không cần tắt sao chép.",
+          "Thời gian xử lý yêu cầu phụ thuộc vào nhà môi giới và phương thức rút tiền đã chọn."
+        ]
+      },
+      {
+        "q": "Đòn bẩy là gì và cần loại tài khoản nào để sao chép?",
+        "a": [
+          "Việc sao chép sử dụng tài khoản Classic Pro với đòn bẩy 1:2000.",
+          "Đòn bẩy xác định tỷ lệ giữa quy mô vị thế giao dịch và số tiền bảo đảm cần thiết.",
+          "Đòn bẩy cao cho phép sử dụng ít tiền ký quỹ hơn cho một vị thế có quy mô nhất định.",
+          "Với cùng quy mô vị thế, biến động giá tạo ra cùng kết quả tài chính bất kể mức đòn bẩy được chọn.",
+          "Tuy nhiên, đòn bẩy không loại bỏ rủi ro thị trường hay rủi ro thiếu ký quỹ."
+        ]
+      }
+    ]
+  },
+  "legal": {
+    "legal": [
+      "Quy định chung",
+      "Vladimir1.com là nguồn thông tin cá nhân về các mối quan tâm và sở thích của tác giả trong lĩnh vực du lịch, giao dịch và giao dịch thuật toán.",
+      "Giao dịch và giao dịch thuật toán là hai lĩnh vực thực hành cá nhân của tác giả, được thực hiện thông qua việc tự nghiên cứu, áp dụng và hoàn thiện các phương pháp, công nghệ giao dịch.",
+      "Trang web giới thiệu hai dự án:",
+      "T-Capital — tự giao dịch trên các thị trường tài chính.",
+      "Fast Money Bot — phát triển và áp dụng các thuật toán giao dịch tự động.",
+      "Minh họa hoạt động giao dịch cá nhân",
+      "Thống kê giao dịch, dữ liệu theo dõi, mô tả thuật toán và liên kết hồ sơ giao dịch được công bố nhằm minh họa kinh nghiệm cá nhân của tác giả, các phương pháp được sử dụng và kết quả áp dụng thực tế, bao gồm cả theo thời gian thực.",
+      "Khách truy cập có thể tự nghiên cứu tài liệu và, khi các nền tảng bên thứ ba có khả năng kỹ thuật tương ứng, quan sát cách các phương pháp giao dịch hoạt động, tự nguyện tái hiện hoặc thử nghiệm chúng.",
+      "Các tài liệu được công bố mang tính thông tin, giới thiệu và minh họa; không phải khuyến nghị đầu tư cá nhân hay lời chào cung cấp dịch vụ quản lý tiền theo ủy thác.",
+      "Nguồn thông tin bên thứ ba",
+      "Vladimir1.com có thể chứa liên kết tới các nguồn bên thứ ba, bao gồm Myfxbook, Markets4you, Telegram và các nền tảng thông tin, môi giới, công nghệ khác.",
+      "Những nguồn này có thể chứa các đề nghị cung cấp dịch vụ tài chính, chiến lược giao dịch, sản phẩm đầu tư và các dịch vụ khác do bên thứ ba độc lập cung cấp.",
+      "Các đề nghị đó không phải là đề nghị của tác giả Vladimir1.com. Nội dung và điều kiện do các bên liên quan và đơn vị vận hành nền tảng bên thứ ba trực tiếp xác định.",
+      "Khách truy cập tự quyết định việc truy cập các nguồn bên thứ ba và sử dụng các khả năng được cung cấp tại đó.",
+      "Không cung cấp dịch vụ môi giới hay thực hiện giao dịch với tiền của khách truy cập",
+      "Vladimir1.com không cung cấp dịch vụ môi giới, không mở hoặc quản lý tài khoản môi giới của khách truy cập, không nhận tiền gửi giao dịch, không lưu giữ tiền của khách hàng và không thực hiện giao dịch với số tiền đó.",
+      "Việc đăng ký, định danh và xác minh người dùng, phục vụ tài khoản môi giới, kết nối dịch vụ sao chép, nạp và rút tiền được thực hiện thông qua các tổ chức bên thứ ba tương ứng theo điều kiện của họ.",
+      "Các vấn đề liên quan đến tài khoản môi giới, thực hiện giao dịch và thanh toán tài chính do nhà môi giới tương ứng trực tiếp giải quyết.",
+      "Vladimir1.com không trực tiếp nhận thanh toán cho hàng hóa và dịch vụ.",
+      "Liên kết tiếp thị liên kết",
+      "Một số liên kết trên trang web có thể chứa mã định danh đối tác tiếp thị liên kết.",
+      "Sở hữu trí tuệ",
+      "Quyền đối với văn bản, hình ảnh, tài liệu phần mềm và các thành quả trí tuệ được bảo hộ khác đăng trên Vladimir1.com thuộc về các chủ sở hữu tương ứng.",
+      "Bên thứ ba được sử dụng trong các trường hợp pháp luật cho phép hoặc có sự đồng ý của chủ sở hữu quyền.",
+      "Thông tin liên hệ",
+      "Với các vấn đề vận hành trang web, hỗ trợ kỹ thuật và yêu cầu có ý nghĩa pháp lý:",
+      "support@vladimir1.com"
+    ],
+    "privacy": [
+      "Quy định chung",
+      "Chính sách quyền riêng tư này quy định cách xử lý thông tin liên quan đến việc sử dụng Vladimir1.com, bao gồm T-Capital và Fast Money Bot.",
+      "Sử dụng trang web",
+      "Vladimir1.com không cung cấp chức năng đăng ký khách truy cập, tạo tài khoản cá nhân hay cung cấp dữ liệu cá nhân qua các biểu mẫu tích hợp.",
+      "Trang web không sử dụng pixel quảng cáo hoặc hệ thống bên thứ ba theo dõi hành vi khách truy cập.",
+      "Ngôn ngữ giao diện đã chọn và tiến độ thực hiện hướng dẫn được lưu trực tiếp trong trình duyệt người dùng bằng bộ nhớ cục bộ.",
+      "Các thiết lập này không được gửi đến cơ sở dữ liệu riêng của trang web và người dùng có thể xóa bằng công cụ của trình duyệt.",
+      "Email",
+      "Khi liên hệ support@vladimir1.com, địa chỉ email người gửi, nội dung thư và thông tin tự nguyện cung cấp có thể được xử lý.",
+      "Thông tin nhận được dùng để xem xét yêu cầu và chuẩn bị trả lời.",
+      "Cơ sở pháp lý của việc xử lý này có thể là thực hiện lợi ích hợp pháp liên quan đến việc xem xét các yêu cầu nhận được, với điều kiện tôn trọng quyền và tự do của chủ thể dữ liệu cá nhân.",
+      "Thư từ không được công bố, dùng cho thư quảng cáo hay chuyển cho tổ chức bên thứ ba nhằm mục đích tiếp thị.",
+      "Việc tiếp nhận và lưu trữ thư điện tử được thực hiện qua hạ tầng email.",
+      "Không gửi thông tin hộ chiếu, mật khẩu, thông tin thanh toán, số tài khoản môi giới hoặc thông tin tài chính bí mật khác đến địa chỉ hỗ trợ.",
+      "Với vấn đề tài khoản môi giới và giao dịch tài chính, cần liên hệ trực tiếp bộ phận hỗ trợ của nhà môi giới tương ứng.",
+      "Thư từ được lưu trong thời gian cần thiết để xem xét yêu cầu hoặc khi có cơ sở pháp lý khác cho việc lưu giữ.",
+      "Thông tin kỹ thuật",
+      "Khi truy cập trang web, nhà cung cấp hosting và hạ tầng kỹ thuật có thể xử lý địa chỉ IP, thông tin trình duyệt, thiết bị và các tham số yêu cầu kỹ thuật cần thiết để cung cấp quyền truy cập trang.",
+      "Vladimir1.com không sử dụng thông tin này để tự xây dựng hồ sơ quảng cáo của khách truy cập.",
+      "Nguồn bên thứ ba",
+      "Khi theo liên kết đến nguồn bên thứ ba, thông tin được xử lý theo điều kiện và chính sách của dịch vụ tương ứng.",
+      "Vladimir1.com không quy định cách các tổ chức bên thứ ba độc lập xử lý dữ liệu cá nhân.",
+      "Bot Telegram Fast Money Bot",
+      "Để vận hành bot Telegram Fast Money Bot, chỉ mã định danh người dùng Telegram (Telegram ID) được lưu trong cơ sở dữ liệu riêng của bot.",
+      "Tên người dùng, biệt danh, số điện thoại và nội dung tin nhắn không được lưu trong cơ sở dữ liệu riêng của bot.",
+      "Một hệ thống tự động trả lời câu hỏi thường gặp và công nghệ trí tuệ nhân tạo sử dụng OpenAI API được dùng để xử lý yêu cầu của người dùng.",
+      "Khi tạo câu trả lời bằng trí tuệ nhân tạo, nội dung các yêu cầu tương ứng được chuyển qua OpenAI API để xử lý và tạo câu trả lời.",
+      "Người dùng cũng có thể liên hệ trực tiếp bộ phận hỗ trợ qua Telegram.",
+      "Việc xử lý thông tin của chính nền tảng Telegram được điều chỉnh bởi điều kiện và chính sách quyền riêng tư của dịch vụ đó.",
+      "Bảo vệ thông tin",
+      "Khi xử lý thông tin nhận được, các biện pháp tổ chức và kỹ thuật được áp dụng nhằm ngăn chặn việc truy cập, thay đổi, phát tán hoặc hủy thông tin trái phép.",
+      "Yêu cầu về dữ liệu cá nhân",
+      "Các yêu cầu cung cấp thông tin về xử lý dữ liệu cá nhân, chỉnh sửa, hạn chế xử lý hoặc xóa dữ liệu được xem xét theo pháp luật hiện hành.",
+      "Liên hệ để gửi yêu cầu:",
+      "support@vladimir1.com"
+    ],
+    "risks": [
+      "Quy định chung",
+      "Giao dịch công cụ tài chính, sao chép giao dịch và sử dụng robot giao dịch có rủi ro mất một phần hoặc toàn bộ số tiền.",
+      "Kết quả giao dịch trước đây, các chỉ số theo dõi và kết quả thử nghiệm thuật toán không bảo đảm đạt kết quả tài chính tương tự trong tương lai.",
+      "Rủi ro sao chép giao dịch",
+      "Kết quả giao dịch sao chép có thể khác kết quả của tài khoản gốc do khác biệt về điều kiện thực hiện, quy mô vốn, thiết lập sao chép và các yếu tố khác.",
+      "Rủi ro giao dịch thuật toán",
+      "Robot giao dịch thực hiện giao dịch theo thuật toán được lập trình và có thể tạo ra cả giao dịch có lãi lẫn thua lỗ.",
+      "Hiệu quả của thuật toán giao dịch phụ thuộc vào điều kiện thị trường, thông số cài đặt, đặc điểm nền tảng sử dụng và chất lượng thực hiện giao dịch.",
+      "Các yếu tố rủi ro bổ sung",
+      "Sử dụng đòn bẩy làm tăng cả lợi nhuận tiềm năng lẫn mức thua lỗ có thể xảy ra.",
+      "Biến động thị trường tài chính, thiếu thanh khoản, trượt giá, sự cố kỹ thuật và chậm thực hiện lệnh có thể ảnh hưởng đáng kể đến kết quả giao dịch.",
+      "Tự quyết định",
+      "Người dùng tự mình, theo quyết định riêng, lựa chọn đăng ký với nhà môi giới, nền tảng, chiến lược giao dịch và người cụ thể để sao chép, kết nối dịch vụ sao chép, sử dụng robot giao dịch, xác định thông số giao dịch và số tiền sử dụng, dựa trên đánh giá riêng về điều kiện sử dụng các dịch vụ tương ứng và rủi ro tài chính liên quan."
+    ]
+  },
+  "meta": {
+    "home": {
+      "title": "www.Vladimir1.com",
+      "description": "Du lịch, giao dịch và robot giao dịch."
+    },
+    "trading": {
+      "title": "T-Capital",
+      "description": "Dự án giao dịch sao chép."
+    },
+    "fmb": {
+      "title": "Fast Money Bot",
+      "description": "Robot giao dịch và giao dịch sao chép."
+    },
+    "guide": {
+      "title": "T-Capital — Hướng dẫn kết nối",
+      "description": "Hướng dẫn từng bước. Kết nối trong 15 phút."
+    },
+    "placeholder": {
+      "title": "Fast Money Bot — Hướng dẫn đang được biên soạn",
+      "description": "Hướng dẫn kết nối Fast Money Bot sẽ sớm được cung cấp."
+    },
+    "legal": {
+      "title": "Thông tin pháp lý — Vladimir1.com",
+      "description": "Thông tin pháp lý về Vladimir1.com và các dự án."
+    },
+    "privacy": {
+      "title": "Chính sách quyền riêng tư — Vladimir1.com",
+      "description": "Sử dụng thông tin và bộ nhớ cục bộ trên Vladimir1.com."
+    },
+    "risks": {
+      "title": "Cảnh báo rủi ro — Vladimir1.com",
+      "description": "Rủi ro giao dịch, sao chép và sử dụng robot giao dịch."
+    }
+  }
+}

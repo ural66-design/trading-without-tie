@@ -1,0 +1,301 @@
+{
+  "ui": {
+    "home": "Ana sayfa",
+    "trading": "Alım satım",
+    "robots": "İşlem robotları",
+    "socials": "Sosyal medya hesaplarım",
+    "connect": "Bağlan",
+    "results": "İşlem sonuçları",
+    "telegram": "Telegram botu",
+    "language": "Dil seçimi",
+    "done": "Tamamlandı",
+    "progress": "İlerlemeniz",
+    "faq": "Sık sorulan sorular",
+    "support": "Teknik destek",
+    "close": "Kapat",
+    "continue": "Devam et",
+    "restart": "Yeniden başla",
+    "already": "Zaten bağlandım",
+    "confirm": "Evet, bağlantı tamamlandı",
+    "return": "Geri dön",
+    "restoreTitle": "Bağlantıya devam edilsin mi?",
+    "restoreStep": "3 adımdan {n}. adımda kaldınız",
+    "confirmTitle": "Aracı kurumda T-Capital bağlantısını tamamladınız mı?",
+    "introLabel": "Giriş bilgileri",
+    "howtoLabel": "Kılavuz nasıl kullanılır?",
+    "riskLabel": "Risk uyarısı",
+    "legal": "Yasal bilgiler",
+    "privacy": "Gizlilik politikası",
+    "risks": "Risk uyarısı",
+    "portraitAlt": "Vladimir",
+    "storageError": "İlerlemeniz tarayıcıya kaydedilemedi. Bağlantıya bu sayfada devam edebilirsiniz.",
+    "chooseLanguage": "Dil seçin",
+    "placeholderTitle": "Kılavuz hazırlanıyor",
+    "placeholderText": "Fast Money Bot bağlantı kılavuzu yakında yayınlanacak."
+  },
+  "home": {
+    "title": "Kravatsız alım satım",
+    "paragraphs": [
+      "Adım Vladimir. Alım satıma ve işlemlerin otomasyonuna ilgi duyuyorum — kendim kullandığım şeyleri üretiyorum.",
+      "Boş zamanlarımda Rusya'da ve dünyada hareket eden her şeyle, hatta yürüyerek, kendi planladığım bağımsız seyahatleri tercih ediyorum."
+    ]
+  },
+  "trading": {
+    "title": "Alım satım",
+    "paragraphs": [
+      "Alım satım; para birimleri, kripto paralar, şirket hisseleri, devlet tahvilleri ve diğer finansal araçlarla bir aracı kurum üzerinden elektronik işlem platformlarında işlem yapmaktır.",
+      "Bu işlemlerin amacı fiyat değişimlerinden kâr elde etmektir.",
+      "Yatırımcı, finansal araçların alım ve satımına kendi karar vererek bu işlemleri gerçekleştiren kişidir.",
+      "İşlem kopyalama, işlem deneyiminiz olmasa bile bir yatırımcının işlemlerini aracı kurum hesabınızda otomatik olarak tekrarlamanızı sağlar.",
+      "İşlem kopyalamaya bağlandıktan sonra aracı kurumun sistemi hesabınızda işlemleri otomatik olarak açar ve kapatır. Grafikleri kendiniz incelemeniz, uygun anları aramanız ve her işlem için karar vermeniz gerekmez.",
+      "15 dakikada bağlanabilirsiniz."
+    ]
+  },
+  "fmb": {
+    "title": "İşlem robotları",
+    "paragraphs": [
+      "İşlem robotları, alım satımda bir insanın — yatırımcının — yaptığı işlemleri otomatikleştirmek amacıyla ortaya çıktı.",
+      "Alım satım, fiyat değişimlerinden kâr elde etmek amacıyla bir aracı kurum üzerinden para birimleri, şirket hisseleri ve diğer finansal araçlarla işlem yapmaktır.",
+      "İşlem robotları, önceden belirlenmiş bir algoritmaya kesin olarak uyarak yatırımcının işini otomatik yapan bilgisayar programlarıdır.",
+      "Robot uyumaz, yorulmaz ve duygularına kapılmaz. Fiyat değişimlerini günün her saati izleyebilir ve sürekli insan müdahalesi olmadan, piyasalar işleme açıkken işlem yapabilir.",
+      "Bildirimler, proje haberleri, izleme verileri, işlem istatistikleri, makaleler, öneriler, abonelik koşulları, projenin sosyal medya hesapları ve daha fazlası dahil işlem robotlarıyla ilgili tüm ayrıntılı bilgiler Telegram botunda toplanmıştır."
+    ]
+  },
+  "guide": {
+    "title": "T-Capital — işlem kopyalamaya bağlanma kılavuzu",
+    "intro": "İşlem kopyalama hizmetine bağlanmak için birkaç basit işlem gerekir: aracı kuruma kaydolun, kopyalama kurallarını ayarlayın, hesap açın ve en az $1000 yatırın. Para yatırıldıktan sonra kopyalama otomatik başlayacaktır.",
+    "howto": "Adımları sırayla uygulayın. Her adımı bitirdiğinizde başlığındaki “Tamamlandı” kutusunu işaretleyin — sonraki adım otomatik açılır.",
+    "risk": "İşlem kopyalama, paranın bir kısmını veya tamamını kaybetme riski taşır. Geçmiş dönemlerin işlem sonuçları gelecekte benzer sonuçları garanti etmez. İşlem kopyalamaya bağlanma ve kullanacağınız tutar konusunda kendi kararınızı verirsiniz.",
+    "steps": [
+      {
+        "title": "Aracı kuruma kayıt",
+        "items": [
+          "İkamet ettiğiniz ülkeyi ve e-posta adresinizi girin, yeni ve güçlü bir şifre oluşturun.",
+          "Veya Google/Facebook hesabınızla giriş yapın.",
+          "Önemli: ülkeniz listede yok mu? En yakın ülkeyi seçin; belgeler kontrol edilirken sistem doğru ülkeyi belirtecektir."
+        ],
+        "action": "Kayıt sayfasına git"
+      },
+      {
+        "title": "Doğrulama",
+        "items": [
+          "Önemli: doğrulama gereklilikleri ülkeye göre değişir: bazı ülkelerde hemen, bazılarında yalnızca para yatırırken gerekir. Bağlantıya tıkladıktan sonra hiçbir şey görmezseniz endişelenmeyin — sizin için doğrulama para yatırma aşamasında yapılacaktır.",
+          "Kimliğinizi doğrulayın: pasaport veya ulusal kimlik kartı.",
+          "Adresinizi doğrulayın: adınızı, soyadınızı ve adresinizi içeren herhangi bir belge (kamu hizmeti, internet veya cep telefonu faturası, banka hesap özeti)."
+        ],
+        "action": "Doğrulamayı yap"
+      },
+      {
+        "title": "Kopyalamayı ayarlama ve hesaba para yatırma",
+        "items": [
+          "T-Capital liderinin profilinde “Kopyala” düğmesine basın.",
+          "Açılan pencerede kopyalama çarpanını = 1 (bir) olarak ayarlayın.",
+          "“Diğer ayarlar”ı açın → “Lider işlemlerini kapattıktan sonra ölçeklendirme yap” seçeneğini etkinleştirin (diğer parametreleri değiştirmeyin).",
+          "Aşağı kaydırın → “Hesap” bölümünde: “Yeni hesap oluştur” → “Kopyala” — para yatırma sayfası açılır.",
+          "Hesaba en az $1000 yatırın.",
+          "Bir yöntem seçin: banka kartı veya kripto para.",
+          "Gereken yöntem yoksa kullanılabilir hale getirmek için doğrulamayı tamamlayın.",
+          "Para yatırıldıktan sonra kopyalama otomatik başlayacaktır."
+        ],
+        "action": "Lider profilini aç"
+      }
+    ],
+    "complete": [
+      "Kılavuzun tüm adımları tamamlandı!",
+      "Artık işlem sonuçlarını aracı kurumun sitesinden veya MetaTrader 4 uygulamasından takip edebilirsiniz."
+    ],
+    "faq": [
+      {
+        "q": "Kopyalama çarpanı nedir? Neden 1 olarak ayarlanmalıdır?",
+        "a": [
+          "Kopyalama çarpanı, yatırımcının (liderin) ve sizin hesabınızın mevduat tutarları arasındaki oran dikkate alınarak kopyalanan işlemlerin hacmini hesaplamak için kullanılan katsayıdır.",
+          "Bağlanırken çarpanı 1 (bir) olarak ayarlayın. Böylece katsayıyı kendiniz hesaplamanız ve ayarlarda hata yapma riskini almanız gerekmez.",
+          "Liderin işlemi kapandıktan sonra etkinleştirilmiş otomatik ölçeklendirme işlevi, aracı kurumun öngördüğü şekilde kopyalama hacimlerini yeniden hesaplar.",
+          "Bu nedenle çarpanı 1 olarak ayarlamak ve “Lider işlemlerini kapattıktan sonra ölçeklendirme yap” seçeneğini etkinleştirmek önemlidir."
+        ]
+      },
+      {
+        "q": "Hesap bilgilerini içeren e-posta gelmezse ne yapmalıyım?",
+        "a": [
+          "Spam klasörünü ve diğer e-posta klasörlerini kontrol edin.",
+          "E-postayı bulamazsanız hesap erişim bilgilerini kurtarmak veya netleştirmek için aracı kurumun destek birimine başvurun.",
+          "Gerekirse aracı kurumun destek birimiyle iletişim kurmak için yardım isteyebilirsiniz."
+        ]
+      },
+      {
+        "q": "İşlem sonuçlarını nereden takip edebilirim?",
+        "a": [
+          "İşlemleri Markets4you aracı kurumunun müşteri panelinden takip edebilirsiniz.",
+          "Yatırımcı şifresiyle işlem hesabına bağlanarak MetaTrader 4'ü de kullanabilirsiniz.",
+          "Bazı ülkelerde Markets4you mobil uygulaması da kullanılabilir."
+        ]
+      },
+      {
+        "q": "Alternatif para yatırma yöntemleri nelerdir?",
+        "a": [
+          "Kullanılabilir para yatırma yöntemleri ülkeye ve aracı kurumdaki müşteri panelinizin ayarlarına bağlıdır.",
+          "Banka kartlarının yanı sıra elektronik cüzdanlar ve kripto para dahil başka yöntemler kullanılabilir.",
+          "Gereken yöntem görünmüyorsa doğrulamayı tamamlayın. Ardından ek para yatırma seçenekleri açılabilir."
+        ]
+      },
+      {
+        "q": "Kopyalama neden çalışmıyor?",
+        "a": [
+          "İşlemler günün her saati değil, gerekli piyasa koşulları ve işlem sinyalleri oluştuğunda yapılır. Bazen işlemler arasında günler veya haftalar geçebilir. Ayrıca hafta sonları işlem yapılmaz.",
+          "Kopyalamanın doğru bağlandığından emin olmak için Markets4you aracı kurumunun müşteri paneline giriş yapın.",
+          "Yan menüde “İşlem kopyalama” → “Kopyalama kuralları” bölümünü açın.",
+          "Oluşturduğunuz kopyalama kuralı listede bulunmalıdır. Aracı kurum kurallara varsayılan olarak Rule 1, Rule 2, Rule 3 gibi adlar verir.",
+          "Birden fazla kuralınız varsa ve müşteri panelinde bu bilgi gösteriliyorsa ilgili kuralın T-Capital liderine ait olduğundan emin olun.",
+          "Kural yoksa kılavuzdaki bağlantı işlemlerini tekrarlayın.",
+          "Yeniden bağlandıktan sonra da kural görünmüyorsa support@vladimir1.com adresindeki teknik desteğe veya Markets4you aracı kurumunun destek birimine başvurun."
+        ]
+      },
+      {
+        "q": "“Yatırımcı şifresi” nedir?",
+        "a": [
+          "Yatırımcı şifresi, MetaTrader 4'te işlem hesabını görüntülemek için kullanılan özel bir şifredir.",
+          "Açık ve kapalı işlemleri, bakiyeyi ve işlem sonuçlarını izlemeyi sağlar.",
+          "Bu şifreyle işlem yapamaz veya hesaptan para çekemezsiniz."
+        ]
+      },
+      {
+        "q": "İstediğim zaman para çekebilir miyim?",
+        "a": [
+          "Günün her saati para çekme talebi gönderebilirsiniz.",
+          "Kimlik doğrulaması daha önce yapılmadıysa aracı kurum ilk para çekiminden önce doğrulama isteyebilir. Genellikle her çekimde tekrarlanması gerekmez.",
+          "Kopyalama aktifken normal bir para çekimi için önce kopyalamayı kapatmanız, para çekildikten sonra yeniden bağlamanız gerekir.",
+          "İstisna, aracı kurumun ayda iki kez uyguladığı komisyon tahsil günleridir. Bu günlerde kopyalamayı kapatmadan para çekilebilir.",
+          "Taleplerin işlenme süresi aracı kuruma ve seçilen para çekme yöntemine bağlıdır."
+        ]
+      },
+      {
+        "q": "Kaldıraç nedir ve kopyalama için hangi hesap türü gerekir?",
+        "a": [
+          "Kopyalama için 1:2000 kaldıraçlı Classic Pro hesabı kullanılır.",
+          "Kaldıraç, işlem pozisyonunun büyüklüğü ile gerekli teminat arasındaki oranı belirler.",
+          "Yüksek kaldıraç, belirli büyüklükte bir pozisyon için teminat olarak daha az para kullanılmasını sağlar.",
+          "Pozisyon büyüklüğü aynı olduğunda fiyat değişimi, seçilen kaldıraçtan bağımsız olarak aynı finansal sonucu doğurur.",
+          "Bununla birlikte kaldıraç, piyasa risklerini ve yetersiz teminat riskini ortadan kaldırmaz."
+        ]
+      }
+    ]
+  },
+  "legal": {
+    "legal": [
+      "Genel hükümler",
+      "Vladimir1.com, yazarın seyahat, alım satım ve algoritmik işlem alanlarındaki kişisel ilgi ve hobilerine adanmış kişisel bir bilgi kaynağıdır.",
+      "Alım satım ve algoritmik işlem, yazarın işlem yöntem ve teknolojilerini bağımsız olarak incelemesi, uygulaması ve geliştirmesi kapsamında yürüttüğü kişisel pratiğinin iki alanıdır.",
+      "Sitede iki proje sunulmaktadır:",
+      "T-Capital — finansal piyasalarda bağımsız alım satım.",
+      "Fast Money Bot — otomatik işlem algoritmalarının geliştirilmesi ve uygulanması.",
+      "Kişisel işlem pratiğinin gösterimi",
+      "İşlem istatistikleri, izleme verileri, algoritma açıklamaları ve işlem profillerine bağlantılar; yazarın kişisel deneyimini, kullandığı yaklaşımları ve bunların pratik uygulama sonuçlarını gerçek zamanlı olarak da göstermek amacıyla yayımlanır.",
+      "Ziyaretçiler sunulan materyalleri bağımsız olarak inceleyebilir; üçüncü taraf platformlar gerekli teknik imkânları sağladığında işlem yaklaşımlarının işleyişini gözlemleyebilir, kendi girişimleriyle bunları tekrarlayabilir veya test edebilir.",
+      "Yayımlanan materyaller bilgilendirme, tanıtım ve gösterim amaçlıdır; kişiye özel yatırım tavsiyesi veya paranın güvene dayalı yönetimine ilişkin hizmet teklifi değildir.",
+      "Üçüncü taraf bilgi kaynakları",
+      "Vladimir1.com; Myfxbook, Markets4you, Telegram ve diğer bilgi, aracılık ve teknoloji platformları dahil üçüncü taraf kaynaklara bağlantılar içerebilir.",
+      "Bu kaynaklar, bağımsız üçüncü tarafların sunduğu finansal hizmetler, işlem stratejileri, yatırım ürünleri ve diğer hizmetlere ilişkin teklifler içerebilir.",
+      "Bu üçüncü taraf teklifleri Vladimir1.com yazarının teklifleri değildir. İçerikleri ve koşulları doğrudan ilgili kişiler ve üçüncü taraf platformların işletmecileri tarafından belirlenir.",
+      "Ziyaretçiler üçüncü taraf kaynaklara geçme ve oradaki imkânları kullanma kararlarını kendileri verir.",
+      "Aracılık hizmetleri ve ziyaretçilerin parasıyla işlem yapılmaması",
+      "Vladimir1.com aracılık hizmeti sunmaz; ziyaretçilerin aracı kurum hesaplarını açmaz veya yönetmez; işlem mevduatı kabul etmez; müşterilerin parasını saklamaz ve bu parayla işlem yapmaz.",
+      "Kullanıcı kaydı, kimlik tespiti ve doğrulaması, aracı kurum hesaplarının hizmetleri, işlem kopyalama hizmetlerine bağlantı, para yatırma ve çekme işlemleri ilgili üçüncü taraf kuruluşlar aracılığıyla, onların belirlediği koşullarda gerçekleştirilir.",
+      "Aracı kurum hesapları, işlemlerin yürütülmesi ve finansal hesaplaşmalarla ilgili konular doğrudan ilgili aracı kurumlar tarafından ele alınır.",
+      "Vladimir1.com üzerinde doğrudan mal ve hizmet ödemesi kabul edilmez.",
+      "İş ortaklığı bağlantıları",
+      "Sitede yayımlanan bazı bağlantılar iş ortaklığı tanımlayıcıları içerebilir.",
+      "Fikrî mülkiyet",
+      "Vladimir1.com üzerinde yayımlanan metinler, görseller, yazılım materyalleri ve korunan diğer fikrî ürünlerin hakları ilgili hak sahiplerine aittir.",
+      "Üçüncü tarafların bunları kullanmasına mevzuatta öngörülen hallerde veya hak sahibinin izniyle müsaade edilir.",
+      "İletişim bilgileri",
+      "Sitenin işleyişi, teknik destek ve hukuken önem taşıyan başvurular için:",
+      "support@vladimir1.com"
+    ],
+    "privacy": [
+      "Genel hükümler",
+      "Bu Gizlilik Politikası, T-Capital ve Fast Money Bot dahil Vladimir1.com kullanımına ilişkin bilgilerin işlenme usulünü belirler.",
+      "Sitenin kullanımı",
+      "Vladimir1.com ziyaretçi kaydı, kişisel hesap oluşturma veya yerleşik formlar aracılığıyla kişisel veri sağlama imkânı sunmaz.",
+      "Sitede reklam pikselleri veya üçüncü taraf ziyaretçi davranışı izleme sistemleri kullanılmaz.",
+      "Seçilen arayüz dili ve kılavuzlardaki ilerleme, yerel depolama aracılığıyla doğrudan kullanıcının tarayıcısında kaydedilir.",
+      "Bu ayarlar sitenin kendi veri tabanına iletilmez ve kullanıcı tarafından tarayıcı araçlarıyla silinebilir.",
+      "E-posta",
+      "support@vladimir1.com adresine başvurulduğunda gönderenin e-posta adresi, mesaj içeriği ve gönüllü olarak sağlanan bilgiler işlenebilir.",
+      "Alınan bilgiler başvuruyu değerlendirmek ve yanıt hazırlamak için kullanılır.",
+      "Bu işlemenin hukuki dayanağı, veri sahibinin hak ve özgürlüklerine saygı gösterilmesi şartıyla, gelen başvuruların değerlendirilmesine ilişkin meşru menfaatlerin gerçekleştirilmesi olabilir.",
+      "Yazışmalar yayımlanmaz, reklam gönderimleri için kullanılmaz ve pazarlama amacıyla üçüncü taraf kuruluşlara aktarılmaz.",
+      "Elektronik yazışmalar e-posta altyapısı kullanılarak alınır ve saklanır.",
+      "Destek adresine pasaport bilgileri, şifreler, ödeme bilgileri, aracı kurum hesap numaraları veya başka gizli finansal bilgiler göndermeyin.",
+      "Aracı kurum hesapları ve finansal işlemlerle ilgili konularda doğrudan ilgili aracı kurumun destek birimine başvurulmalıdır.",
+      "Yazışmalar başvurunun değerlendirilmesi için gerekli süre boyunca veya saklanmalarına ilişkin mevzuatta öngörülen başka gerekçeler varsa saklanır.",
+      "Teknik bilgiler",
+      "Site ziyaret edildiğinde barındırma ve teknik altyapı sağlayıcıları, sayfalara erişimi sağlamak için gerekli IP adresini, tarayıcı ve cihaz bilgilerini ve teknik istek parametrelerini işleyebilir.",
+      "Vladimir1.com bu bilgileri bağımsız olarak ziyaretçilerin reklam profillerini oluşturmak için kullanmaz.",
+      "Üçüncü taraf kaynaklar",
+      "Üçüncü taraf kaynakların bağlantılarına geçildiğinde bilgiler ilgili hizmetlerin koşul ve politikalarına göre işlenir.",
+      "Vladimir1.com bağımsız üçüncü taraf kuruluşların kişisel verileri işleme usulünü belirlemez.",
+      "Fast Money Bot Telegram botu",
+      "Fast Money Bot Telegram botunun çalışması için kendi veri tabanında yalnızca Telegram kullanıcı tanımlayıcıları (Telegram ID) saklanır.",
+      "Kullanıcı adları, takma adlar, telefon numaraları ve mesaj içerikleri botun kendi veri tabanında saklanmaz.",
+      "Kullanıcı başvurularını işlemek için otomatik sık sorulan sorular yanıt sistemi ve OpenAI API kullanan yapay zekâ teknolojileri uygulanır.",
+      "Yapay zekâ kullanılarak yanıt hazırlanırken ilgili isteklerin içeriği, işleme ve yanıt oluşturma amacıyla OpenAI API üzerinden iletilir.",
+      "Kullanıcılara ayrıca Telegram üzerinden doğrudan destek birimine başvurma imkânı sunulur.",
+      "Telegram platformunun kendi bilgi işleme faaliyetleri, ilgili hizmetin koşulları ve gizlilik politikasıyla düzenlenir.",
+      "Bilgilerin korunması",
+      "Alınan bilgiler işlenirken hukuka aykırı erişimi, değişikliği, yayılmayı veya imhayı önlemeye yönelik organizasyonel ve teknik tedbirler uygulanır.",
+      "Kişisel verilere ilişkin başvurular",
+      "Kişisel veri işlemeye ilişkin bilgi sağlanması, verilerin düzeltilmesi, işlemenin sınırlandırılması veya silinmesi talepleri yürürlükteki mevzuatın öngördüğü usulle değerlendirilir.",
+      "Başvurular için iletişim:",
+      "support@vladimir1.com"
+    ],
+    "risks": [
+      "Genel hükümler",
+      "Finansal araçlarla işlem yapmak, işlemleri kopyalamak ve işlem robotlarını kullanmak, paranın kısmen veya tamamen kaybedilmesi riskini taşır.",
+      "Geçmiş işlem sonuçları, izleme göstergeleri ve işlem algoritmalarının test sonuçları gelecekte benzer finansal sonuçlara ulaşılacağını garanti etmez.",
+      "İşlem kopyalama riskleri",
+      "Kopyalanan işlemlerin sonuçları; işlem yürütme koşulları, sermaye tutarları, kopyalama ayarları ve diğer durumlar arasındaki farklar nedeniyle kaynak işlem hesabının sonuçlarından farklı olabilir.",
+      "Algoritmik işlem riskleri",
+      "İşlem robotları programlanan algoritmalara göre çalışır ve hem kârlı hem de zararlı işlemler yapabilir.",
+      "İşlem algoritmalarının etkinliği piyasa koşullarına, ayar parametrelerine, kullanılan işlem platformunun özelliklerine ve işlemlerin yürütülme kalitesine bağlıdır.",
+      "Ek risk faktörleri",
+      "Kaldıraç kullanımı hem potansiyel kârı hem de olası zararların büyüklüğünü artırır.",
+      "Finansal piyasaların oynaklığı, yetersiz likidite, fiyat kayması, teknik arızalar ve emir yürütme gecikmeleri işlem sonuçlarını önemli ölçüde etkileyebilir.",
+      "Bağımsız karar alma",
+      "Bir aracı kuruma kaydolma, işlem platformu, işlem stratejisi ve işlemleri kopyalanacak belirli bir katılımcıyı seçme, işlem kopyalama hizmetlerine bağlanma, işlem robotlarını kullanma, işlem parametrelerini ve kullanılacak para miktarını belirleme kararları kullanıcı tarafından bağımsız olarak, kendi takdirine göre, ilgili hizmetlerin kullanım koşullarını ve bunlarla bağlantılı finansal riskleri kendi değerlendirmesine dayanarak alınır."
+    ]
+  },
+  "meta": {
+    "home": {
+      "title": "www.Vladimir1.com",
+      "description": "Seyahat, alım satım ve işlem robotları."
+    },
+    "trading": {
+      "title": "T-Capital",
+      "description": "İşlem kopyalama projesi."
+    },
+    "fmb": {
+      "title": "Fast Money Bot",
+      "description": "İşlem robotları ve işlem kopyalama."
+    },
+    "guide": {
+      "title": "T-Capital — Bağlantı kılavuzu",
+      "description": "Adım adım kılavuz. 15 dakikada bağlantı."
+    },
+    "placeholder": {
+      "title": "Fast Money Bot — Kılavuz hazırlanıyor",
+      "description": "Fast Money Bot bağlantı kılavuzu yakında yayınlanacak."
+    },
+    "legal": {
+      "title": "Yasal bilgiler — Vladimir1.com",
+      "description": "Vladimir1.com ve projeleri hakkında yasal bilgiler."
+    },
+    "privacy": {
+      "title": "Gizlilik politikası — Vladimir1.com",
+      "description": "Vladimir1.com üzerinde bilgi ve yerel depolama kullanımı."
+    },
+    "risks": {
+      "title": "Risk uyarısı — Vladimir1.com",
+      "description": "Alım satım, işlem kopyalama ve işlem robotu kullanımının riskleri."
+    }
+  }
+}

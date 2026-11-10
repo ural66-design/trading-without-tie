@@ -1,0 +1,301 @@
+{
+  "ui": {
+    "home": "Laman utama",
+    "trading": "Dagangan",
+    "robots": "Robot dagangan",
+    "socials": "Media sosial saya",
+    "connect": "Sambungkan",
+    "results": "Hasil dagangan",
+    "telegram": "Bot Telegram",
+    "language": "Pilihan bahasa",
+    "done": "Selesai",
+    "progress": "Kemajuan anda",
+    "faq": "Soalan lazim",
+    "support": "Sokongan teknikal",
+    "close": "Tutup",
+    "continue": "Teruskan",
+    "restart": "Mula semula",
+    "already": "Saya sudah bersambung",
+    "confirm": "Ya, sambungan telah selesai",
+    "return": "Kembali",
+    "restoreTitle": "Teruskan proses sambungan?",
+    "restoreStep": "Anda berhenti pada langkah {n} daripada 3",
+    "confirmTitle": "Adakah anda telah menyelesaikan sambungan ke T-Capital di broker?",
+    "introLabel": "Maklumat pengenalan",
+    "howtoLabel": "Cara menggunakan panduan",
+    "riskLabel": "Amaran risiko",
+    "legal": "Maklumat undang-undang",
+    "privacy": "Dasar privasi",
+    "risks": "Amaran risiko",
+    "portraitAlt": "Vladimir",
+    "storageError": "Kemajuan tidak dapat disimpan dalam pelayar. Anda boleh meneruskan sambungan pada halaman ini.",
+    "chooseLanguage": "Pilih bahasa",
+    "placeholderTitle": "Panduan sedang disediakan",
+    "placeholderText": "Panduan sambungan Fast Money Bot akan tersedia tidak lama lagi."
+  },
+  "home": {
+    "title": "Dagangan tanpa tali leher",
+    "paragraphs": [
+      "Nama saya Vladimir. Saya meminati dagangan dan automasi dagangan — saya mencipta apa yang saya gunakan sendiri.",
+      "Pada waktu lapang, saya lebih suka mengembara secara bebas di Rusia dan seluruh dunia, dengan apa sahaja yang bergerak, malah berjalan kaki."
+    ]
+  },
+  "trading": {
+    "title": "Dagangan",
+    "paragraphs": [
+      "Dagangan ialah urus niaga mata wang, mata wang kripto, saham syarikat, bon kerajaan dan instrumen kewangan lain melalui syarikat broker di platform dagangan elektronik.",
+      "Tujuan urus niaga tersebut ialah memperoleh keuntungan daripada perubahan harga.",
+      "Pedagang ialah orang yang melakukan urus niaga tersebut dengan membuat keputusan sendiri untuk membeli dan menjual instrumen kewangan.",
+      "Dagangan salinan membolehkan anda menyalin urus niaga pedagang secara automatik dalam akaun broker anda, walaupun tanpa pengalaman berdagang.",
+      "Selepas menyambung kepada penyalinan dagangan, sistem broker membuka dan menutup dagangan secara automatik dalam akaun anda. Anda tidak perlu menganalisis carta, mencari masa yang sesuai atau membuat keputusan bagi setiap dagangan sendiri.",
+      "Anda boleh bersambung dalam 15 minit."
+    ]
+  },
+  "fmb": {
+    "title": "Robot dagangan",
+    "paragraphs": [
+      "Robot dagangan muncul sebagai cara mengautomasikan tindakan yang dilakukan oleh manusia dalam dagangan — iaitu pedagang.",
+      "Dagangan ialah urus niaga mata wang, saham syarikat dan instrumen kewangan lain melalui syarikat broker dengan tujuan memperoleh keuntungan daripada perubahan harga.",
+      "Robot dagangan ialah program komputer yang menjalankan tugas pedagang secara automatik, dengan mematuhi algoritma yang ditetapkan terlebih dahulu secara ketat.",
+      "Robot tidak tidur, tidak penat dan tidak dipengaruhi emosi. Ia boleh memantau perubahan harga sepanjang masa dan melakukan urus niaga ketika dagangan tersedia, tanpa penglibatan manusia berterusan.",
+      "Semua maklumat terperinci tentang robot dagangan, termasuk pemberitahuan, berita projek, pemantauan, statistik dagangan, artikel, cadangan, syarat langganan, media sosial projek dan banyak lagi, dihimpunkan dalam bot Telegram."
+    ]
+  },
+  "guide": {
+    "title": "T-Capital — panduan sambungan dagangan salinan",
+    "intro": "Untuk menyambung kepada perkhidmatan penyalinan dagangan, lakukan beberapa tindakan mudah: daftar dengan broker, tetapkan peraturan penyalinan, cipta akaun dan masukkan dana sekurang-kurangnya $1000. Penyalinan akan bermula secara automatik selepas dana dimasukkan.",
+    "howto": "Ikuti langkah mengikut turutan. Selepas menyelesaikan setiap langkah, tandakan “Selesai” pada tajuknya — langkah seterusnya akan dibuka secara automatik.",
+    "risk": "Penyalinan dagangan melibatkan risiko kehilangan sebahagian atau semua dana. Hasil dagangan tempoh lalu tidak menjamin hasil serupa pada masa hadapan. Anda membuat keputusan sendiri untuk menyambung kepada penyalinan dagangan dan menentukan jumlah dana yang digunakan.",
+    "steps": [
+      {
+        "title": "Pendaftaran dengan broker",
+        "items": [
+          "Nyatakan negara kediaman dan alamat e-mel anda, kemudian cipta kata laluan baharu yang kukuh.",
+          "Atau log masuk melalui akaun Google/Facebook.",
+          "Penting: negara anda tiada dalam senarai? Pilih negara terdekat; semasa semakan dokumen, sistem akan menetapkan negara yang betul."
+        ],
+        "action": "Pergi ke pendaftaran"
+      },
+      {
+        "title": "Pengesahan",
+        "items": [
+          "Penting: keperluan pengesahan bergantung pada negara: di sesetengah negara ia perlu dilakukan segera, di negara lain hanya semasa memasukkan dana. Jika tiada apa-apa muncul selepas membuka pautan, jangan bimbang — pengesahan untuk anda akan dilakukan pada peringkat memasukkan dana.",
+          "Sahkan identiti: pasport atau kad pengenalan kebangsaan.",
+          "Sahkan alamat: apa-apa dokumen dengan nama penuh dan alamat (bil utiliti, internet, telefon bimbit atau penyata bank)."
+        ],
+        "action": "Lengkapkan pengesahan"
+      },
+      {
+        "title": "Tetapan penyalinan dan memasukkan dana",
+        "items": [
+          "Tekan “Salin” pada profil ketua T-Capital.",
+          "Dalam tetingkap yang dibuka, tetapkan pengganda penyalinan = 1 (satu).",
+          "Buka “Tetapan lanjut” → aktifkan “Lakukan penskalaan selepas ketua menutup dagangannya” (jangan ubah parameter lain).",
+          "Tatal ke bawah → dalam bahagian “Akaun”: “Cipta akaun baharu” → “Salin” — halaman memasukkan dana akan dibuka.",
+          "Masukkan sekurang-kurangnya $1000 ke dalam akaun.",
+          "Pilih kaedah: kad bank atau mata wang kripto.",
+          "Jika kaedah yang diperlukan tiada, lengkapkan pengesahan untuk membukanya.",
+          "Penyalinan akan bermula secara automatik selepas dana dimasukkan."
+        ],
+        "action": "Buka profil ketua"
+      }
+    ],
+    "complete": [
+      "Semua langkah panduan telah selesai!",
+      "Kini anda boleh memantau hasil dagangan di laman broker atau dalam aplikasi MetaTrader 4."
+    ],
+    "faq": [
+      {
+        "q": "Apakah pengganda penyalinan? Mengapakah ia perlu ditetapkan kepada 1?",
+        "a": [
+          "Pengganda penyalinan ialah pekali yang digunakan untuk mengira volum dagangan yang disalin dengan mengambil kira nisbah saiz deposit pedagang (ketua) dan akaun anda.",
+          "Semasa menyambung, tetapkan pengganda kepada 1 (satu). Dengan itu, anda tidak perlu mengira pekali sendiri dan menghadapi risiko tersilap dalam tetapan.",
+          "Selepas dagangan ketua ditutup, fungsi penskalaan automatik yang diaktifkan akan mengira semula volum penyalinan seperti yang ditetapkan oleh broker.",
+          "Oleh itu, penting untuk menetapkan pengganda kepada 1 dan mengaktifkan “Lakukan penskalaan selepas ketua menutup dagangannya”."
+        ]
+      },
+      {
+        "q": "Apakah yang perlu dilakukan jika e-mel butiran akaun belum diterima?",
+        "a": [
+          "Semak folder Spam dan folder e-mel lain.",
+          "Jika e-mel tidak ditemui, hubungi sokongan broker untuk memulihkan atau menjelaskan butiran akses akaun.",
+          "Jika perlu, anda boleh meminta bantuan untuk menghubungi sokongan broker."
+        ]
+      },
+      {
+        "q": "Di manakah saya boleh memantau hasil dagangan?",
+        "a": [
+          "Anda boleh memantau dagangan dalam ruang peribadi broker Markets4you.",
+          "Anda juga boleh menggunakan MetaTrader 4 dengan menyambung ke akaun dagangan menggunakan kata laluan pelabur.",
+          "Di sesetengah negara, aplikasi mudah alih Markets4you turut tersedia."
+        ]
+      },
+      {
+        "q": "Apakah kaedah alternatif untuk memasukkan dana?",
+        "a": [
+          "Kaedah yang tersedia bergantung pada negara dan tetapan ruang peribadi broker anda.",
+          "Selain kad bank, dompet elektronik dan kaedah lain, termasuk mata wang kripto, mungkin tersedia.",
+          "Jika kaedah yang diperlukan tidak dipaparkan, lengkapkan pengesahan. Selepas itu, pilihan tambahan untuk memasukkan dana mungkin dibuka."
+        ]
+      },
+      {
+        "q": "Mengapakah penyalinan tidak berjalan?",
+        "a": [
+          "Dagangan tidak dijalankan sepanjang masa, tetapi apabila terdapat keadaan pasaran dan isyarat dagangan yang diperlukan. Kadangkala beberapa hari atau minggu boleh berlalu antara dagangan. Selain itu, tiada dagangan pada hujung minggu.",
+          "Untuk memastikan penyalinan disambungkan dengan betul, log masuk ke ruang peribadi broker Markets4you.",
+          "Dalam menu sisi, buka “Dagangan salinan” → “Peraturan penyalinan”.",
+          "Senarai itu sepatutnya mengandungi peraturan penyalinan yang anda cipta. Secara lalai, broker menamakan peraturan Rule 1, Rule 2, Rule 3 dan seterusnya.",
+          "Jika terdapat beberapa peraturan, pastikan peraturan yang dikehendaki berkaitan dengan ketua T-Capital, jika maklumat tersebut dipaparkan dalam ruang peribadi.",
+          "Jika peraturan tiada, ulangi prosedur sambungan mengikut panduan.",
+          "Jika peraturan masih tidak muncul selepas penyambungan semula, hubungi sokongan teknikal di support@vladimir1.com atau sokongan broker Markets4you."
+        ]
+      },
+      {
+        "q": "Apakah “kata laluan pelabur”?",
+        "a": [
+          "Kata laluan pelabur ialah kata laluan khas untuk melihat akaun dagangan dalam MetaTrader 4.",
+          "Ia membolehkan anda memantau dagangan terbuka dan tertutup, baki serta hasil dagangan.",
+          "Ia tidak membolehkan anda melakukan dagangan sendiri atau mengeluarkan dana daripada akaun."
+        ]
+      },
+      {
+        "q": "Bolehkah saya mengeluarkan dana pada bila-bila masa?",
+        "a": [
+          "Permohonan pengeluaran dana boleh dihantar sepanjang masa.",
+          "Jika pengesahan identiti belum pernah dibuat, broker mungkin memerlukannya sebelum pengeluaran pertama. Biasanya, pengesahan tidak perlu diulang bagi setiap pengeluaran.",
+          "Ketika penyalinan aktif, pengeluaran biasa memerlukan anda mematikan penyalinan terlebih dahulu, kemudian menyambungkannya semula selepas dana dikeluarkan.",
+          "Pengecualian ialah hari potongan komisen yang ditetapkan broker, dua kali sebulan. Pada hari tersebut, pengeluaran boleh dilakukan tanpa mematikan penyalinan.",
+          "Tempoh pemprosesan permohonan bergantung pada broker dan kaedah pengeluaran yang dipilih."
+        ]
+      },
+      {
+        "q": "Apakah leveraj dan jenis akaun yang diperlukan untuk penyalinan?",
+        "a": [
+          "Penyalinan menggunakan akaun Classic Pro dengan leveraj 1:2000.",
+          "Leveraj menentukan nisbah antara saiz posisi dagangan dan cagaran yang diperlukan.",
+          "Leveraj tinggi membolehkan jumlah dana yang lebih kecil digunakan sebagai margin bagi posisi bersaiz tertentu.",
+          "Bagi saiz posisi yang sama, perubahan harga menghasilkan keputusan kewangan yang sama tanpa mengira leveraj yang dipilih.",
+          "Namun, leveraj tidak menghapuskan risiko pasaran atau risiko kekurangan margin."
+        ]
+      }
+    ]
+  },
+  "legal": {
+    "legal": [
+      "Peruntukan am",
+      "Vladimir1.com ialah sumber maklumat peribadi yang dikhususkan kepada minat dan hobi penulis dalam pengembaraan, dagangan dan dagangan beralgoritma.",
+      "Dagangan dan dagangan beralgoritma merupakan dua bidang amalan peribadi penulis, yang dijalankan melalui pembelajaran kendiri, penerapan dan penambahbaikan kaedah serta teknologi dagangan.",
+      "Laman ini mempersembahkan dua projek:",
+      "T-Capital — dagangan bebas di pasaran kewangan.",
+      "Fast Money Bot — pembangunan dan penggunaan algoritma dagangan automatik.",
+      "Demonstrasi amalan dagangan peribadi",
+      "Statistik dagangan, pemantauan, penerangan algoritma dan pautan profil dagangan diterbitkan untuk menunjukkan pengalaman peribadi penulis, pendekatan yang digunakan dan hasil penggunaan praktikalnya, termasuk dalam masa nyata.",
+      "Pelawat boleh mengkaji bahan secara bebas dan, jika platform pihak ketiga mempunyai keupayaan teknikal yang berkaitan, memerhatikan operasi pendekatan dagangan, meniru atau mengujinya atas inisiatif sendiri.",
+      "Bahan yang diterbitkan bersifat maklumat, pengenalan dan demonstrasi; ia bukan cadangan pelaburan individu atau tawaran perkhidmatan pengurusan wang secara amanah.",
+      "Sumber maklumat pihak ketiga",
+      "Vladimir1.com boleh mengandungi pautan kepada sumber pihak ketiga, termasuk Myfxbook, Markets4you, Telegram serta platform maklumat, pembrokeran dan teknologi lain.",
+      "Sumber tersebut mungkin mengandungi tawaran perkhidmatan kewangan, strategi dagangan, produk pelaburan dan perkhidmatan lain yang disediakan oleh pihak ketiga bebas.",
+      "Tawaran pihak ketiga tersebut bukan tawaran penulis Vladimir1.com. Kandungan dan syaratnya ditentukan secara langsung oleh pihak berkaitan dan pengendali platform pihak ketiga.",
+      "Pelawat membuat keputusan sendiri untuk mengunjungi sumber pihak ketiga dan menggunakan peluang yang ditawarkan.",
+      "Tiada perkhidmatan pembrokeran atau urus niaga dengan dana pelawat",
+      "Vladimir1.com tidak menyediakan perkhidmatan pembrokeran, membuka atau mengurus akaun broker pelawat, menerima deposit dagangan, menyimpan dana pelanggan atau melakukan urus niaga dengan dana tersebut.",
+      "Pendaftaran, pengecaman dan pengesahan pengguna, perkhidmatan akaun broker, sambungan ke perkhidmatan penyalinan dagangan, deposit dan pengeluaran dilakukan melalui organisasi pihak ketiga berkaitan mengikut syarat mereka.",
+      "Perkara berkaitan akaun broker, pelaksanaan dagangan dan penyelesaian kewangan dikendalikan terus oleh broker berkaitan.",
+      "Pembayaran bagi barangan dan perkhidmatan tidak diterima secara langsung di Vladimir1.com.",
+      "Pautan afiliasi",
+      "Pautan tertentu yang diterbitkan di laman ini mungkin mengandungi pengecam afiliasi.",
+      "Harta intelek",
+      "Hak atas teks, imej, bahan perisian dan hasil kegiatan intelektual lain yang dilindungi serta diterbitkan di Vladimir1.com dimiliki oleh pemegang hak masing-masing.",
+      "Penggunaannya oleh pihak ketiga dibenarkan dalam keadaan yang diperuntukkan undang-undang atau dengan kebenaran pemegang hak.",
+      "Maklumat hubungan",
+      "Bagi urusan operasi laman, sokongan teknikal dan pertanyaan yang mempunyai kepentingan undang-undang:",
+      "support@vladimir1.com"
+    ],
+    "privacy": [
+      "Peruntukan am",
+      "Dasar Privasi ini menetapkan tatacara pemprosesan maklumat berkaitan penggunaan Vladimir1.com, termasuk T-Capital dan Fast Money Bot.",
+      "Penggunaan laman",
+      "Vladimir1.com tidak menyediakan pendaftaran pelawat, penciptaan akaun peribadi atau penyerahan data peribadi melalui borang terbina dalam.",
+      "Laman ini tidak menggunakan piksel iklan atau sistem pihak ketiga untuk menjejak tingkah laku pelawat.",
+      "Bahasa antara muka yang dipilih dan kemajuan panduan disimpan terus dalam pelayar pengguna melalui storan setempat.",
+      "Tetapan tersebut tidak dihantar ke pangkalan data milik laman dan boleh dipadam oleh pengguna melalui alat pelayar.",
+      "E-mel",
+      "Apabila menghubungi support@vladimir1.com, alamat e-mel pengirim, kandungan mesej dan maklumat yang diberikan secara sukarela boleh diproses.",
+      "Maklumat yang diterima digunakan untuk meneliti pertanyaan dan menyediakan jawapan.",
+      "Asas undang-undang pemprosesan itu mungkin pelaksanaan kepentingan sah berkaitan penelitian pertanyaan yang diterima, dengan syarat hak dan kebebasan subjek data peribadi dihormati.",
+      "Surat-menyurat tidak diterbitkan, digunakan untuk kiriman iklan atau diserahkan kepada organisasi pihak ketiga untuk tujuan pemasaran.",
+      "Penerimaan dan penyimpanan surat-menyurat elektronik dilakukan menggunakan infrastruktur e-mel.",
+      "Jangan hantar butiran pasport, kata laluan, butiran pembayaran, nombor akaun broker atau maklumat kewangan sulit lain ke alamat sokongan.",
+      "Bagi perkara berkaitan akaun broker dan urus niaga kewangan, hubungi terus sokongan broker berkaitan.",
+      "Surat-menyurat disimpan sepanjang tempoh yang diperlukan untuk meneliti pertanyaan atau apabila terdapat asas undang-undang lain untuk penyimpanannya.",
+      "Maklumat teknikal",
+      "Apabila laman dikunjungi, penyedia pengehosan dan infrastruktur teknikal mungkin memproses alamat IP, maklumat pelayar dan peranti serta parameter permintaan teknikal yang diperlukan untuk menyediakan akses kepada halaman.",
+      "Vladimir1.com tidak menggunakan maklumat tersebut untuk membina profil pengiklanan pelawat secara sendiri.",
+      "Sumber pihak ketiga",
+      "Apabila mengikuti pautan ke sumber pihak ketiga, maklumat diproses mengikut syarat dan dasar perkhidmatan masing-masing.",
+      "Vladimir1.com tidak menentukan tatacara pemprosesan data peribadi oleh organisasi pihak ketiga bebas.",
+      "Bot Telegram Fast Money Bot",
+      "Untuk operasi bot Telegram Fast Money Bot, hanya pengecam pengguna Telegram (Telegram ID) disimpan dalam pangkalan data milik bot.",
+      "Nama pengguna, nama samaran, nombor telefon dan kandungan mesej tidak disimpan dalam pangkalan data milik bot.",
+      "Sistem jawapan automatik bagi soalan lazim dan teknologi kecerdasan buatan menggunakan OpenAI API digunakan untuk mengendalikan pertanyaan pengguna.",
+      "Apabila jawapan dijana menggunakan kecerdasan buatan, kandungan permintaan berkaitan dihantar melalui OpenAI API untuk diproses dan dijana jawapannya.",
+      "Pengguna juga boleh menghubungi sokongan secara langsung melalui Telegram.",
+      "Pemprosesan maklumat oleh platform Telegram sendiri tertakluk pada syarat dan dasar privasi perkhidmatan itu.",
+      "Perlindungan maklumat",
+      "Semasa memproses maklumat yang diterima, langkah organisasi dan teknikal diterapkan untuk mencegah akses, perubahan, penyebaran atau pemusnahan maklumat yang menyalahi undang-undang.",
+      "Pertanyaan berkaitan data peribadi",
+      "Permintaan maklumat berkaitan pemprosesan data peribadi, pembetulan, sekatan pemprosesan atau pemadaman dipertimbangkan mengikut tatacara yang ditetapkan undang-undang terpakai.",
+      "Hubungan untuk pertanyaan:",
+      "support@vladimir1.com"
+    ],
+    "risks": [
+      "Peruntukan am",
+      "Dagangan instrumen kewangan, penyalinan dagangan dan penggunaan robot dagangan melibatkan risiko kehilangan sebahagian atau semua dana.",
+      "Hasil dagangan terdahulu, petunjuk pemantauan dan hasil ujian algoritma dagangan tidak menjamin hasil kewangan serupa pada masa hadapan.",
+      "Risiko penyalinan dagangan",
+      "Hasil dagangan yang disalin boleh berbeza daripada hasil akaun asal disebabkan perbezaan syarat pelaksanaan, jumlah modal, tetapan penyalinan dan keadaan lain.",
+      "Risiko dagangan beralgoritma",
+      "Robot dagangan menjalankan urus niaga mengikut algoritma yang diprogramkan dan boleh menghasilkan dagangan yang menguntungkan mahupun merugikan.",
+      "Keberkesanan algoritma dagangan bergantung pada keadaan pasaran, parameter tetapan, ciri platform yang digunakan dan kualiti pelaksanaan dagangan.",
+      "Faktor risiko tambahan",
+      "Penggunaan leveraj meningkatkan potensi keuntungan dan juga jumlah kerugian yang mungkin berlaku.",
+      "Turun naik pasaran kewangan, kecairan yang tidak mencukupi, gelinciran harga, kegagalan teknikal dan kelewatan pelaksanaan pesanan boleh menjejaskan hasil dagangan dengan ketara.",
+      "Membuat keputusan secara bebas",
+      "Keputusan untuk mendaftar dengan broker, memilih platform, strategi dagangan dan peserta tertentu yang dagangannya akan disalin, menyambung kepada perkhidmatan penyalinan, menggunakan robot dagangan serta menentukan parameter dagangan dan jumlah dana yang digunakan dibuat oleh pengguna secara bebas, mengikut budi bicaranya sendiri, berdasarkan penilaiannya sendiri terhadap syarat penggunaan perkhidmatan berkaitan dan risiko kewangan yang terlibat."
+    ]
+  },
+  "meta": {
+    "home": {
+      "title": "www.Vladimir1.com",
+      "description": "Pengembaraan, dagangan dan robot dagangan."
+    },
+    "trading": {
+      "title": "T-Capital",
+      "description": "Projek dagangan salinan."
+    },
+    "fmb": {
+      "title": "Fast Money Bot",
+      "description": "Robot dagangan dan dagangan salinan."
+    },
+    "guide": {
+      "title": "T-Capital — Panduan sambungan",
+      "description": "Panduan langkah demi langkah. Sambung dalam 15 minit."
+    },
+    "placeholder": {
+      "title": "Fast Money Bot — Panduan sedang disediakan",
+      "description": "Panduan sambungan Fast Money Bot akan tersedia tidak lama lagi."
+    },
+    "legal": {
+      "title": "Maklumat undang-undang — Vladimir1.com",
+      "description": "Maklumat undang-undang tentang Vladimir1.com dan projeknya."
+    },
+    "privacy": {
+      "title": "Dasar privasi — Vladimir1.com",
+      "description": "Penggunaan maklumat dan storan setempat di Vladimir1.com."
+    },
+    "risks": {
+      "title": "Amaran risiko — Vladimir1.com",
+      "description": "Risiko dagangan, penyalinan dagangan dan penggunaan robot dagangan."
+    }
+  }
+}

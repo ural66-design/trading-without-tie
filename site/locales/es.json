@@ -1,0 +1,301 @@
+{
+  "ui": {
+    "home": "Inicio",
+    "trading": "Trading",
+    "robots": "Robots de trading",
+    "socials": "Mis redes sociales",
+    "connect": "Conectarse",
+    "results": "Resultados de trading",
+    "telegram": "Bot de Telegram",
+    "language": "Idioma",
+    "done": "Completado",
+    "progress": "Tu progreso",
+    "faq": "Preguntas frecuentes",
+    "support": "Soporte técnico",
+    "close": "Cerrar",
+    "continue": "Continuar",
+    "restart": "Empezar de nuevo",
+    "already": "Ya me he conectado",
+    "confirm": "Sí, la conexión está completa",
+    "return": "Volver",
+    "restoreTitle": "¿Continuar la conexión?",
+    "restoreStep": "Te quedaste en el paso {n} de 3",
+    "confirmTitle": "¿Ya has completado la conexión a T-Capital con el bróker?",
+    "introLabel": "Información introductoria",
+    "howtoLabel": "Cómo usar esta guía",
+    "riskLabel": "Advertencia de riesgos",
+    "legal": "Información legal",
+    "privacy": "Política de privacidad",
+    "risks": "Advertencia de riesgos",
+    "portraitAlt": "Vladímir",
+    "storageError": "No se pudo guardar el progreso en el navegador. Puedes continuar la conexión en esta página.",
+    "chooseLanguage": "Elige un idioma",
+    "placeholderTitle": "Guía en desarrollo",
+    "placeholderText": "La guía de conexión a Fast Money Bot estará disponible próximamente."
+  },
+  "home": {
+    "title": "Trading sin corbata",
+    "paragraphs": [
+      "Me llamo Vladímir. Me apasionan el trading y su automatización: creo lo que yo mismo utilizo.",
+      "En mi tiempo libre prefiero viajar por libre por Rusia y el mundo, en todo lo que se mueve e incluso a pie."
+    ]
+  },
+  "trading": {
+    "title": "Trading",
+    "paragraphs": [
+      "El trading consiste en realizar operaciones con divisas, criptomonedas, acciones de empresas, bonos del Estado y otros instrumentos financieros a través de una empresa de corretaje en plataformas electrónicas de negociación.",
+      "El objetivo de estas operaciones es obtener beneficios de los cambios de precios.",
+      "Un trader es una persona que realiza estas operaciones y toma sus propias decisiones sobre la compra y venta de instrumentos financieros.",
+      "El copy trading permite replicar automáticamente las operaciones de un trader en tu cuenta de corretaje, incluso sin experiencia en trading.",
+      "Tras conectarte a la copia de operaciones, el sistema del bróker abre y cierra operaciones automáticamente en tu cuenta. No necesitas analizar gráficos, buscar momentos adecuados ni tomar decisiones sobre cada operación por tu cuenta.",
+      "Puedes conectarte en 15 minutos."
+    ]
+  },
+  "fmb": {
+    "title": "Robots de trading",
+    "paragraphs": [
+      "Los robots de trading surgieron como una forma de automatizar las acciones que realiza una persona en el trading: el trader.",
+      "El trading consiste en realizar operaciones con divisas, acciones de empresas y otros instrumentos financieros a través de una empresa de corretaje con el objetivo de obtener beneficios de los cambios de precios.",
+      "Los robots de trading son programas informáticos que realizan automáticamente el trabajo de un trader, siguiendo estrictamente un algoritmo predefinido.",
+      "Un robot no duerme, no se cansa ni se deja llevar por las emociones. Puede vigilar los cambios de precios las 24 horas y realizar operaciones cuando la negociación está disponible, sin intervención humana constante.",
+      "Toda la información detallada sobre los robots de trading, incluidas notificaciones, noticias del proyecto, monitorizaciones, estadísticas de trading, artículos, recomendaciones, condiciones de suscripción, redes sociales del proyecto y mucho más, está reunida en el bot de Telegram."
+    ]
+  },
+  "guide": {
+    "title": "T-Capital — guía de conexión al copy trading",
+    "intro": "Para conectarte al servicio de copia de operaciones, debes realizar unas acciones sencillas: registrarte con el bróker, configurar las reglas de copia, crear una cuenta e ingresar al menos $1000. La copia comenzará automáticamente después del ingreso.",
+    "howto": "Sigue los pasos en orden. Al terminar cada paso, marca «Completado» en su encabezado: se abrirá automáticamente el siguiente paso.",
+    "risk": "La copia de operaciones conlleva el riesgo de pérdida parcial o total de los fondos. Los resultados de trading de periodos anteriores no garantizan resultados similares en el futuro. Tú decides por tu cuenta si conectarte a la copia de operaciones y qué cantidad de fondos utilizar.",
+    "steps": [
+      {
+        "title": "Registro con el bróker",
+        "items": [
+          "Indica tu país de residencia y tu correo electrónico, y crea una nueva contraseña segura.",
+          "O inicia sesión con tu cuenta de Google/Facebook.",
+          "Importante: ¿tu país no aparece en la lista? Elige el más cercano; durante la verificación de documentos el sistema indicará el correcto."
+        ],
+        "action": "Ir al registro"
+      },
+      {
+        "title": "Verificación",
+        "items": [
+          "Importante: los requisitos de verificación dependen del país: en algunos hay que completarla de inmediato y en otros solo al ingresar fondos. Si no ves nada al seguir el enlace, no te preocupes: en tu caso la verificación se hará al ingresar fondos.",
+          "Verifica tu identidad: pasaporte o documento nacional de identidad.",
+          "Verifica tu dirección: cualquier documento con tu nombre completo y dirección (facturas de servicios, internet, telefonía móvil o un extracto bancario)."
+        ],
+        "action": "Completar la verificación"
+      },
+      {
+        "title": "Configuración de la copia e ingreso de fondos",
+        "items": [
+          "Pulsa «Copiar» en el perfil del líder T-Capital.",
+          "En la ventana que se abre, establece el multiplicador de copia = 1 (uno).",
+          "Abre «Más ajustes» → activa «Realizar el escalado después de que el líder cierre sus operaciones» (no modifiques los demás parámetros).",
+          "Desplázate hacia abajo → en «Cuenta»: «Crear una cuenta nueva» → «Copiar»; se abrirá la página de ingreso de fondos.",
+          "Ingresa al menos $1000 en la cuenta.",
+          "Elige el método: tarjeta bancaria o criptomoneda.",
+          "Si falta el método que necesitas, completa la verificación para desbloquearlo.",
+          "La copia comenzará automáticamente después del ingreso."
+        ],
+        "action": "Abrir el perfil del líder"
+      }
+    ],
+    "complete": [
+      "¡Todos los pasos de la guía están completados!",
+      "Ahora puedes seguir los resultados de trading en el sitio del bróker o en la aplicación MetaTrader 4."
+    ],
+    "faq": [
+      {
+        "q": "¿Qué es el multiplicador de copia? ¿Por qué debe establecerse en 1?",
+        "a": [
+          "El multiplicador de copia es un coeficiente que se utiliza para calcular el volumen de las operaciones copiadas teniendo en cuenta la proporción entre los depósitos del trader (líder) y de tu cuenta.",
+          "Al conectarte, establece el multiplicador en 1 (uno). Así no tendrás que calcular el coeficiente por tu cuenta ni arriesgarte a cometer errores de configuración.",
+          "Una vez cerrada la operación del líder, la función de escalado automático activada realizará el recálculo de los volúmenes de copia previsto por el bróker.",
+          "Por eso es importante establecer el multiplicador en 1 y activar «Realizar el escalado después de que el líder cierre sus operaciones»."
+        ]
+      },
+      {
+        "q": "¿Qué hago si no ha llegado el correo con los datos de la cuenta?",
+        "a": [
+          "Revisa la carpeta de spam y las demás carpetas de tu correo.",
+          "Si no encuentras el mensaje, contacta con el soporte del bróker para recuperar o aclarar los datos de acceso a la cuenta.",
+          "Si lo necesitas, puedes pedir ayuda para contactar con el soporte del bróker."
+        ]
+      },
+      {
+        "q": "¿Dónde puedo seguir los resultados de trading?",
+        "a": [
+          "Puedes seguir las operaciones en tu área personal del bróker Markets4you.",
+          "También puedes usar MetaTrader 4 conectándote a la cuenta de trading con la contraseña de inversor.",
+          "En algunos países también está disponible la aplicación móvil de Markets4you."
+        ]
+      },
+      {
+        "q": "¿Qué métodos alternativos de ingreso hay?",
+        "a": [
+          "Los métodos de ingreso disponibles dependen del país y de la configuración de tu área personal del bróker.",
+          "Además de tarjetas bancarias, puede haber monederos electrónicos y otros métodos, incluidas las criptomonedas.",
+          "Si no aparece el método que necesitas, completa la verificación. Después pueden habilitarse opciones adicionales de ingreso."
+        ]
+      },
+      {
+        "q": "¿Por qué no funciona la copia?",
+        "a": [
+          "No se opera las 24 horas, sino cuando se dan las condiciones de mercado y las señales de trading necesarias. A veces pueden pasar varios días o semanas entre operaciones. Además, no se opera los fines de semana.",
+          "Para comprobar que la copia está conectada correctamente, inicia sesión en tu área personal del bróker Markets4you.",
+          "En el menú lateral, abre «Copy trading» → «Reglas de copia».",
+          "La lista debe contener la regla de copia que creaste. Por defecto, el bróker asigna los nombres Rule 1, Rule 2, Rule 3, etc.",
+          "Si tienes varias reglas, comprueba que la correspondiente pertenece al líder T-Capital, si esa información aparece en tu área personal.",
+          "Si la regla no aparece, repite el procedimiento de conexión siguiendo la guía.",
+          "Si después de volver a conectarte la regla sigue sin aparecer, contacta con el soporte técnico en support@vladimir1.com o con el soporte del bróker Markets4you."
+        ]
+      },
+      {
+        "q": "¿Qué es una «contraseña de inversor»?",
+        "a": [
+          "La contraseña de inversor es una contraseña especial para consultar una cuenta de trading en MetaTrader 4.",
+          "Permite observar las operaciones abiertas y cerradas, el saldo y los resultados de trading.",
+          "No permite realizar operaciones por tu cuenta ni retirar fondos de la cuenta."
+        ]
+      },
+      {
+        "q": "¿Puedo retirar fondos en cualquier momento?",
+        "a": [
+          "Puedes presentar una solicitud de retirada las 24 horas.",
+          "Si tu identidad no ha sido verificada antes, el bróker puede exigir la verificación antes de la primera retirada. Normalmente no es necesario repetirla en cada retirada.",
+          "Si la copia está activa, para una retirada ordinaria primero debes desactivarla y volver a conectarla después de retirar los fondos.",
+          "La excepción son los días de cobro de comisiones establecidos por el bróker, que tienen lugar dos veces al mes. Esos días puede realizarse la retirada sin desactivar la copia.",
+          "Los plazos de tramitación dependen del bróker y del método de retirada elegido."
+        ]
+      },
+      {
+        "q": "¿Qué es el apalancamiento y qué tipo de cuenta se necesita para copiar?",
+        "a": [
+          "Para copiar se utiliza una cuenta Classic Pro con apalancamiento de 1:2000.",
+          "El apalancamiento determina la relación entre el tamaño de una posición y la garantía necesaria.",
+          "Un apalancamiento alto permite utilizar menos fondos como margen para una posición de un tamaño determinado.",
+          "Con el mismo tamaño de posición, un cambio de precio produce el mismo resultado financiero, independientemente del apalancamiento elegido.",
+          "Sin embargo, el apalancamiento no elimina los riesgos del mercado ni el de insuficiencia de margen."
+        ]
+      }
+    ]
+  },
+  "legal": {
+    "legal": [
+      "Disposiciones generales",
+      "Vladimir1.com es un recurso informativo personal dedicado a los intereses y aficiones del autor en materia de viajes, trading y negociación algorítmica.",
+      "El trading y la negociación algorítmica son dos ámbitos de práctica personal del autor, desarrollados mediante el estudio independiente, la aplicación y el perfeccionamiento de métodos y tecnologías de negociación.",
+      "En el sitio se presentan dos proyectos:",
+      "T-Capital — negociación independiente en los mercados financieros.",
+      "Fast Money Bot — desarrollo y aplicación de algoritmos de negociación automatizados.",
+      "Demostración de la práctica personal de trading",
+      "Las estadísticas de trading, las monitorizaciones, las descripciones de algoritmos y los enlaces a perfiles de trading se publican para mostrar la experiencia personal del autor, los enfoques que utiliza y los resultados de su aplicación práctica, incluso en tiempo real.",
+      "Los visitantes pueden estudiar por su cuenta los materiales presentados y, cuando las plataformas de terceros dispongan de las capacidades técnicas pertinentes, observar el funcionamiento de los enfoques de trading, reproducirlos o probarlos por iniciativa propia.",
+      "Los materiales publicados tienen un carácter informativo, introductorio y demostrativo; no constituyen recomendaciones de inversión individuales ni una oferta de servicios de gestión fiduciaria de fondos.",
+      "Recursos informativos de terceros",
+      "Vladimir1.com puede incluir enlaces a recursos de terceros, entre ellos Myfxbook, Markets4you, Telegram y otras plataformas informativas, de corretaje y tecnológicas.",
+      "Estos recursos pueden contener ofertas de servicios financieros, estrategias de trading, productos de inversión y otros servicios prestados por terceros independientes.",
+      "Las ofertas de dichos terceros no son ofertas del autor de Vladimir1.com. Su contenido y condiciones los determinan directamente las partes correspondientes y los operadores de las plataformas de terceros.",
+      "Los visitantes deciden por su cuenta si acceden a recursos de terceros y utilizan las posibilidades que ofrecen.",
+      "Ausencia de servicios de corretaje y operaciones con los fondos de los visitantes",
+      "Vladimir1.com no presta servicios de corretaje, no abre ni administra cuentas de corretaje de los visitantes, no acepta depósitos para operar, no custodia fondos de clientes ni realiza operaciones con ellos.",
+      "El registro, la identificación y la verificación de usuarios, la administración de cuentas de corretaje, la conexión a servicios de copia de operaciones, los ingresos y las retiradas se realizan a través de las organizaciones externas correspondientes, según sus condiciones.",
+      "Las cuestiones relativas a las cuentas de corretaje, la ejecución de operaciones y las liquidaciones financieras se tramitan directamente con los brókeres correspondientes.",
+      "No se aceptan pagos por bienes y servicios directamente en Vladimir1.com.",
+      "Enlaces de afiliados",
+      "Algunos enlaces publicados en el sitio pueden contener identificadores de afiliado.",
+      "Propiedad intelectual",
+      "Los derechos sobre los textos, imágenes, materiales de software y otros resultados protegidos de la actividad intelectual publicados en Vladimir1.com pertenecen a sus respectivos titulares.",
+      "Su uso por terceros se permite en los casos previstos por la legislación o con autorización del titular de los derechos.",
+      "Información de contacto",
+      "Para consultas sobre el funcionamiento del sitio, soporte técnico y comunicaciones con relevancia jurídica:",
+      "support@vladimir1.com"
+    ],
+    "privacy": [
+      "Disposiciones generales",
+      "Esta Política de privacidad establece el tratamiento de la información relacionada con el uso de Vladimir1.com, incluidos T-Capital y Fast Money Bot.",
+      "Uso del sitio",
+      "Vladimir1.com no contempla el registro de visitantes, la creación de cuentas personales ni la entrega de datos personales mediante formularios integrados.",
+      "El sitio no utiliza píxeles publicitarios ni sistemas de terceros para rastrear el comportamiento de los visitantes.",
+      "El idioma de la interfaz elegido y el progreso en las instrucciones se guardan directamente en el navegador del usuario mediante almacenamiento local.",
+      "Estos ajustes no se transmiten a una base de datos propia del sitio y el usuario puede eliminarlos con las herramientas del navegador.",
+      "Correo electrónico",
+      "Al contactar con support@vladimir1.com, pueden tratarse la dirección de correo del remitente, el contenido del mensaje y los datos facilitados voluntariamente.",
+      "La información recibida se utiliza para atender la consulta y preparar una respuesta.",
+      "La base jurídica de dicho tratamiento puede ser la satisfacción de intereses legítimos relacionados con la atención de consultas recibidas, siempre que se respeten los derechos y libertades del interesado.",
+      "La correspondencia no se publica, no se utiliza para envíos publicitarios ni se facilita a organizaciones externas con fines de marketing.",
+      "La recepción y el almacenamiento de correspondencia electrónica se realizan mediante infraestructura de correo.",
+      "No envíes al soporte datos de pasaporte, contraseñas, datos de pago, números de cuentas de corretaje ni otra información financiera confidencial.",
+      "Para cuestiones sobre cuentas de corretaje y operaciones financieras, contacta directamente con el soporte del bróker correspondiente.",
+      "La correspondencia se conserva durante el tiempo necesario para atender la consulta o cuando existan otros fundamentos legales para conservarla.",
+      "Información técnica",
+      "Al visitar el sitio, los proveedores de alojamiento e infraestructura técnica pueden tratar la dirección IP, información sobre el navegador y el dispositivo y los parámetros de solicitudes técnicas necesarios para dar acceso a las páginas.",
+      "Vladimir1.com no utiliza esta información para crear por su cuenta perfiles publicitarios de los visitantes.",
+      "Recursos de terceros",
+      "Al acceder a recursos de terceros mediante enlaces, la información se trata de acuerdo con las condiciones y políticas de los servicios correspondientes.",
+      "Vladimir1.com no determina cómo tratan los datos personales las organizaciones externas independientes.",
+      "Bot de Telegram Fast Money Bot",
+      "Para el funcionamiento del bot de Telegram Fast Money Bot, en su base de datos propia se guardan exclusivamente los identificadores de usuarios de Telegram (Telegram ID).",
+      "Los nombres de usuario, apodos, números de teléfono y contenido de los mensajes no se guardan en la base de datos propia del bot.",
+      "Para atender las consultas de los usuarios se utiliza un sistema automatizado de respuestas a preguntas frecuentes y tecnologías de inteligencia artificial mediante la OpenAI API.",
+      "Cuando se generan respuestas con inteligencia artificial, el contenido de las consultas correspondientes se transmite a través de la OpenAI API para su procesamiento y la generación de la respuesta.",
+      "Los usuarios también pueden contactar directamente con el soporte a través de Telegram.",
+      "El tratamiento de información por la propia plataforma Telegram se rige por las condiciones y la política de privacidad de ese servicio.",
+      "Protección de la información",
+      "Al tratar la información recibida, se aplican medidas organizativas y técnicas destinadas a evitar el acceso, la modificación, la divulgación o la destrucción ilícitos de la información.",
+      "Consultas sobre datos personales",
+      "Las solicitudes de información sobre el tratamiento de datos personales, su rectificación, limitación del tratamiento o supresión se atienden conforme a la legislación aplicable.",
+      "Contacto para consultas:",
+      "support@vladimir1.com"
+    ],
+    "risks": [
+      "Disposiciones generales",
+      "La negociación de instrumentos financieros, la copia de operaciones y el uso de robots de trading conllevan el riesgo de pérdida parcial o total de los fondos.",
+      "Los resultados de operaciones anteriores, los indicadores de monitorización y los resultados de pruebas de algoritmos de trading no garantizan resultados financieros similares en el futuro.",
+      "Riesgos de la copia de operaciones",
+      "Los resultados de las operaciones copiadas pueden diferir de los de la cuenta de origen debido a diferencias en las condiciones de ejecución, los importes de capital, la configuración de copia y otras circunstancias.",
+      "Riesgos del trading algorítmico",
+      "Los robots de trading operan de acuerdo con sus algoritmos programados y pueden realizar operaciones tanto rentables como con pérdidas.",
+      "La eficacia de los algoritmos de trading depende de las condiciones del mercado, los parámetros de configuración, las características de la plataforma utilizada y la calidad de ejecución de las operaciones.",
+      "Factores de riesgo adicionales",
+      "El uso de apalancamiento aumenta tanto el beneficio potencial como las posibles pérdidas.",
+      "La volatilidad de los mercados financieros, la liquidez insuficiente, el deslizamiento, los fallos técnicos y los retrasos en la ejecución de órdenes pueden afectar significativamente a los resultados de trading.",
+      "Toma de decisiones independiente",
+      "Las decisiones de registrarse con un bróker, elegir una plataforma, una estrategia de trading y un participante concreto cuyas operaciones se copiarán, conectarse a servicios de copia, usar robots de trading y determinar los parámetros de negociación y la cantidad de fondos utilizados las toma el usuario de forma independiente, a su criterio, basándose en su propia evaluación de las condiciones de uso de los servicios correspondientes y los riesgos financieros asociados."
+    ]
+  },
+  "meta": {
+    "home": {
+      "title": "www.Vladimir1.com",
+      "description": "Viajes, trading y robots de trading."
+    },
+    "trading": {
+      "title": "T-Capital",
+      "description": "Proyecto de copy trading."
+    },
+    "fmb": {
+      "title": "Fast Money Bot",
+      "description": "Robots de trading y copy trading."
+    },
+    "guide": {
+      "title": "T-Capital — Guía de conexión",
+      "description": "Guía paso a paso. Conexión en 15 minutos."
+    },
+    "placeholder": {
+      "title": "Fast Money Bot — Guía en desarrollo",
+      "description": "La guía de conexión a Fast Money Bot estará disponible próximamente."
+    },
+    "legal": {
+      "title": "Información legal — Vladimir1.com",
+      "description": "Información legal sobre Vladimir1.com y sus proyectos."
+    },
+    "privacy": {
+      "title": "Política de privacidad — Vladimir1.com",
+      "description": "Uso de la información y del almacenamiento local en Vladimir1.com."
+    },
+    "risks": {
+      "title": "Advertencia de riesgos — Vladimir1.com",
+      "description": "Riesgos del trading, la copia de operaciones y el uso de robots de trading."
+    }
+  }
+}

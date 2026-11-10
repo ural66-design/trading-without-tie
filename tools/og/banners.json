@@ -1,0 +1,21 @@
+{
+  "lang": "ru",
+  "banners": [
+    { "id": "home", "route": "", "file": "home", "theme": "home", "image": "portrait", "title": "Vladimir1.com", "description": "Путешествия. Трейдинг. Алгоритмы." },
+    { "id": "t-capital", "route": "t-capital", "file": "t-capital", "theme": "t-capital", "image": "t-capital", "title": "T-Capital", "description": "Проект копитрейдинга." },
+    { "id": "t-capital-instruction", "route": "t-capital/instruction", "file": "instruction", "theme": "t-capital", "image": "t-capital", "title": "T-Capital", "description": "Пошаговая инструкция по подключению." },
+    { "id": "fast-money-bot", "route": "fast-money-bot", "file": "fmb", "theme": "fmb", "image": "fmb", "title": "Fast Money Bot", "description": "Торговые роботы и копитрейдинг." }
+  ],
+  "translations": {
+    "en": { "home": "Travel. Trading. Algorithms.", "t-capital": "A copy trading project.", "t-capital-instruction": "Step-by-step setup guide.", "fast-money-bot": "Trading robots and copy trading." },
+    "es": { "home": "Viajes. Trading. Algoritmos.", "t-capital": "Proyecto de copy trading.", "t-capital-instruction": "Guía de conexión paso a paso.", "fast-money-bot": "Robots de trading y copy trading." },
+    "pt-BR": { "home": "Viagens. Trading. Algoritmos.", "t-capital": "Projeto de copy trading.", "t-capital-instruction": "Guia de conexão passo a passo.", "fast-money-bot": "Robôs de trading e copy trading." },
+    "tr": { "home": "Seyahat. Alım satım. Algoritmalar.", "t-capital": "İşlem kopyalama projesi.", "t-capital-instruction": "Adım adım bağlantı kılavuzu.", "fast-money-bot": "İşlem robotları ve işlem kopyalama." },
+    "fil": { "home": "Paglalakbay. Trading. Mga algorithm.", "t-capital": "Proyekto sa copy trading.", "t-capital-instruction": "Hakbang-hakbang na gabay sa pagkonekta.", "fast-money-bot": "Mga trading robot at copy trading." },
+    "id": { "home": "Perjalanan. Trading. Algoritme.", "t-capital": "Proyek copy trading.", "t-capital-instruction": "Panduan koneksi langkah demi langkah.", "fast-money-bot": "Robot trading dan copy trading." },
+    "ms": { "home": "Pengembaraan. Dagangan. Algoritma.", "t-capital": "Projek dagangan salinan.", "t-capital-instruction": "Panduan sambungan langkah demi langkah.", "fast-money-bot": "Robot dagangan dan dagangan salinan." },
+    "th": { "home": "การเดินทาง การเทรด อัลกอริทึม", "t-capital": "โครงการคัดลอกการเทรด", "t-capital-instruction": "คู่มือเชื่อมต่อทีละขั้นตอน", "fast-money-bot": "หุ่นยนต์เทรดและการคัดลอกการเทรด" },
+    "vi": { "home": "Du lịch. Giao dịch. Thuật toán.", "t-capital": "Dự án sao chép giao dịch.", "t-capital-instruction": "Hướng dẫn kết nối từng bước.", "fast-money-bot": "Robot giao dịch và sao chép giao dịch." },
+    "hi": { "home": "यात्राएँ। ट्रेडिंग। एल्गोरिदम।", "t-capital": "कॉपी ट्रेडिंग परियोजना।", "t-capital-instruction": "जुड़ने की चरणबद्ध मार्गदर्शिका।", "fast-money-bot": "ट्रेडिंग रोबोट और कॉपी ट्रेडिंग।" }
+  }
+}

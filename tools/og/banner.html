@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>OG banner</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 1200px; height: 630px; margin: 0; overflow: hidden; }
+    body { font-family: Inter, sans-serif; font-synthesis: none; }
+    body:lang(th) { font-family: 'Noto Sans Thai', Inter, sans-serif; }
+    body:lang(hi) { font-family: 'Noto Sans Devanagari', Inter, sans-serif; }
+    .backdrop { position: absolute; inset: 0; overflow: hidden; }
+    [data-theme="home"] {
+      color: #fff;
+      background: linear-gradient(148deg, #204b76, #13547b 47%, #183f43 100%);
+    }
+    [data-theme="home"] .backdrop::before {
+      content: '';
+      position: absolute;
+      inset: -18px;
+      background-image: var(--portrait);
+      background-size: 580% 110%;
+      background-position: left center;
+      filter: blur(12px);
+    }
+    [data-theme="home"] .backdrop::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, #102e52bf, #103a62a6 64%, #163f5270);
+    }
+    [data-theme="t-capital"] {
+      color: #0d2a52;
+      background: radial-gradient(ellipse at 18% 6%, #fff 0%, transparent 57%),
+                  radial-gradient(ellipse at 92% 42%, #dbe9de 0%, transparent 52%),
+                  linear-gradient(153deg, #f5f2e9, #e5e9e3);
+    }
+    [data-theme="fmb"] {
+      color: #fff;
+      background: radial-gradient(ellipse at 95% 55%, #50662167 0%, transparent 49%),
+                  radial-gradient(ellipse at 12% 5%, #1c3558 0%, transparent 54%),
+                  linear-gradient(135deg, #102542, #071629);
+    }
+    .panel {
+      position: absolute;
+      --media-size: 248px;
+      --mark-size: 240px;
+      left: 55px;
+      top: 70px;
+      width: 1090px;
+      height: 490px;
+      padding: 60px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) var(--media-size);
+      gap: 36px;
+      align-items: center;
+      border: 1px solid rgb(255 255 255 / 42%);
+      border-radius: 36px;
+      background: rgb(255 255 255 / 12%);
+      box-shadow: 0 22px 54px rgb(7 22 41 / 14%);
+      backdrop-filter: blur(18px);
+    }
+    .copy { grid-column: 1; grid-row: 1; }
+    [data-theme="home"] .copy { grid-column: 1 / -1; margin-inline-start: -16px; white-space: nowrap; }
+    [data-theme="home"] .copy p { text-wrap: nowrap; letter-spacing: -2.27px; }
+    [data-theme="home"]:not(:lang(ru)) .copy { max-width: 708px; white-space: normal; }
+    [data-theme="home"]:not(:lang(ru)) .copy p { text-wrap: balance; letter-spacing: normal; }
+    h1, p { margin: 0; }
+    h1 { font-size: 86px; line-height: 1.1; font-weight: 700; letter-spacing: -.035em; }
+    p { margin-top: 20px; font-size: 44px; line-height: 1.15; font-weight: 500; text-wrap: balance; }
+    .media { grid-column: 2; grid-row: 1; width: var(--media-size); height: var(--media-size); display: grid; place-items: center; }
+    [data-theme="home"] .media { position: relative; top: -40px; }
+    .mark { display: block; width: var(--mark-size); height: var(--mark-size); object-fit: contain; }
+    .media[data-image="portrait"] .mark {
+      object-fit: cover;
+      object-position: center;
+      object-view-box: inset(2% 15.5% 29%);
+      border-radius: 50%;
+      outline: 2px solid #fff;
+      outline-offset: -2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"></div>
+  <main class="panel">
+    <div class="copy"><h1></h1><p></p></div>
+    <div class="media"><img class="mark" alt=""></div>
+  </main>
+</body>
+</html>

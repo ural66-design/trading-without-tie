@@ -99,10 +99,14 @@ async function main() {
   assert.equal(new Set(config.banners.map(banner => banner.id)).size, 4);
   const requested = process.argv[3];
   const all = requested === '--all';
-  const banners = !requested || all ? config.banners : config.banners.filter(banner => banner.id === requested);
+  const centeredHomes = requested === '--centered-homes';
+  const versioned = all || centeredHomes;
+  const banners = !requested || all ? config.banners : config.banners.filter(banner => banner.id === (centeredHomes ? 'home' : requested));
   assert.ok(banners.length, `Unknown banner: ${requested}`);
-  const languages = all ? [config.lang, ...Object.keys(config.translations)] : [config.lang];
+  const languages = all ? [config.lang, ...Object.keys(config.translations)]
+    : centeredHomes ? Object.keys(config.translations).filter(lang => lang !== 'tr') : [config.lang];
   if (all) assert.equal(languages.length, 11);
+  if (centeredHomes) assert.equal(languages.length, 9);
   await mkdir(output, { recursive: true });
   const browser = await chromium.launch({
     channel: process.env.OG_CHROMIUM ? undefined : 'chrome',
@@ -126,7 +130,7 @@ async function main() {
       const check = await render(page, { ...banner, description }, lang, images[banner.image], portrait);
       assert.deepEqual(check.panel, [55, 70, 1090, 490]);
       const isPortrait = banner.image === 'portrait';
-      const portraitLift = isPortrait ? 40 : 0;
+      const portraitLift = isPortrait && ['ru', 'tr'].includes(lang) ? 40 : 0;
       assert.deepEqual(check.media, [836, 191 - portraitLift, 248, 248]);
       assert.deepEqual(check.image, [840, 195 - portraitLift, 240, 240]);
       assert.equal(check.fit, isPortrait ? 'cover' : 'contain');
@@ -156,13 +160,13 @@ async function main() {
         const gap = Math.max(ix - text.right, text.left - (ix + iw), iy - text.bottom, text.top - (iy + ih));
         assert.ok(gap >= minimumGap, `${banner.id}: text too close to the image (${gap.toFixed(1)} px)`);
       }
-      const directory = all ? path.join(output, lang) : output;
+      const directory = versioned ? path.join(output, lang) : output;
       await mkdir(directory, { recursive: true });
-      const filename = all ? `${banner.file}-v3.jpg` : `${banner.id}.jpg`;
+      const filename = versioned ? `${banner.file}-v3.jpg` : `${banner.id}.jpg`;
       const jpeg = await page.screenshot({ path: path.join(directory, filename), type: 'jpeg', quality: 95 });
       const large = await sharp(jpeg).metadata();
       assert.deepEqual([large.width, large.height], [1200, 630]);
-      if (!all) {
+      if (!versioned) {
         const small = await sharp(jpeg).resize({ width: 500 }).jpeg({ quality: 93 }).toFile(path.join(output, `${banner.id}-500.jpg`));
         assert.deepEqual([small.width, small.height], [500, 263]);
       }

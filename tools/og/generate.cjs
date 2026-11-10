@@ -57,7 +57,12 @@ async function render(page, item, lang, image, portrait) {
     document.body.dataset.theme = item.theme;
     document.body.style.setProperty('--portrait', `url("${portrait}")`);
     h1.textContent = item.title;
-    p.textContent = item.description;
+    if (item.id === 'home' && ['ru', 'tr'].includes(lang)) {
+      const lastSpace = item.description.lastIndexOf(' ');
+      p.replaceChildren(item.description.slice(0, lastSpace), document.createElement('br'), item.description.slice(lastSpace + 1));
+    } else {
+      p.textContent = item.description;
+    }
     media.dataset.image = item.image;
     mark.src = image;
     const faces = await Promise.all([h1, p].map(el => {
@@ -73,8 +78,12 @@ async function render(page, item, lang, image, portrait) {
       const range = document.createRange();
       range.selectNodeContents(el);
       const rect = range.getBoundingClientRect();
+      const leading = parseFloat(getComputedStyle(el).lineHeight);
+      const lines = el.querySelector('br')
+        ? Math.round((rect.height - range.getClientRects()[0].height) / leading) + 1
+        : Math.round(el.getBoundingClientRect().height / leading);
       return { width: rect.width, left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom,
-        lines: Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)) };
+        lines };
     };
     const panel = box(document.querySelector('.panel'));
     const copy = box(document.querySelector('.copy'));
@@ -100,11 +109,13 @@ async function main() {
   const requested = process.argv[3];
   const all = requested === '--all';
   const centeredHomes = requested === '--centered-homes';
-  const versioned = all || centeredHomes;
-  const banners = !requested || all ? config.banners : config.banners.filter(banner => banner.id === (centeredHomes ? 'home' : requested));
+  const ruTrHomes = requested === '--ru-tr-homes';
+  const versioned = all || centeredHomes || ruTrHomes;
+  const banners = !requested || all ? config.banners : config.banners.filter(banner => banner.id === (centeredHomes || ruTrHomes ? 'home' : requested));
   assert.ok(banners.length, `Unknown banner: ${requested}`);
   const languages = all ? [config.lang, ...Object.keys(config.translations)]
-    : centeredHomes ? Object.keys(config.translations).filter(lang => lang !== 'tr') : [config.lang];
+    : centeredHomes ? Object.keys(config.translations).filter(lang => lang !== 'tr')
+    : ruTrHomes ? ['ru', 'tr'] : [config.lang];
   if (all) assert.equal(languages.length, 11);
   if (centeredHomes) assert.equal(languages.length, 9);
   await mkdir(output, { recursive: true });
@@ -130,9 +141,8 @@ async function main() {
       const check = await render(page, { ...banner, description }, lang, images[banner.image], portrait);
       assert.deepEqual(check.panel, [55, 70, 1090, 490]);
       const isPortrait = banner.image === 'portrait';
-      const portraitLift = isPortrait && ['ru', 'tr'].includes(lang) ? 40 : 0;
-      assert.deepEqual(check.media, [836, 191 - portraitLift, 248, 248]);
-      assert.deepEqual(check.image, [840, 195 - portraitLift, 240, 240]);
+      assert.deepEqual(check.media, [836, 191, 248, 248]);
+      assert.deepEqual(check.image, [840, 195, 240, 240]);
       assert.equal(check.fit, isPortrait ? 'cover' : 'contain');
       assert.equal(check.position, '50% 50%');
       assert.equal(check.crop, isPortrait ? 'inset(2% 15.5% 29%)' : 'none');
@@ -150,8 +160,9 @@ async function main() {
       const family = { th: 'Noto Sans Thai', hi: 'Noto Sans Devanagari' }[lang] || 'Inter';
       assert.ok(check.description.family.startsWith(family) || check.description.family.startsWith(`"${family}"`));
       assert.equal(check.title.lines, 1, `${banner.id}: unexpected title wrap`);
-      const allowedLines = lang === 'ru' && ['home', 't-capital'].includes(banner.id) ? 1 : 2;
+      const allowedLines = lang === 'ru' && banner.id === 't-capital' ? 1 : 2;
       assert.ok(check.description.lines >= 1 && check.description.lines <= allowedLines, `${lang}/${banner.id}: unexpected description wrap`);
+      if (isPortrait && ['ru', 'tr'].includes(lang)) assert.equal(check.description.lines, 2);
       if (lang === 'ru' && banner.id === 'fast-money-bot') assert.equal(check.description.lines, 2);
       assert.ok(Math.abs(check.title.left - check.description.left) < 1, `${banner.id}: inconsistent left edge`);
       const minimumGap = banner.id === 'fast-money-bot' ? 30 : 8;

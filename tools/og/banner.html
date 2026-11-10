@@ -65,11 +65,11 @@
     [data-theme="home"] .copy p { text-wrap: nowrap; letter-spacing: -2.27px; }
     [data-theme="home"]:not(:lang(ru)) .copy { max-width: 708px; white-space: normal; }
     [data-theme="home"]:not(:lang(ru)) .copy p { text-wrap: balance; letter-spacing: normal; }
+    [data-theme="home"]:is(:lang(ru), :lang(tr)) .copy p { block-size: 1lh; text-wrap: nowrap; }
     h1, p { margin: 0; }
     h1 { font-size: 86px; line-height: 1.1; font-weight: 700; letter-spacing: -.035em; }
     p { margin-top: 20px; font-size: 44px; line-height: 1.15; font-weight: 500; text-wrap: balance; }
     .media { grid-column: 2; grid-row: 1; width: var(--media-size); height: var(--media-size); display: grid; place-items: center; }
-    [data-theme="home"]:is(:lang(ru), :lang(tr)) .media { position: relative; top: -40px; }
     .mark { display: block; width: var(--mark-size); height: var(--mark-size); object-fit: contain; }
     .media[data-image="portrait"] .mark {
       object-fit: cover;

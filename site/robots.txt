@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://ural66-design.github.io/trading-without-tie/sitemap.xml
+Sitemap: https://www.vladimir1.com/sitemap.xml

@@ -66,6 +66,20 @@ strong{font-weight:700}
 
 h1, h2, h3 { text-wrap: balance; }
 p, .step-content li { text-wrap: pretty; }
+.home .panel, .project-panel, .guide-intro, .answer, .legal-copy { container-type: inline-size; }
+@container (width < 25rem) {
+  .home p .keep-words { white-space: normal; }
+}
+@container (width >= 19rem) {
+  .home .panel > p { text-wrap: balance; }
+}
+@container (width >= 24rem) {
+  .project-panel > p,
+  .guide-intro > p:first-of-type,
+  .answer > p:first-of-type,
+  .legal-copy > p:first-of-type { text-wrap: balance; }
+  .trading .project-panel > p:first-of-type .paragraph-tail { display: inline; }
+}
 .paragraph-tail, .long-word {
   display: inline-block;
   max-inline-size: 100%;

@@ -38,34 +38,15 @@ h1{font-size:clamp(28px,3vw,32px);line-height:1.2;letter-spacing:-.025em;margin:
 .legal-page{background:var(--legal-bg);color:var(--legal-text)}.legal-page .panel{background:var(--legal-surface);border-color:var(--legal-border);box-shadow:none}.legal-copy h2{font-size:22px;margin:24px 0 16px}.legal-copy a{color:var(--legal-accent)}.legal-copy p{line-height:1.6}.legal-page .back{margin:24px 0 0;color:var(--legal-accent)}
 .modal-open{overflow:hidden;scrollbar-gutter:stable}dialog{color:#1a1a1a;border:1px solid #d8e0e8;border-radius:24px;padding:24px;max-width:min(480px,calc(100vw - 32px));max-height:85dvh;overflow:auto;background:#fff;box-shadow:0 24px 80px #0d2a5233}dialog::backdrop{background:var(--legal-overlay)}dialog h2{padding-right:32px}.dialog-close{position:absolute;right:8px;top:8px;border:0;background:transparent;color:#375a72;width:44px;height:44px;font-size:28px}.modal-actions{display:grid;gap:12px;margin-top:24px}
 .legal-dialog{width:720px;max-width:calc(100vw - 32px);padding:0;background:var(--legal-surface);color:var(--legal-text)}.legal-dialog [data-panel=legal]{padding:24px}.legal-dialog-header{position:sticky;top:0;background:#fff;z-index:1;padding-bottom:16px}.legal-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.legal-tabs button{min-height:48px;border:1px solid var(--legal-border);border-radius:12px;padding:8px;font-size:14px;background:white;color:var(--legal-text)}.legal-tabs [aria-selected=true]{background:var(--legal-active);border-color:var(--legal-accent)}.legal-dialog a{color:var(--legal-accent)}.legal-dialog :focus-visible{outline:2px solid var(--legal-accent)}.legal-copy{overflow-wrap:anywhere}
-@media(min-width:601px) and (max-height:840px){
-  .home{--avatar:clamp(112px,18dvh,160px);--home-spacing:clamp(0px,calc((100dvh - 480px)*.05),8px);padding-top:calc(var(--overlap) + 4px + var(--home-spacing)*1.5);padding-bottom:calc(8px + var(--home-spacing))}
-  .home .panel{padding-top:calc(var(--avatar) - var(--overlap) + 8px + var(--home-spacing));padding-bottom:calc(12px + var(--home-spacing)*1.5)}
-  .home h1{font-size:28px;margin-bottom:calc(10px + var(--home-spacing)*.75)}
-  .home p{margin-bottom:calc(4px + var(--home-spacing)*.5)}
-  .home .actions{margin-top:calc(8px + var(--home-spacing)*.5)}
-  .home .socials{margin-top:calc(12px + var(--home-spacing)*.5)}
-}
+@media(min-width:601px) and (max-height:840px){.home{--avatar:clamp(112px,18dvh,160px);padding-top:calc(var(--overlap) + 16px)}.home .panel{padding-top:calc(var(--avatar) - var(--overlap) + 16px)}.home .socials{margin-top:16px}.home h1{font-size:28px}.home .actions{margin-top:12px}}
 @media(min-width:601px) and (max-width:1366px) and (orientation:landscape){.home .panel{max-width:650px}}
-@media(max-width:600px){body{padding:72px 16px 24px}.panel{padding:20px}.project-logo{width:80px;height:80px;margin-bottom:16px}.fmb .actions{grid-template-columns:1fr}.step-head{flex-wrap:wrap}.step-toggle{flex-basis:100%}.step-label{margin-left:auto}.step-content{padding:16px}
-  .home{
-    --avatar:clamp(104px,min(18dvh,calc(104px + (100dvh - 700px)*.34)),160px);
-    --home-spacing:clamp(0px,calc((100dvh - 680px)*.05),8px);
-    --home-top:clamp(4px,calc(4px + (100dvh - 740px)*.6),64px);
-    padding:calc(var(--overlap) + var(--home-top)) 12px calc(2px + var(--home-spacing)*1.25);
-  }
-  .home .panel{padding:calc(var(--avatar) - var(--overlap) + 6px + var(--home-spacing)*1.75) 20px calc(6px + var(--home-spacing)*1.75)}
-  .home h1{font-size:28px;margin-bottom:calc(6px + var(--home-spacing)*1.25)}
-  .home p{font-size:16px;margin-bottom:calc(3px + var(--home-spacing)*.625)}
-  .home .actions{gap:calc(6px + var(--home-spacing)*.25);margin-top:calc(6px + var(--home-spacing)*1.25)}
-  .home .socials{margin-top:calc(10px + var(--home-spacing)*1.25)}
-  .home h2{margin-bottom:calc(8px + var(--home-spacing)*.5)}
-.legal-dialog{max-width:100vw;width:100%;height:100dvh;max-height:100dvh;border-radius:0;margin:0}.legal-dialog [data-panel=legal]{padding:calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom))}}
-@media(max-width:600px) and (max-height:740px){.home h1{font-size:26px}}
+@media(max-width:600px){body{padding:72px 16px 24px}.panel{padding:20px}.project-logo{width:80px;height:80px;margin-bottom:16px}.fmb .actions{grid-template-columns:1fr}.step-head{flex-wrap:wrap}.step-toggle{flex-basis:100%}.step-label{margin-left:auto}.step-content{padding:16px}.home{--avatar:clamp(112px,18dvh,160px);padding:calc(var(--overlap) + 64px) 12px 12px}.home .panel{padding:calc(var(--avatar) - var(--overlap) + 20px) 20px 20px}.home h1{font-size:28px}.home .socials{margin-top:20px}.home p{font-size:16px}.legal-dialog{max-width:100vw;width:100%;height:100dvh;max-height:100dvh;border-radius:0;margin:0}.legal-dialog [data-panel=legal]{padding:calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom))}}
+@media(max-width:600px) and (max-height:740px){.home{--avatar:112px;padding-top:calc(var(--overlap) + 16px)}.home .panel{padding-top:calc(var(--avatar) - var(--overlap) + 16px);padding-bottom:16px}.home h1{font-size:26px;margin-bottom:12px}.home .actions{margin-top:12px}.home .socials{margin-top:16px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
 .legal-language-slot{height:48px;margin-bottom:16px}.legal-language-slot .language-picker{top:0;right:32px}.legal-dialog .dialog-close{position:sticky;float:right;z-index:40;top:8px;margin-bottom:-44px}.legal-dialog-header h2{font-size:22px}
 .legal-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.legal-tabs button{min-width:0;overflow-wrap:anywhere}
-@media(max-width:600px) and (max-height:700px){.home .panel{padding-inline:16px}}
+@media(max-width:600px) and (max-height:740px){.home{padding-bottom:8px}}
+@media(max-width:600px) and (max-height:700px){.home{--avatar:104px;padding-top:calc(var(--overlap) + 4px);padding-bottom:4px}.home .panel{padding:calc(var(--avatar) - var(--overlap) + 8px) 16px 12px}.home h1{margin-bottom:8px}.home p{margin-bottom:4px}.home .actions{margin-top:8px}.home .socials{margin-top:12px}}
 
 /* Locale-aware line breaking, with a static no-orphan fallback. */
 .home h1{text-wrap:balance;word-break:normal;line-break:auto}

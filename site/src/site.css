@@ -43,11 +43,6 @@ h1{font-size:clamp(28px,3vw,32px);line-height:1.2;letter-spacing:-.025em;margin:
 .social-button{display:grid;grid-template-columns:1fr max-content 1fr;gap:12px}.social-button span{grid-column:2}.social-button img{grid-column:1;grid-row:1;justify-self:end;width:20px;height:20px;transition:opacity .15s}.social-button:hover img{opacity:.8}
 .guide .panel{max-width:700px}.guide h1{font-size:24px;line-height:1.35}.guide-intro,.howto,.risk{padding:16px;border-radius:12px;margin-bottom:16px;background:#f2f6fa;border-left:3px solid #0d2a52}.howto{background:#edf7f0;border-color:#1faf5a}.risk{background:#fff3f1;border-color:#d93a3a}
 .guide-intro p,.howto p,.risk p{font-size:16px}.risk h2,.guide-intro h2,.howto h2{font-size:16px;margin-bottom:8px}
-/* Align the three callouts only when their text has enough room for comfortable spacing. */
-.guide-intro,.howto,.risk{container-type:inline-size}
-@container (min-width:36rem){
-  :is(.guide-intro,.howto,.risk) p:not(:lang(th)){text-align:justify;text-align-last:start}
-}
 .progress{margin:24px 0;padding:12px 16px;border-radius:14px;background:#ffffffe8;border:1px solid #d8e0e8;backdrop-filter:blur(12px);z-index:10;box-shadow:0 3px 14px #0d2a520d}
 .progress.sticky{position:sticky;top:max(8px,env(safe-area-inset-top))}.progress-track{height:8px;background:#e1e7e4;border-radius:8px;overflow:hidden}#progress-fill{height:100%;width:0;background:#1faf5a;transition:width .25s}.progress-counter{font-size:14px;text-align:center;margin-top:8px}
 .step{border:1px solid #d8e0e8;border-radius:16px;margin-bottom:16px;overflow:hidden;background:#fff}.step.complete{border-color:#1faf5a}.step.locked{background:#f7f8fa}
@@ -93,8 +88,28 @@ strong{font-weight:700}
 @media(max-width:600px){.legal-dialog [data-panel=legal]{padding:0 16px calc(16px + env(safe-area-inset-bottom))}.legal-dialog-header{padding-top:calc(16px + env(safe-area-inset-top))}}
 
 h1, h2, h3 { text-wrap: balance; }
-p, .step-content li { text-wrap: pretty; }
-.paragraph-tail, .long-word {
+p { text-wrap: pretty; }
+
+/* Apply browser-native typography to prose, leaving controls and the homepage alone. */
+body:not(.home) :is(main:not(.placeholder), .legal-copy) :is(p:not([role="status"]), li) {
+  text-wrap: wrap;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  word-break: normal;
+}
+body:not(.home) :is(main:not(.placeholder), .legal-copy) :is(p, li) a:is([href^="mailto:"], [href^="tel:"]) {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+body:not(.home) :is(main:not(.placeholder), .legal-copy) :is(p, li):lang(th) {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+body:not(.home) :is(main:not(.placeholder), .legal-copy) :is(p:not([role="status"]), li).prose-justified:not(:lang(th)) {
+  text-align: justify;
+  text-align-last: start;
+}
+.long-word {
   display: inline-block;
   max-inline-size: 100%;
 }

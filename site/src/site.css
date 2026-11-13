@@ -182,3 +182,6 @@ body:not(.home) :is(main:not(.placeholder), .legal-copy) :is(p:not([role="status
   .legal-dialog-header:has(details[open]) { position: relative; }
   .home { --home-top:16px; }
 }
+
+.protected-name { white-space: nowrap; -webkit-hyphens: none; hyphens: none; }
+.protected-name.address { display: inline-block; max-inline-size: 100%; overflow-x: auto; vertical-align: bottom; }

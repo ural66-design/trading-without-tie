@@ -4,6 +4,7 @@ const DATA=JSON.parse(document.querySelector('#page-data').textContent);
 const originalURL=location.href;
 for(const key in DATA.legalURLs)DATA.legalURLs[key]=new URL(DATA.legalURLs[key],originalURL).href;
 const KEY='vladimir1:t-capital:progress:v2', LANG='vladimir1:language';
+const isHistoryReturn=performance.getEntriesByType('navigation')[0]?.type==='back_forward';
 let state=normalise(null), storageFailed=false, transfer=null;
 try { transfer=JSON.parse(sessionStorage.getItem('vladimir1:transfer'));sessionStorage.removeItem('vladimir1:transfer'); } catch {}
 const isTransfer=transfer?.target===location.pathname&&Date.now()-transfer.time<30000;
@@ -19,14 +20,69 @@ picker.querySelector('summary').addEventListener('click',e=>{
 picker.addEventListener('focusout',e=>{if(!picker.contains(e.relatedTarget))picker.open=false;});
 document.addEventListener('pointerdown',e=>{if(!picker.contains(e.target))picker.open=false;});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&picker.open){picker.open=false;picker.querySelector('summary').focus();}});
-picker.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
-  try {localStorage.setItem(LANG,a.dataset.lang);}catch{}
-  try {sessionStorage.setItem('vladimir1:transfer',JSON.stringify({target:new URL(a.href).pathname,time:Date.now(),state:page==='guide'?state:null}));}catch{}
-  picker.open=false;
-}));
 let modal=null, lastFocus=null,scrollTop=0;
 const dialog=document.querySelector('#dialog');
-const baseURL=location.pathname+location.search+location.hash;
+const standaloneCopy=document.querySelector('main.legal-copy');
+const guideURL=new URL(location.href);
+const legalTabs=[...dialog?.querySelectorAll('[data-legal-tab]')??[]];
+const requestedDoc=legalTabs.find(tab=>tab.dataset.legalTab===guideURL.searchParams.get('legal'))?.dataset.legalTab;
+if(requestedDoc)guideURL.searchParams.delete('legal');
+const baseURL=guideURL.pathname+guideURL.search+guideURL.hash;
+
+function readingSections(copy){
+  return [copy,...copy.querySelectorAll(':scope > h2, :scope > h3')];
+}
+function readingEdge(scroller){
+  return scroller===document.scrollingElement?0:scroller.querySelector('.legal-dialog-header').getBoundingClientRect().bottom;
+}
+function readingPosition(copy,scroller){
+  const edge=readingEdge(scroller);
+  const sections=readingSections(copy).map(section=>section.getBoundingClientRect().top);
+  sections.push(copy.getBoundingClientRect().bottom);
+  const index=Math.max(0,sections.findLastIndex(top=>top<=edge));
+  const span=sections[index+1]-sections[index];
+  return {index,ratio:span>0?Math.min(1,Math.max(0,(edge-sections[index])/span)):0,atStart:scroller.scrollTop<2};
+}
+function restoreReading(copy,scroller,reading){
+  if(reading.atStart){scroller.scrollTop=0;return;}
+  const sections=readingSections(copy);
+  const index=Math.min(reading.index,sections.length-1);
+  const start=sections[index].getBoundingClientRect().top;
+  const end=sections[index+1]?.getBoundingClientRect().top??copy.getBoundingClientRect().bottom;
+  scroller.scrollTop+=start+(end-start)*reading.ratio-readingEdge(scroller);
+}
+function restoreTransferredReading(copy,scroller){
+  if(!isTransfer||!transfer.reading)return;
+  const reading=transfer.reading;
+  document.fonts.ready.then(()=>{
+    // Wait for native navigation and the prose-spacing pass before measuring headings.
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      if(copy.getClientRects().length)restoreReading(copy,scroller,reading);
+    }));
+  });
+}
+let standaloneReading;
+if(standaloneCopy){
+  window.addEventListener('scroll',()=>{
+    if(scrollY>2||!picker.open&&!picker.contains(document.activeElement))standaloneReading=readingPosition(standaloneCopy,document.scrollingElement);
+  },{passive:true});
+}
+picker.querySelectorAll('a').forEach(a=>a.addEventListener('click',event=>{
+  if(event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+  const inLegalModal=modal?.kind==='legal';
+  const copy=inLegalModal?dialog.querySelector('[data-legal-doc]:not([hidden])'):standaloneCopy;
+  const target=new URL(a.href);
+  try {localStorage.setItem(LANG,a.dataset.lang);}catch{}
+  picker.open=false;
+  if((inLegalModal||standaloneCopy)&&a.dataset.lang===lang){event.preventDefault();return;}
+  const current=copy?readingPosition(copy,inLegalModal?dialog:document.scrollingElement):null;
+  const reading=!inLegalModal&&current?.atStart?standaloneReading??current:current;
+  try {sessionStorage.setItem('vladimir1:transfer',JSON.stringify({target:target.pathname,time:Date.now(),state:page==='guide'?state:null,reading}));}catch{}
+  if(inLegalModal){
+    event.preventDefault();
+    location.replace(target.href);
+  }
+}));
 if(!dialog&&history.state?.vladimirModal){
   const clean={...history.state};delete clean.vladimirModal;history.replaceState(clean,'');
 }
@@ -39,7 +95,7 @@ function displayModal(kind,doc) {
     dialog.querySelector('.legal-language-slot').append(picker);
     picker.querySelectorAll('a').forEach((a,i)=>{
       const url=new URL(originalLanguageLinks[i]);
-      url.pathname=url.pathname.replace(/t-capital\/instruction\/$/,doc+'/');
+      url.searchParams.set('legal',doc);
       a.href=url.href;
     });
     dialog.querySelectorAll('[data-legal-doc]').forEach(el=>el.hidden=el.dataset.legalDoc!==doc);
@@ -51,11 +107,15 @@ function displayModal(kind,doc) {
     scrollTop=scrollY;document.documentElement.classList.add('modal-open');dialog.showModal();
   }
   if(kind==='legal'&&documentChanged)dialog.scrollTop=0;
-  dialog.querySelector(`[data-panel="${kind}"] button:not([hidden])`)?.focus();
+  dialog.querySelector(`[data-panel="${kind}"] button:not([hidden])`)?.focus({preventScroll:true});
 }
-function openModal(kind,doc=null,replace=false){
-  const url=kind==='legal'?DATA.legalURLs[doc]:baseURL;
-  const h={...history.state,vladimirModal:{kind,doc,base:baseURL}};
+function openModal(kind,doc=null,replace=false,replaceOnClose=history.state?.vladimirModal?.replaceOnClose??false){
+  let url=baseURL;
+  if(kind==='legal'){
+    url=new URL(baseURL,location.origin);
+    url.searchParams.set('legal',doc);
+  }
+  const h={...history.state,vladimirModal:{kind,doc,base:baseURL,replaceOnClose}};
   (replace?history.replaceState:history.pushState).call(history,h,'',url);
   displayModal(kind,doc);
 }
@@ -66,7 +126,16 @@ function hideModal(){
   picker.querySelectorAll('a').forEach((a,i)=>a.href=originalLanguageLinks[i]);
   scrollTo(0,scrollTop);lastFocus?.focus({preventScroll:true});lastFocus=null;
 }
-function closeModal(){if(history.state?.vladimirModal)history.back();else hideModal();}
+function closeModal(){
+  const current=history.state?.vladimirModal;
+  if(current?.replaceOnClose){
+    const next={...history.state};
+    delete next.vladimirModal;
+    history.replaceState(next,'',baseURL);
+    hideModal();
+  }else if(current)history.back();
+  else hideModal();
+}
 window.addEventListener('popstate',e=>{const m=e.state?.vladimirModal;if(m&&dialog)displayModal(m.kind,m.doc);else hideModal();});
 if(dialog){
   dialog.addEventListener('cancel',e=>{e.preventDefault();closeModal();});
@@ -116,8 +185,12 @@ if(page==='guide'){
   document.querySelector('[data-confirm-return]').addEventListener('click',()=>openModal('restore',null,true));
   document.querySelector('[data-confirm-done]').addEventListener('click',()=>{state={visited:true,count:3,open:null};save();render();closeModal();});
   save();render();
-  if(returning&&state.count<3&&!isTransfer)openModal('restore',null,Boolean(history.state?.vladimirModal));
+  if(requestedDoc){
+    openModal('legal',requestedDoc,true,history.state?.vladimirModal?.replaceOnClose??true);
+    restoreTransferredReading(dialog.querySelector('[data-legal-doc]:not([hidden])'),dialog);
+  }else if(returning&&state.count<3&&!isTransfer&&!isHistoryReturn)openModal('restore',null,Boolean(history.state?.vladimirModal));
 }
+if(standaloneCopy)restoreTransferredReading(standaloneCopy,document.scrollingElement);
 const faq=document.querySelector('#faq');
 if(faq){
   const items=[...faq.querySelectorAll('details')];

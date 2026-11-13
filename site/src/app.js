@@ -1,5 +1,19 @@
 import {normalise,checkStep,toggleStep,progressSticky} from './state.js';
 const body=document.body, page=body.dataset.page,lang=document.documentElement.lang;
+const viewport=document.documentElement;
+const stackedViewport=matchMedia('(vertical-viewport-segments > 1)');
+function centerPanels(){
+  const gutter=stackedViewport.matches
+    ? body.offsetWidth-body.clientWidth
+    : innerWidth-viewport.getBoundingClientRect().width;
+  viewport.style.setProperty('--panel-center-offset',Math.max(0,gutter)/2+'px');
+}
+const viewportObserver=new ResizeObserver(centerPanels);
+viewportObserver.observe(viewport);
+viewportObserver.observe(body);
+window.addEventListener('resize',centerPanels);
+stackedViewport.addEventListener('change',centerPanels);
+centerPanels();
 const DATA=JSON.parse(document.querySelector('#page-data').textContent);
 const originalURL=location.href;
 for(const key in DATA.legalURLs)DATA.legalURLs[key]=new URL(DATA.legalURLs[key],originalURL).href;

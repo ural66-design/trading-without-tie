@@ -31,11 +31,11 @@ h1{font-size:clamp(28px,3vw,32px);line-height:1.2;letter-spacing:-.025em;margin:
     calc(max(16px,env(safe-area-inset-top)) + 52px),
     calc(var(--overlap) + (var(--home-height) + var(--home-top) - var(--home-bottom) - var(--avatar) - var(--home-reference) + var(--home-width-adjustment))*.5)
   );
-  color:#fff;background:#0a2e4f;padding:var(--home-anchor) 16px var(--home-bottom);display:flex;flex-direction:column;isolation:isolate
+  color:#fff;background:#0a2e4f;padding:var(--home-padding-top,var(--home-anchor)) 16px var(--home-bottom);display:flex;flex-direction:column;isolation:isolate
 }
 .sea{position:fixed;inset:-14px;z-index:-2;background-image:url('../assets/portrait-sea.webp');background-repeat:no-repeat;background-size:600% 100%;background-position:left top;filter:blur(9px)}
 .home::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,#4ab2f014,#0046791f 50%,#092d4929)}
-.home .panel{position:relative;max-width:520px;margin:0 auto;padding:calc(var(--avatar) - var(--overlap) + 24px) 24px 24px;text-align:center;background:linear-gradient(135deg,#c0def452,#185e9557 45%,#bed7de4d);border:1.5px solid #ffffffe6;color:white;box-shadow:inset 0 0 20px #ffffff0a,0 15px 45px #143b5712}
+.home .panel{position:relative;max-width:520px;margin:var(--home-panel-margin,0 auto);padding:calc(var(--avatar) - var(--overlap) + 24px) 24px 24px;text-align:center;background:linear-gradient(135deg,#c0def452,#185e9557 45%,#bed7de4d);border:1.5px solid #ffffffe6;color:white;box-shadow:inset 0 0 20px #ffffff0a,0 15px 45px #143b5712}
 .portrait{position:absolute;top:calc(0px - var(--overlap));left:50%;transform:translateX(-50%);width:var(--avatar);aspect-ratio:1;border:2px solid white;border-radius:50%;overflow:hidden;box-shadow:0 12px 24px #103e5855;background:#41a1da}
 /* Keep the existing avatar crop and appearance exactly. */
 .portrait img{position:absolute;width:145%;height:145%;max-width:none;left:-22.5%;top:-3%;object-fit:cover;transform:scaleX(.96);transform-origin:center}
@@ -71,6 +71,7 @@ h1{font-size:clamp(28px,3vw,32px);line-height:1.2;letter-spacing:-.025em;margin:
 
 /* Keep native line-breaking rules for each document language. */
 :root{-webkit-hyphens:manual;hyphens:manual}
+.home .panel{-webkit-hyphens:none;hyphens:none}
 .keep-words{white-space:nowrap;hyphens:none;-webkit-hyphens:none}
 strong{font-weight:700}
 
@@ -129,6 +130,14 @@ p, .step-content li { text-wrap: pretty; }
   .legal-page .panel, .legal-dialog [data-panel=legal] { padding-inline: 12px; }
 }
 
+/* Center the actual desktop card while reserving room for the overlapping portrait. */
+@media (min-width: 1024px) {
+  .home {
+    --home-padding-top:max(calc(var(--overlap) + 16px),calc(max(16px,env(safe-area-inset-top)) + 52px));
+    --home-panel-margin:auto;
+  }
+}
+
 /* Keep the page and top-layer dialogs in one unobstructed viewport segment. */
 @media (horizontal-viewport-segments > 1), (vertical-viewport-segments > 1) {
   :root {
@@ -136,7 +145,7 @@ p, .step-content li { text-wrap: pretty; }
     --segment-height: env(viewport-segment-height 0 0, 100dvh);
   }
   body { position: relative; inline-size: var(--segment-width); }
-  .home { --home-width:var(--segment-width); --home-height:var(--segment-height); }
+  .home { --home-width:var(--segment-width); --home-height:var(--segment-height); --home-padding-top:var(--home-anchor); --home-panel-margin:0 auto; }
   body:is(.trading,.fmb,.guide) { padding-inline: clamp(16px, 5vw, 24px); }
   dialog {
     position: fixed;

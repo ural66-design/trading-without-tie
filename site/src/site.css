@@ -19,14 +19,13 @@ h1{font-size:clamp(28px,3vw,32px);line-height:1.2;letter-spacing:-.025em;margin:
 .home{
   --avatar:clamp(136px,21dvh,184px);
   --overlap:calc(var(--avatar)*.3);
-  --home-inline-size:100vw;
   --home-edge:max(4px,env(safe-area-inset-top),env(safe-area-inset-bottom));
-  --picker-bottom:calc(max(16px,env(safe-area-inset-top)) + 44px);
-  /* Reserve the picker height only when the portrait can reach its column. */
-  --picker-clearance:clamp(0px,calc((var(--avatar) + 2 * (max(16px,env(safe-area-inset-right)) + 80px) - var(--home-inline-size))*100),var(--picker-bottom));
   color:#fff;background:#0a2e4f;padding:var(--home-edge) 16px;
-  display:grid;grid-template-rows:minmax(var(--picker-clearance),1fr) auto minmax(0px,1fr);isolation:isolate
+  --home-viewport-height:100dvh;
+  --home-center-space:calc((var(--home-viewport-height) - 2 * var(--home-edge) - var(--overlap) - var(--home-panel-height,100dvh)) / 2);
+  display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:max(var(--picker-clearance,0px),var(--home-center-space)) auto;align-content:start;isolation:isolate
 }
+.home .language-menu>div{max-height:calc(var(--home-viewport-height) - max(16px,env(safe-area-inset-top)) - max(16px,env(safe-area-inset-bottom)) - 52px)}
 .sea{position:fixed;inset:-14px;z-index:-2;background-image:url('../assets/portrait-sea.webp');background-repeat:no-repeat;background-size:600% 100%;background-position:left top;filter:blur(9px)}
 .home::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,#4ab2f014,#0046791f 50%,#092d4929)}
 .home .panel{position:relative;max-width:520px;grid-row:2;margin:var(--overlap) auto 0;padding:calc(var(--avatar) - var(--overlap) + 24px) 24px 24px;text-align:center;background:linear-gradient(135deg,#c0def452,#185e9557 45%,#bed7de4d);border:1.5px solid #ffffffe6;color:white;box-shadow:inset 0 0 20px #ffffff0a,0 15px 45px #143b5712}
@@ -151,7 +150,6 @@ main.panel, dialog { translate: var(--panel-center-offset,0px) 0; }
     --segment-height: env(viewport-segment-height 0 0, 100dvh);
   }
   body { position: relative; inline-size: var(--segment-width); }
-  .home { --home-inline-size:var(--segment-width); }
   body:is(.trading,.fmb,.guide) { padding-inline: clamp(16px, 5vw, 24px); }
   dialog {
     position: fixed;
@@ -166,6 +164,7 @@ main.panel, dialog { translate: var(--panel-center-offset,0px) 0; }
 @media (vertical-viewport-segments > 1) {
   :root { overflow: hidden; }
   body { block-size: var(--segment-height); min-block-size: 0; overflow-y: auto; }
+  .home { --home-viewport-height:var(--segment-height); }
   .legal-dialog-header:has(details[open]) { position: relative; }
   dialog { translate:none; }
 }

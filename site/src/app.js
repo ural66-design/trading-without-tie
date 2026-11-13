@@ -8,12 +8,48 @@ function centerPanels(){
     : innerWidth-viewport.getBoundingClientRect().width;
   viewport.style.setProperty('--panel-center-offset',Math.max(0,gutter)/2+'px');
 }
-const viewportObserver=new ResizeObserver(centerPanels);
+const homePanel=page==='home'?body.querySelector('main.panel'):null;
+const homePortrait=homePanel?.querySelector('.portrait');
+const homePicker=homePanel&&body.querySelector('.language-picker summary');
+
+function layoutPage(){
+  centerPanels();
+  if(!homePanel)return;
+
+  const pickerBox=homePicker.getBoundingClientRect();
+  const panelBox=homePanel.getBoundingClientRect();
+  const portraitBox=homePortrait.getBoundingClientRect();
+  const overlapsPicker=box=>box.left<pickerBox.right&&box.right>pickerBox.left;
+
+  // Compare against the grid's unsized first row, independent of scroll or a previous clearance.
+  const rowStart=body.getBoundingClientRect().top-body.scrollTop+parseFloat(getComputedStyle(body).paddingTop);
+  const panelMargin=parseFloat(getComputedStyle(homePanel).marginTop);
+  const pickerClearEdge=pickerBox.bottom+12;
+  const panelClearance=overlapsPicker(panelBox)?pickerClearEdge-rowStart-panelMargin:0;
+  const portraitClearance=overlapsPicker(portraitBox)
+    ? pickerClearEdge-rowStart-panelMargin-(portraitBox.top-panelBox.top)
+    : 0;
+  const clearance=Math.ceil(Math.max(0,panelClearance,portraitClearance))+'px';
+  const panelHeight=panelBox.height+'px';
+  if(body.style.getPropertyValue('--picker-clearance')!==clearance){
+    body.style.setProperty('--picker-clearance',clearance);
+  }
+  if(body.style.getPropertyValue('--home-panel-height')!==panelHeight){
+    body.style.setProperty('--home-panel-height',panelHeight);
+  }
+}
+
+const viewportObserver=new ResizeObserver(layoutPage);
 viewportObserver.observe(viewport);
 viewportObserver.observe(body);
-window.addEventListener('resize',centerPanels);
-stackedViewport.addEventListener('change',centerPanels);
-centerPanels();
+if(homePanel){
+  viewportObserver.observe(homePanel);
+  viewportObserver.observe(homePortrait);
+  viewportObserver.observe(homePicker);
+}
+window.addEventListener('resize',layoutPage);
+stackedViewport.addEventListener('change',layoutPage);
+layoutPage();
 const DATA=JSON.parse(document.querySelector('#page-data').textContent);
 const originalURL=location.href;
 for(const key in DATA.legalURLs)DATA.legalURLs[key]=new URL(DATA.legalURLs[key],originalURL).href;

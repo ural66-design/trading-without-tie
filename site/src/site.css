@@ -189,3 +189,6 @@ main.panel, dialog { translate: var(--panel-center-offset,0px) 0; }
 @media (max-width: 420px) {
   .fmb .fmb-action-grid .button { padding-inline: 8px; }
 }
+@media (max-width: 480px) {
+  .fmb .fmb-action-grid .button.secondary > span { text-align: start; }
+}

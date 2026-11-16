@@ -1,0 +1,25 @@
+{
+  "name": "sea",
+  "version": "1",
+  "avatar": "assets/portrait-sea.webp",
+  "background": null,
+  "accent": "#41A1DA",
+  "colors": {
+    "text": "#FFFFFF",
+    "background": "#0A2E4F",
+    "overlay-top": "#4AB2F014",
+    "overlay-middle": "#0046791F",
+    "overlay-bottom": "#092D4929",
+    "glass-top": "#C0DEF452",
+    "glass-middle": "#185E9557",
+    "glass-bottom": "#BED7DE4D",
+    "glass-border": "#FFFFFFE6",
+    "glass-highlight": "#FFFFFF0A",
+    "glass-shadow": "#143B5712",
+    "avatar-border": "#FFFFFF",
+    "avatar-shadow": "#103E5855",
+    "button": "#D8EFF23B",
+    "button-border": "#FFFFFFE0",
+    "button-hover": "#D9EFF65C"
+  }
+}

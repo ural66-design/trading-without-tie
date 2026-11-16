@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 147 100">
+  <path fill="{{v}}" d="M0 1H25L52 66 79 1H104L62 100H42Z"/>
+  <path fill="{{accent}}" d="M107 17L126 0H147V100H122V28L107 33Z"/>
+</svg>

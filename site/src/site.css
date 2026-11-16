@@ -21,19 +21,19 @@ h1{font-size:clamp(28px,3vw,32px);line-height:1.2;letter-spacing:-.025em;margin:
   --avatar:clamp(136px,21dvh,184px);
   --overlap:calc(var(--avatar)*.3);
   --home-edge:max(4px,env(safe-area-inset-top),env(safe-area-inset-bottom));
-  color:#fff;background:#0a2e4f;padding:var(--home-edge) 16px;
+  color:var(--home-text);background:var(--home-background);padding:var(--home-edge) 16px;
   --home-viewport-height:100dvh;
   --home-center-space:calc((var(--home-viewport-height) - 2 * var(--home-edge) - var(--overlap) - var(--home-panel-height,100dvh)) / 2);
   display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:max(var(--picker-clearance,0px),var(--home-center-space)) auto;align-content:start;isolation:isolate
 }
 .home .language-menu>div{max-height:calc(var(--home-viewport-height) - max(16px,env(safe-area-inset-top)) - max(16px,env(safe-area-inset-bottom)) - 52px)}
-.sea{position:fixed;inset:-14px;z-index:-2;background-image:url('../assets/portrait-sea.webp');background-repeat:no-repeat;background-size:600% 100%;background-position:left top;filter:blur(9px)}
-.home::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,#4ab2f014,#0046791f 50%,#092d4929)}
-.home .panel{position:relative;max-width:520px;grid-row:2;margin:var(--overlap) auto 0;padding:calc(var(--avatar) - var(--overlap) + 24px) 24px 24px;text-align:center;background:linear-gradient(135deg,#c0def452,#185e9557 45%,#bed7de4d);border:1.5px solid #ffffffe6;color:white;box-shadow:inset 0 0 20px #ffffff0a,0 15px 45px #143b5712}
-.portrait{position:absolute;top:calc(0px - var(--overlap));left:50%;transform:translateX(-50%);width:var(--avatar);aspect-ratio:1;border:2px solid white;border-radius:50%;overflow:hidden;box-shadow:0 12px 24px #103e5855;background:#41a1da}
+.sea{position:fixed;inset:-14px;z-index:-2;background-image:var(--home-background-image);background-repeat:no-repeat;background-size:600% 100%;background-position:left top;filter:blur(9px)}
+.home::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,var(--home-overlay-top),var(--home-overlay-middle) 50%,var(--home-overlay-bottom))}
+.home .panel{position:relative;max-width:520px;grid-row:2;margin:var(--overlap) auto 0;padding:calc(var(--avatar) - var(--overlap) + 24px) 24px 24px;text-align:center;background:linear-gradient(135deg,var(--home-glass-top),var(--home-glass-middle) 45%,var(--home-glass-bottom));border:1.5px solid var(--home-glass-border);color:var(--home-text);box-shadow:inset 0 0 20px var(--home-glass-highlight),0 15px 45px var(--home-glass-shadow)}
+.portrait{position:absolute;top:calc(0px - var(--overlap));left:50%;transform:translateX(-50%);width:var(--avatar);aspect-ratio:1;border:2px solid var(--home-avatar-border);border-radius:50%;overflow:hidden;box-shadow:0 12px 24px var(--home-avatar-shadow);background:var(--home-accent)}
 /* Keep the existing avatar crop and appearance exactly. */
 .portrait img{position:absolute;width:145%;height:145%;max-width:none;left:-22.5%;top:-3%;object-fit:cover;transform:scaleX(.96);transform-origin:center}
-.home h1{margin-bottom:16px}.home p{line-height:1.5}.home .panel>p:first-of-type{margin-bottom:20px}.home .panel>p:last-of-type{margin-bottom:8px}.home .actions{gap:8px;margin-top:16px}.home .button{background:#d8eff23b;border:1.5px solid #ffffffe0;color:#fff;font-weight:400}.home .socials{margin-top:24px}.home h2{font-size:18px;font-weight:500;margin-bottom:12px}
+.home h1{margin-bottom:16px}.home p{line-height:1.5}.home .panel>p:first-of-type{margin-bottom:20px}.home .panel>p:last-of-type{margin-bottom:8px}.home .actions{gap:8px;margin-top:16px}.home .button{background:var(--home-button);border:1.5px solid var(--home-button-border);color:var(--home-text);font-weight:400}.home .socials{margin-top:24px}.home h2{font-size:18px;font-weight:500;margin-bottom:12px}
 .social-button{display:grid;grid-template-columns:minmax(0,1fr) max-content minmax(0,1fr);gap:12px}.social-button span{grid-column:2}.social-button img{grid-column:1;grid-row:1;justify-self:end;width:20px;height:20px;transition:opacity .15s}
 .guide .panel{max-width:700px}.guide h1{font-size:24px;line-height:1.35}.guide-intro,.howto,.risk{padding:16px;border-radius:12px;margin-bottom:16px;background:#f2f6fa;border-left:3px solid #0d2a52}.howto{background:#edf7f0;border-color:#1faf5a}.risk{background:#fff3f1;border-color:#d93a3a}
 .guide-intro p,.howto p,.risk p{font-size:16px}.risk h2,.guide-intro h2,.howto h2{font-size:16px;margin-bottom:8px}
@@ -59,7 +59,7 @@ h1{font-size:clamp(28px,3vw,32px);line-height:1.2;letter-spacing:-.025em;margin:
 :is(.button,.back,.text-button,.step-toggle,.dialog-close,.legal-tabs button,.language-picker summary,#faq summary){transition:background-color .15s,border-color .15s,box-shadow .15s,transform .12s}
 @media (hover:hover){
   :is(.button,.back,.text-button,.step-toggle,.dialog-close,.legal-tabs button,.language-picker summary,#faq summary):hover:not(:disabled){box-shadow:0 5px 16px #0d2a5226}
-  .home .button:hover{background:#d9eff65c}
+  .home .button:hover{background:var(--home-button-hover)}
   .social-button:hover img{opacity:.8}
   .back:hover,.text-button:hover{background:#e6eef5;border-color:var(--accent)}
 }

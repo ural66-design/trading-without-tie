@@ -92,7 +92,8 @@ async function apply() {
     ['maskable-192', 192, .62], ['maskable-512', 512, .62], ['apple-180', 180, .68]
   ];
   for (const [key, size, fraction] of shortcuts) {
-    const svg = icon(mark, size, fraction, ink, white, theme.accent);
+    const corner = key.startsWith('any-') ? size * .2 : 0;
+    const svg = icon(mark, size, fraction, ink, white, theme.accent, corner);
     const png = await sharp(Buffer.from(svg)).png().toBuffer();
     writes.set(path.join(site, 'assets/shortcuts/vladimir1-' + key + '.png'), png);
   }

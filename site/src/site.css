@@ -49,6 +49,12 @@ h1{font-size:clamp(28px,3vw,32px);line-height:1.2;letter-spacing:-.025em;margin:
 .modal-open{overflow:hidden;scrollbar-gutter:stable}dialog{color:#1a1a1a;border:1px solid #d8e0e8;border-radius:24px;padding:24px;max-width:min(480px,calc(100vw - 32px));max-height:85dvh;overflow:auto;background:#fff;box-shadow:0 24px 80px #0d2a5233}dialog::backdrop{background:var(--legal-overlay)}dialog h2{padding-right:32px}.dialog-close{position:absolute;right:8px;top:8px;border:0;background:transparent;color:#375a72;width:44px;height:44px;font-size:28px}.modal-actions{display:grid;gap:12px;margin-top:24px}
 .legal-dialog{width:720px;max-width:calc(100vw - 32px);padding:0;background:var(--legal-surface);color:var(--legal-text)}.legal-dialog [data-panel=legal]{padding:24px}.legal-dialog-header{position:sticky;top:0;background:#fff;z-index:1;padding-bottom:16px}.legal-tabs{display:flex;flex-wrap:wrap;gap:8px}.legal-tabs button{flex:1 1 0;min-inline-size:min-content;min-height:48px;border:1px solid var(--legal-border);border-radius:12px;padding:8px;font-size:14px;background:white;color:var(--legal-text)}.legal-tabs [aria-selected=true]{background:var(--legal-active);border-color:var(--legal-accent)}.legal-dialog a{color:var(--legal-accent)}.legal-dialog :focus-visible{outline:2px solid var(--legal-accent)}
 @media(min-width:601px) and (max-height:840px){.home{--avatar:clamp(112px,18dvh,160px)}.home .panel{padding-top:calc(var(--avatar) - var(--overlap) + 16px)}.home .socials{margin-top:16px}.home h1{font-size:28px}.home .actions{margin-top:12px}}
+@media (min-width: 601px) and (max-height: 740px) {
+  html:lang(ru) .home .socials { margin-top: 8px; }
+  html:lang(ru) .home .panel > p:first-of-type { margin-bottom: 12px; }
+  html:lang(ru) .home .actions { margin-top: 8px; }
+  html:lang(ru) .home .panel { padding-bottom: 20px; }
+}
 @media(min-width:601px) and (orientation:landscape){.home .panel{max-width:clamp(520px,calc(2016px - 100vw),650px)}}
 @media(max-width:600px){body{padding:72px 16px 24px}.panel{padding:20px}.project-logo{width:80px;height:80px;margin-bottom:16px}.fmb .actions{grid-template-columns:1fr}.step-head{flex-wrap:wrap}.step-toggle{flex-basis:100%}.step-label{margin-left:auto}.step-content{padding:16px}.home{
   --avatar:clamp(112px,18dvh,160px);

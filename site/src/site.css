@@ -204,3 +204,18 @@ main.panel, dialog { translate: var(--panel-center-offset,0px) 0; }
 @media (max-width: 600px) {
   .fmb .fmb-action-grid .actions { grid-template-columns: minmax(0, 1fr); }
 }
+
+.trading .tc-info { margin-bottom: 16px; padding: 12px 16px; border-inline-start: 3px solid #101315; border-radius: 12px; background: #10131508; }
+.trading .tc-info h2 { font-size: 16px; line-height: inherit; font-weight: 700; margin-bottom: 8px; }
+.trading .tc-info p:last-child { margin-bottom: 0; }
+.trading .tc-capital { border-inline-start-color: #20B454; background: #20B4540D; }
+.trading .tc-capital ul { padding-inline-start: 20px; margin: 0; }
+.trading .tc-capital li { margin-bottom: 8px; }
+.trading .tc-capital li:last-child { margin-bottom: 0; }
+.trading .tc-capital li::marker { color: #20B454; }
+.trading .tc-telegram-name { color: #20B454; }
+.trading .tc-setup-time { text-align: center; margin-block: 16px; }
+html body.trading main.panel.project-panel p.tc-setup-time.prose-justified { text-align: center; text-align-last: center; }
+.trading .tc-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 0; }
+.trading .tc-connect { grid-column: 1 / -1; background: #20B454; border-color: #20B454; color: white; }
+@media (max-width: 600px) { .trading .tc-actions { grid-template-columns: minmax(0, 1fr); } }

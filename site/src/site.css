@@ -195,9 +195,10 @@ main.panel, dialog { translate: var(--panel-center-offset,0px) 0; }
 .fmb .fmb-action-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
 .fmb .fmb-action-grid > * { grid-column: 1 / -1; }
 .fmb .fmb-action-grid .actions { grid-template-columns: subgrid; gap: inherit; margin: 0; }
-.fmb .fmb-action-grid .button { gap: 8px; }
-.fmb .fmb-action-grid .button img { width: 20px; height: 20px; flex: none; }
-.fmb .fmb-action-grid .button span { min-inline-size: 0; overflow-wrap: anywhere; text-align: start; }
+:is(.fmb,.trading) .button-icon-content { display: inline-flex; align-items: center; justify-content: center; gap: 12px; flex: none; max-width: 100%; }
+.trading .button-icon-content { max-width: calc(100% + 32px); }
+:is(.fmb,.trading) .button-icon img { width: 20px; height: 20px; flex: none; }
+:is(.fmb,.trading) .button-icon-content > span { min-inline-size: 0; overflow-wrap: anywhere; text-align: start; }
 .fmb .fmb-telegram-info { border-inline-start-color: var(--positive); background: color-mix(in srgb, var(--positive) 10%, transparent); }
 .fmb .fmb-telegram-info strong { font-weight: 600; }
 @media (max-width: 600px) {

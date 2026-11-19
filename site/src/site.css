@@ -7,7 +7,7 @@ h1{font-size:clamp(28px,3vw,32px);line-height:1.2;letter-spacing:-.025em;margin:
 .project-logo{display:block;width:96px;height:96px;object-fit:contain;margin:0 auto 24px}.project-panel h1{text-align:center}.back{display:inline-flex;align-items:center;min-height:48px;margin-bottom:16px;font-size:14px;text-decoration:none}
 .actions{display:grid;gap:16px;margin-top:24px}.button{display:flex;align-items:center;justify-content:center;min-height:48px;padding:12px 20px;border:1px solid var(--accent);border-radius:14px;background:var(--accent);color:white;text-decoration:none;font-size:16px;line-height:1.4;font-weight:600;text-align:center}
 .button.secondary{background:#ffffff88;color:var(--accent)}.button.positive{background:var(--positive);border-color:var(--positive);color:#fff}
-.fmb{--bg:#f7f8fa;--accent:#0b1f3a;--positive:#b7e600;color:#161616;background:radial-gradient(ellipse at 80% 10%,#b7e6000d,transparent 60%),#f7f8fa}.fmb .actions{grid-template-columns:1fr 1fr}.trading{background:radial-gradient(ellipse at 10% 0%,#fff,#f7f4ec 70%)}.placeholder{padding:48px 24px;text-align:center}
+.fmb{--bg:#f7f8fa;--accent:#0b1f3a;--positive:#b7e600;color:#161616;background:radial-gradient(ellipse at 80% 10%,#b7e6000d,transparent 60%),#f7f8fa}.fmb .actions{grid-template-columns:1fr 1fr}.trading{--accent:#101315;--positive:#20B454;background:radial-gradient(ellipse at 10% 0%,#fff,#f7f4ec 70%)}.placeholder{padding:48px 24px;text-align:center}
 .language-picker{position:absolute;right:max(16px,env(safe-area-inset-right));top:max(16px,env(safe-area-inset-top));z-index:30;font-size:14px;color:#1a1a1a}
 .language-picker summary{list-style:none;display:grid;grid-template-columns:24px minmax(0,1fr);align-items:center;gap:6px;width:76px;height:44px;padding:0 5px 0 9px;border:1px solid #bccbd8;border-radius:12px;background:#ffffffed;cursor:pointer}
 .language-picker summary>span{font-family:Inter,Arial,sans-serif;font-size:16px;font-weight:400;line-height:1;text-align:center}
@@ -212,7 +212,7 @@ main.panel, dialog { translate: var(--panel-center-offset,0px) 0; }
 .trading .tc-setup-time { text-align: center; margin-block: 16px; }
 html body.trading main.panel.project-panel p.tc-setup-time.prose-justified { text-align: center; text-align-last: center; }
 .trading .tc-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 0; }
-.trading .tc-connect { grid-column: 1 / -1; background: #20B454; border-color: #20B454; color: white; }
+.trading .tc-connect { grid-column: 1 / -1; background: #20B454; border-color: #20B454; color: #101315; }
 @media (max-width: 600px) { .trading .tc-actions { grid-template-columns: minmax(0, 1fr); } }
 
 .trading main.project-panel :is(h1, h2, h3, strong, b, .button, .back, .button-icon-content, .button-icon-content > span) {
@@ -251,12 +251,21 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
 .tc-guide .step-note { border-left-color: #F21D2A; background: #F21D2A0D; }
 .tc-guide .storage-status { color: #F21D2A; }
 .tc-guide #faq summary { color: #101315; }
-.tc-guide :is(.back,.text-button) { color: #101315; background: #10131508; }
+:is(.trading,.tc-guide) :is(.back,.text-button) { color: #101315; background: #10131508; }
 .tc-guide .support-card { background: #1013150D; border-color: #10131533; }
-@media (hover:hover) { .tc-guide :is(.back,.text-button):hover { background: #10131514; border-color: #101315; } }
+@media (hover:hover) { :is(.trading,.tc-guide) :is(.back,.text-button):hover { background: #10131514; border-color: #101315; } }
 .tc-guide main :is(h1,h2,h3,strong,b,.step-toggle,#faq summary,.button,.back,.text-button) {
   -webkit-hyphens: none;
   hyphens: none;
   word-break: normal;
   overflow-wrap: normal;
+}
+
+.tc-guide .modal-actions .button.secondary { background: #10131508; border-color: #101315; color: #101315; }
+.tc-guide .dialog-close { color: #101315; }
+.tc-guide .legal-tabs button { color: #101315; border-color: #10131533; }
+.tc-guide .legal-tabs [aria-selected=true] { background: #1013150D; border-color: #101315; }
+:is(.trading,.tc-guide) :is(.button,.back,.text-button,.dialog-close,.legal-tabs button):focus-visible { outline-color: #101315; }
+@media (hover:hover) {
+  :is(.trading,.tc-guide) :is(.button,.back,.text-button,.dialog-close,.legal-tabs button):hover:not(:disabled) { box-shadow: 0 5px 16px #10131526; }
 }

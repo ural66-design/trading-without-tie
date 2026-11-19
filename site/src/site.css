@@ -209,10 +209,8 @@ main.panel, dialog { translate: var(--panel-center-offset,0px) 0; }
 .trading .tc-info h2 { font-size: 16px; line-height: inherit; font-weight: 700; margin-bottom: 8px; }
 .trading .tc-info p:last-child { margin-bottom: 0; }
 .trading .tc-capital { border-inline-start-color: #20B454; background: #20B4540D; }
-.trading .tc-capital ul { padding-inline-start: 20px; margin: 0; }
-.trading .tc-capital li { margin-bottom: 8px; }
-.trading .tc-capital li:last-child { margin-bottom: 0; }
-.trading .tc-capital li::marker { color: #20B454; }
+.trading .tc-capital p { margin-bottom: 8px; }
+.trading .tc-capital p:last-child { margin-bottom: 0; }
 .trading .tc-telegram-name { color: inherit; }
 .trading .tc-setup-time { text-align: center; margin-block: 16px; }
 html body.trading main.panel.project-panel p.tc-setup-time.prose-justified { text-align: center; text-align-last: center; }

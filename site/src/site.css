@@ -213,9 +213,16 @@ main.panel, dialog { translate: var(--panel-center-offset,0px) 0; }
 .trading .tc-capital li { margin-bottom: 8px; }
 .trading .tc-capital li:last-child { margin-bottom: 0; }
 .trading .tc-capital li::marker { color: #20B454; }
-.trading .tc-telegram-name { color: #20B454; }
+.trading .tc-telegram-name { color: inherit; }
 .trading .tc-setup-time { text-align: center; margin-block: 16px; }
 html body.trading main.panel.project-panel p.tc-setup-time.prose-justified { text-align: center; text-align-last: center; }
 .trading .tc-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 0; }
 .trading .tc-connect { grid-column: 1 / -1; background: #20B454; border-color: #20B454; color: white; }
 @media (max-width: 600px) { .trading .tc-actions { grid-template-columns: minmax(0, 1fr); } }
+
+.trading main.project-panel :is(h1, h2, h3, strong, b, .button, .back, .button-icon-content, .button-icon-content > span) {
+  -webkit-hyphens: none;
+  hyphens: none;
+  word-break: normal;
+  overflow-wrap: normal;
+}

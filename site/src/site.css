@@ -224,3 +224,11 @@ html body.trading main.panel.project-panel p.tc-setup-time.prose-justified { tex
   word-break: normal;
   overflow-wrap: normal;
 }
+
+.fmb .fmb-copy-info h2 { font-size: 16px; line-height: inherit; font-weight: 700; margin-bottom: 8px; }
+.fmb main.project-panel :is(h1, h2, h3, strong, b) {
+  -webkit-hyphens: none;
+  hyphens: none;
+  word-break: normal;
+  overflow-wrap: normal;
+}

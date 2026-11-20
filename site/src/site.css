@@ -321,3 +321,11 @@ a[href^="mailto:"],a[href^="mailto:"] .protected-name { white-space: normal; ove
   .home .socials .actions { grid-template-columns: minmax(0,1fr); grid-auto-rows: 1fr; }
   .home .social-button { display: flex; flex-direction: column; gap: 8px; padding-inline: 6px; }
 }
+
+/* Maintain justification only where inter-word spacing remains readable. */
+body.guide:is(.tc-guide,.fmb-guide) main.panel :is(.guide-intro,.howto,.risk,.step-content,.step-note,.answer,.completion) :is(p:not([role="status"]),li).prose-relaxed:not(:lang(th)),
+body.fmb-guide dialog [data-panel=leader] :is(p,li).prose-relaxed:not(:lang(th)) {
+  text-align: start;
+  text-align-last: auto;
+}
+.quoted-phrase { -webkit-hyphens: none; hyphens: none; }

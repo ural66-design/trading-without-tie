@@ -7,12 +7,12 @@ let pending;
 let formattedBlocks = new WeakMap();
 const blockSignature = element => devicePixelRatio+'|'+element.getBoundingClientRect().width+'|'+getComputedStyle(element).font+'|'+element.textContent;
 
-function hasWideSpaces(element) {
+function hasWideSpaces(element, threshold = null) {
     const style = getComputedStyle(element);
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     context.font = style.font;
-    const limit = Math.min(parseFloat(style.fontSize) * .65, context.measureText(' ').width * 2.2);
+    const limit = threshold ?? Math.min(parseFloat(style.fontSize) * .65, context.measureText(' ').width * 2.2);
     const range = document.createRange();
     const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
     const characters = [];
@@ -40,62 +40,31 @@ const serviceWords = {
 const shortWords = new Set((serviceWords[language.split('-')[0]]||'').split(' '));
 const segmenter = new Intl.Segmenter(language,{granularity:'word'});
 const typographySelector = 'main :is(p,li,h1,h2,h3), dialog [data-panel] :is(p,li,h2,h3)';
+// Bind short function words without measuring rendered line positions or wrapping syllables.
 function protectLineEnds(element) {
-  if (!element.getClientRects().length || language==='th') return;
-  for(let pass=0;pass<24;pass++){
-    const nodes=[],walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT);
-    let text='';
-    for(let node=walker.nextNode();node;node=walker.nextNode()){
-      nodes.push({node,start:text.length,end:text.length+node.length});text+=node.data;
+  if (language === 'th' || language === 'hi') return;
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  const word = /[\p{L}\p{M}]+(?:\u00ad[\p{L}\p{M}]+)*/gu;
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (node.parentElement.closest('.protected-name,.keep-words,.quoted-phrase,a,strong,b,button')) continue;
+    const source = node.data;
+    const tokens = [...source.matchAll(word)];
+    const positions = [];
+    for (let i = 0; i < tokens.length - 1; i++) {
+      const current = tokens[i], following = tokens[i + 1];
+      const end = current.index + current[0].length;
+      if (source.slice(end, following.index) !== ' ') continue;
+      const plain = current[0].replace(/\u00ad/g, '');
+      const sentenceStart = /(?:^|[.!?]\s+)$/u.test(source.slice(0, current.index));
+      if (shortWords.has(plain.toLocaleLowerCase(language)) || (sentenceStart && [...plain].length <= 5)) positions.push(end);
     }
-    const tokens=[...segmenter.segment(text)].filter(t=>t.isWordLike);
-    const position=offset=>{const part=nodes.find(n=>n.end>offset);return part&&{node:part.node,offset:offset-part.start};};
-    let changed=false;
-    for(let i=0;i<tokens.length-1;i++){
-      const word=tokens[i],next=tokens[i+1];
-      const sentence=word.segment.length<=5&&/[.!?]\s+$/u.test(text.slice(0,word.index));
-      if(!sentence&&!shortWords.has(word.segment.toLocaleLowerCase(language)))continue;
-      if(!/^[\s$€£«“„"'(,;:]+$/u.test(text.slice(word.index+word.segment.length,next.index)))continue;
-      const start=position(word.index),end=position(next.index+next.segment.length-1);
-      if(!start||!end)continue;
-      if(start.node.parentElement.closest('.protected-name,.keep-words,a'))continue;
-      const range=document.createRange();range.setStart(start.node,start.offset);range.setEnd(start.node,start.offset+word.segment.length);
-      const previous=[...range.getClientRects()].filter(r=>r.width).at(-1);
-      const nextStart=position(next.index);range.setStart(nextStart.node,nextStart.offset);range.setEnd(end.node,end.offset+1);
-      const following=[...range.getClientRects()].find(r=>r.width);
-      if(!previous||!following||following.top-previous.top<Math.min(previous.height,following.height)*.6)continue;
-      const atom=nextStart.node.parentElement.closest('.protected-name,.keep-words,a');
-      if(nextStart.node.parentElement.closest('a[href^="mailto:"],.typography-address')){
-        const gap=position(word.index+word.segment.length);
-        if(gap&&gap.node.data[gap.offset]===' '){gap.node.replaceData(gap.offset,1,'\u00a0');changed=true;break;}
-        continue;
-      }
-      range.setStart(start.node,start.offset);
-      if(atom&&element.contains(atom)&&atom.textContent.trimStart().startsWith(next.segment))range.setEndAfter(atom);
-      else range.setEnd(end.node,end.offset+1);
-      if(language==='ru'&&!atom&&next.segment.includes('\u00ad')){
-        const split=position(next.index+next.segment.indexOf('\u00ad'));
-        range.setEnd(split.node,split.offset);
-      }
-      const measure=document.createElement('span');
-      measure.style.cssText='position:fixed;visibility:hidden;white-space:nowrap;width:max-content;max-width:none';
-      measure.append(range.cloneContents());element.append(measure);
-      const width=measure.getBoundingClientRect().width;measure.remove();
-      const style=getComputedStyle(element),available=element.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight);
-      if(width>available+1){
-        if(/^H[123]$/.test(element.tagName)&&(!element.matches('.guide main h1')||innerWidth<=280)){
-          if(element.dataset.typographySize===undefined)element.dataset.typographySize=element.style.fontSize;
-          element.style.fontSize=(Math.floor(parseFloat(style.fontSize)*available/width*100)/100)+'px';changed=true;break;
-        }
-        continue;
-      }
-      const span=document.createElement('span');span.className='keep-words';span.dataset.typographyBond='';span.append(range.extractContents());range.insertNode(span);
-      changed=true;break;
+    if (positions.length) {
+      let output = source;
+      for (const pos of positions.reverse()) output = output.slice(0, pos) + '\u00a0' + output.slice(pos + 1);
+      node.data = output;
     }
-    if(!changed)break;
   }
 }
-
 function protectNamesAndValues(){
   for(const span of document.querySelectorAll('.protected-name')){
     if(span.textContent.includes('@'))span.classList.add('typography-address');
@@ -103,17 +72,21 @@ function protectNamesAndValues(){
     if(range){span.textContent=range[1];span.after(document.createTextNode(' '+range[2]));}
   }
   const pattern=/Fast Money Bot|MetaTrader 4|Markets4you|Vladimir1\.com|T-Capital|Telegram(?:-бот[а-яё]*)?|Google|Facebook|e-mail|[$€£]\s?\d+(?:[.,]\d+)?|\d+(?:[.,]\d+)?%|\d+:\d+|\d+[–—]\d+|\d+\s+(?:минут\p{L}*|час\p{L}*|км|кг|minutes?|hours?|km|kg|minutos?|horas?|menit|minit|jam|dakika|saat|phút|giờ|นาที|ชั่วโมง|मिनट|घंटे)/gu;
+  // Protect quoted labels and hyphenated compounds before the browser lays out the text.
+  const quoted = '«[^«»\\n]{1,48}»|“[^“”\\n]{1,48}”|„[^„“\\n]{1,48}“';
+  const compound = '[\\p{L}\\p{N}]+(?:\\u00ad[\\p{L}\\p{N}]+)*[-‐‑][\\p{L}\\p{N}]+(?:\\u00ad[\\p{L}\\p{N}]+)*';
+  const protectedPattern = new RegExp(quoted + '|' + compound + '|' + pattern.source, 'gu');
   const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
   const nodes=[];for(let node=walker.nextNode();node;node=walker.nextNode()){
     if(node.parentElement.closest('main,dialog')&&!node.parentElement.closest('script,style,.protected-name,.keep-words'))nodes.push(node);
   }
   for(const node of nodes){
     const bold=node.parentElement.closest('strong,b,h1,h2,h3,button,.button,summary');
-    const matcher=bold?new RegExp('[\\p{L}\\p{M}]+(?:-[\\p{L}\\p{M}]+)+|'+pattern.source,'gu'):pattern;
+    const matcher=protectedPattern;
     const matches=[...node.data.matchAll(matcher)];
     if(!matches.length)continue;
     const fragment=document.createDocumentFragment();let offset=0;
-    for(const m of matches){fragment.append(node.data.slice(offset,m.index));const span=document.createElement('span');span.className='protected-name';span.textContent=m[0];fragment.append(span);offset=m.index+m[0].length;}
+    for(const m of matches){fragment.append(node.data.slice(offset,m.index));const span=document.createElement('span');span.className=(m[0].length>24&&/\s/u.test(m[0])&&/^[«“„]/u.test(m[0]))?'quoted-phrase':'protected-name';span.textContent=m[0].replace(/\u00ad/g,'');fragment.append(span);offset=m.index+m[0].length;}
     fragment.append(node.data.slice(offset));node.replaceWith(fragment);
   }
   for(const google of document.querySelectorAll('main .protected-name')){
@@ -122,6 +95,7 @@ function protectNamesAndValues(){
   }
 }
 protectNamesAndValues();
+for (const block of document.querySelectorAll(guideProse)) protectLineEnds(block);
 
 function fitOverflowingHeadings(changed){
   for(const heading of document.querySelectorAll('main :is(h1,h2,h3),dialog :is(h2,h3)')){
@@ -157,11 +131,15 @@ function checkSpacing() {
     for (const block of blocks) block.classList.add('prose-justified');
     const wideSpaces = blocks.filter(block => getComputedStyle(block).textAlign === 'justify' && hasWideSpaces(block));
     for (const block of wideSpaces) block.classList.remove('prose-justified');
-    for(const block of changed)protectLineEnds(block);
-    for(const block of blocks){
-      if(getComputedStyle(block).textAlign==='justify'&&hasWideSpaces(block))block.classList.remove('prose-justified');
+    for (const block of changed) {
+      if (!block.matches(guideProse) || !block.matches('p,li')) continue;
+      block.classList.remove('prose-relaxed');
+      // Prefer readable spacing over forced full justification.
+      const limit = Math.max(20, parseFloat(getComputedStyle(block).fontSize) * 1.25);
+      if (getComputedStyle(block).textAlign === 'justify' && hasWideSpaces(block, limit)) {
+        block.classList.add('prose-relaxed');
+      }
     }
-    for(const block of changed)protectLineEnds(block);
     for(const block of changed)formattedBlocks.set(block,blockSignature(block));
   });
 }

@@ -5,6 +5,27 @@ const inlineSizes = new WeakMap();
 let pending;
 
 function hasWideSpaces(element) {
+  if (element.closest('.fmb-guide') && !element.closest('.legal-copy')) {
+    const style = getComputedStyle(element);
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    context.font = style.font;
+    const limit = Math.min(parseFloat(style.fontSize) * .65, context.measureText(' ').width * 2.2);
+    const range = document.createRange();
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    const characters = [];
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      for (let i = 0; i < node.length; i++) {
+        range.setStart(node, i); range.setEnd(node, i + 1);
+        const rect = [...range.getClientRects()].find(rect => rect.width > 0);
+        if (rect) characters.push({space:/\s/u.test(node.data[i]),rect});
+      }
+    }
+    return characters.some((char,i) => char.space && char.rect.width > limit &&
+      characters[i-1] && characters[i+1] &&
+      Math.abs(char.rect.top-characters[i-1].rect.top)<2 &&
+      Math.abs(char.rect.top-characters[i+1].rect.top)<2);
+  }
   const limit = parseFloat(getComputedStyle(element).fontSize);
   const range = document.createRange();
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);

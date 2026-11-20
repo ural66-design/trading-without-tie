@@ -301,3 +301,10 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
 .fmb-guide [data-panel=leader] li { padding-inline-start: 4px; margin-bottom: 12px; }
 .fmb-guide [data-panel=leader] li:last-child { margin-bottom: 0; }
 .fmb-guide [data-leader-confirm] { background: #B7E600; border-color: #B7E600; color: #0B1F3A; width: 100%; }
+.fmb-guide :is(main,[data-panel=leader]) :is(p,li) { hyphenate-limit-chars: 8 4 4; }
+.fmb-guide main.panel h1 { hyphens: manual !important; }
+.fmb-guide a[href^="mailto:"] .protected-name { white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 280px) {
+  .fmb-guide .panel, .fmb-guide :is(.step-head,.step-content,.guide-intro,.howto,.risk,.answer) { padding-inline: 8px; }
+  .fmb-guide .step-content ol { padding-inline-start: 20px; }
+}

@@ -1,4 +1,5 @@
-const selector = ':is(main:not(.placeholder), .legal-copy) :is(p:not([role="status"]), li)';
+const leaderProse = '.fmb-guide [data-panel=leader] :is(p,li)';
+const selector = ':is(main:not(.placeholder), .legal-copy) :is(p:not([role="status"]), li), '+leaderProse;
 const panel = document.querySelector('main:not(.placeholder)');
 const inlineSizes = new WeakMap();
 let pending;
@@ -31,7 +32,7 @@ function checkSpacing() {
   pending = requestAnimationFrame(() => {
     pending = undefined;
     const candidates = [...document.querySelectorAll(selector)];
-    const blocks = candidates.filter(block => block.clientWidth >= 576 && block.getClientRects().length);
+    const blocks = candidates.filter(block => (block.clientWidth >= 576 || block.matches(leaderProse)) && block.getClientRects().length);
     for (const block of candidates) block.classList.remove('prose-justified');
     // Try native justification at the current width and keep it only for readable paragraphs.
     for (const block of blocks) block.classList.add('prose-justified');
@@ -50,9 +51,11 @@ const observer = new ResizeObserver(entries => {
   if (resized) checkSpacing();
 });
 if (panel) observer.observe(panel, { box: 'border-box' });
+const leaderPanel = document.querySelector('.fmb-guide [data-panel=leader]');
+if (leaderPanel) observer.observe(leaderPanel, { box: 'border-box' });
 
 const visibility = new MutationObserver(checkSpacing);
-for (const documentPanel of document.querySelectorAll('dialog .legal-copy')) {
+for (const documentPanel of document.querySelectorAll('dialog .legal-copy, .fmb-guide [data-panel=leader]')) {
   visibility.observe(documentPanel, { attributes: true, attributeFilter: ['hidden'] });
 }
 const dialog = document.querySelector('dialog');

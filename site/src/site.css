@@ -231,7 +231,8 @@ html body.trading main.panel.project-panel p.tc-setup-time.prose-justified { tex
 }
 
 body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
-:is(.tc-guide,.fmb-guide) h1 { line-height: 1.2; }
+:is(.tc-guide,.fmb-guide) h1 { font-size: 26px; font-weight: 700; line-height: 1.25; }
+@media (max-width: 600px) { :is(.tc-guide,.fmb-guide) h1 { font-size: 22px; } }
 :is(.tc-guide,.fmb-guide) :is(.guide-intro,.howto,.risk) { padding: 12px 16px; border-radius: 12px; border-left-width: 3px; margin-bottom: 16px; }
 .tc-guide .guide-intro { border-color: #101315; background: #10131508; }
 .tc-guide .howto { border-color: #20B454; background: #20B4540D; }
@@ -277,14 +278,27 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
 .fmb-guide .step:not(.locked) .step-number { background: #0B1F3A; color: white; }
 .fmb-guide .step.complete { border-color: #B7E600; }
 .fmb-guide .step.complete .step-number { background: #B7E600; color: #0B1F3A; }
-.fmb-guide :is(.step-label input,.notification-options input) { accent-color: #0B1F3A; }
+.fmb-guide .step-label input { accent-color: #0B1F3A; }
 .fmb-guide #progress-fill { background: #B7E600; }
 .fmb-guide .completion { border-color: #B7E600; background: #B7E6000D; }
 .fmb-guide .storage-status { color: #F21D2A; }
 .fmb-guide :is(.back,.text-button) { color: #0B1F3A; background: #0B1F3A08; }
 .fmb-guide .support-card { background: #0B1F3A0D; border-color: #0B1F3A33; }
-.fmb-guide .notification-options { display: grid; gap: 12px; min-width: 0; margin: 16px 0 0; padding: 0; border: 0; }
-.fmb-guide .notification-options label { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
-.fmb-guide .notification-options input { flex: none; width: 20px; height: 20px; margin: 0; }
 .fmb-guide .modal-actions .button.secondary { color: #0B1F3A; background: #0B1F3A08; border-color: #0B1F3A; }
 .fmb-guide .dialog-close { color: #0B1F3A; }
+.fmb-guide .guide-nav { display: flex; flex-wrap: wrap; }
+.fmb-guide .guide-nav .back { flex: 1 0 max-content; white-space: nowrap; }
+@media (min-width: 401px) {
+  .fmb-guide .guide-nav .back:first-child { max-width: 200px; }
+  .fmb-guide .guide-nav .back:last-child { max-width: 8.5rem; }
+}
+.fmb-guide .risk .risk-important { padding: 12px 16px; border-radius: 12px; background: #F21D2A0D; }
+.fmb-guide .risk-important > [aria-hidden] { margin-inline-end: 8px; }
+.fmb-guide [data-panel=leader] :is(p,li) { font-size: 16px; line-height: 1.55; text-wrap: wrap; hyphens: auto; word-break: normal; }
+.fmb-guide [data-panel=leader] :is(p,li):lang(th) { hyphens: none; }
+.fmb-guide [data-panel=leader] .prose-justified:not(:lang(th)) { text-align: justify; text-align-last: start; }
+.fmb-guide [data-panel=leader] h3 { font-size: 16px; line-height: 1.55; margin: 0 0 8px; }
+.fmb-guide [data-panel=leader] ol { padding-inline-start: 24px; margin: 0; }
+.fmb-guide [data-panel=leader] li { padding-inline-start: 4px; margin-bottom: 12px; }
+.fmb-guide [data-panel=leader] li:last-child { margin-bottom: 0; }
+.fmb-guide [data-leader-confirm] { background: #B7E600; border-color: #B7E600; color: #0B1F3A; width: 100%; }

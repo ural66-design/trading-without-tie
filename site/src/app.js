@@ -53,16 +53,10 @@ layoutPage();
 const DATA=JSON.parse(document.querySelector('#page-data').textContent);
 const originalURL=location.href;
 for(const key in DATA.legalURLs)DATA.legalURLs[key]=new URL(DATA.legalURLs[key],originalURL).href;
-const isFmbGuide=page==='guide'&&body.classList.contains('fmb-guide');
 const total=DATA.stepCount??3;
 const KEY=DATA.progressKey??'vladimir1:t-capital:progress:v2', LANG='vladimir1:language';
 function readState(raw){
-  const result=normalise(raw,total);
-  if(isFmbGuide){
-    result.notification=['telegram','alternative'].includes(raw?.notification)?raw.notification:null;
-    if(result.count>=3&&!result.notification){result.count=2;result.open=2;}
-  }
-  return result;
+  return normalise(raw,total);
 }
 const isHistoryReturn=performance.getEntriesByType('navigation')[0]?.type==='back_forward';
 let state=readState(null), storageFailed=false, transfer=null;
@@ -215,7 +209,6 @@ if(page==='guide'){
   try{state=readState(JSON.parse(localStorage.getItem(KEY)));}catch{storageFailed=true;}
   if(isTransfer&&transfer.state)state=readState(transfer.state);
   const returning=state.visited, boxes=[...document.querySelectorAll('[data-step-check]')];
-  const notificationChoices=[...document.querySelectorAll('[name="notification"]')];
   function save(){
     state.visited=true;
     try{localStorage.setItem(KEY,JSON.stringify(state));storageFailed=false;}catch{storageFailed=true;}
@@ -228,9 +221,8 @@ if(page==='guide'){
       const button=s.querySelector('[data-step-toggle]');
       button.disabled=locked;button.setAttribute('aria-expanded',String(open));
       s.querySelector('.step-content').hidden=!open;
-      boxes[i].checked=i<state.count;boxes[i].disabled=locked||(isFmbGuide&&i===2&&!state.notification);
+      boxes[i].checked=i<state.count;boxes[i].disabled=locked;
     });
-    notificationChoices.forEach(input=>{input.checked=input.value===state.notification;input.disabled=state.count<2;});
     const p=document.querySelector('#progress');p.classList.toggle('sticky',progressSticky(state,total));
     document.querySelector('#progress-count').textContent=state.count+' / '+total;
     document.querySelector('#progress-fill').style.width=(state.count/total*100)+'%';
@@ -239,12 +231,7 @@ if(page==='guide'){
     document.querySelector('#restart').hidden=state.count!==total;
   }
   boxes.forEach((b,i)=>b.addEventListener('change',()=>{
-    if(!(isFmbGuide&&i===2&&b.checked&&!state.notification))state=checkStep(state,i,b.checked,total);
-    if(isFmbGuide&&state.count<2)state.notification=null;
-    save();render();
-  }));
-  notificationChoices.forEach(input=>input.addEventListener('change',()=>{
-    if(state.count>=2&&input.checked){state.notification=input.value;save();render();}
+    state=checkStep(state,i,b.checked,total);save();render();
   }));
   document.querySelectorAll('[data-step-toggle]').forEach((b,i)=>b.addEventListener('click',()=>{state=toggleStep(state,i,total);save();render();}));
   function restart(){state=readState({visited:true,count:0,open:0});save();render();}
@@ -263,6 +250,7 @@ if(page==='guide'){
     });
     document.querySelector('[data-leader-confirm]').addEventListener('click',()=>{
       try{localStorage.setItem(ack,'1');}catch{}
+      window.open(leader.href,'_blank','noopener,noreferrer');
       closeModal();
     });
   }

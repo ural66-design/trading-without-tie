@@ -162,6 +162,7 @@ function bindSentenceStarts(block) {
     const [first,next] = words;
     const count = (first.segment.normalize('NFC').match(/\p{L}/gu) || []).length;
     if (count < 1 || count > 4 || !/^[\s«“„"‘'(\[]*$/u.test(segment.slice(0,first.index))) continue;
+    if (position(index+first.index).node.parentElement.closest(atomic)) continue;
     const end = index+first.index+first.segment.length;
     const following = index+next.index;
     const gap = text.slice(end,following);
@@ -184,7 +185,7 @@ function fitGuideAtoms(block) {
   const style = getComputedStyle(block);
   const width = block.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight);
   for (const span of block.querySelectorAll(atomic)) {
-    if (span.closest('a') || span.classList.contains('typography-address')) continue;
+    if (span.closest('a[href^="mailto:"]') || span.matches('.typography-address,.address')) continue;
     span.classList.remove('guide-inline-scroll');
     const oversized = span.getBoundingClientRect().width > width + .5;
     span.classList.toggle('guide-inline-scroll', oversized);

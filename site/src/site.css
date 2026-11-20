@@ -182,6 +182,7 @@ main.panel, dialog { translate: var(--panel-center-offset,0px) 0; }
   :root { overflow: hidden; }
   body { block-size: var(--segment-height); min-block-size: 0; overflow-y: auto; }
   .home { --home-viewport-height:var(--segment-height); }
+  body.guide:is(.tc-guide,.fmb-guide) .legal-dialog { max-block-size: var(--segment-height); }
   .legal-dialog-header:has(details[open]) { position: relative; }
   dialog { translate:none; }
 }

@@ -1,4 +1,4 @@
-import {normalise,checkStep,toggleStep,progressSticky} from './state.js';
+import {normalise,checkStep,toggleStep,progressSticky} from './state.js?v=20261120fmb';
 const body=document.body, page=body.dataset.page,lang=document.documentElement.lang;
 const viewport=document.documentElement;
 const stackedViewport=matchMedia('(vertical-viewport-segments > 1)');
@@ -53,9 +53,19 @@ layoutPage();
 const DATA=JSON.parse(document.querySelector('#page-data').textContent);
 const originalURL=location.href;
 for(const key in DATA.legalURLs)DATA.legalURLs[key]=new URL(DATA.legalURLs[key],originalURL).href;
-const KEY='vladimir1:t-capital:progress:v2', LANG='vladimir1:language';
+const isFmbGuide=page==='guide'&&body.classList.contains('fmb-guide');
+const total=DATA.stepCount??3;
+const KEY=DATA.progressKey??'vladimir1:t-capital:progress:v2', LANG='vladimir1:language';
+function readState(raw){
+  const result=normalise(raw,total);
+  if(isFmbGuide){
+    result.notification=['telegram','alternative'].includes(raw?.notification)?raw.notification:null;
+    if(result.count>=3&&!result.notification){result.count=2;result.open=2;}
+  }
+  return result;
+}
 const isHistoryReturn=performance.getEntriesByType('navigation')[0]?.type==='back_forward';
-let state=normalise(null), storageFailed=false, transfer=null;
+let state=readState(null), storageFailed=false, transfer=null;
 try { transfer=JSON.parse(sessionStorage.getItem('vladimir1:transfer'));sessionStorage.removeItem('vladimir1:transfer'); } catch {}
 const isTransfer=transfer?.target===location.pathname&&Date.now()-transfer.time<30000;
 const picker=document.querySelector('.language-picker');
@@ -152,7 +162,7 @@ function displayModal(kind,doc) {
     dialog.querySelectorAll('[data-legal-tab]').forEach(el=>{el.setAttribute('aria-selected',String(el.dataset.legalTab===doc));el.tabIndex=el.dataset.legalTab===doc?0:-1;});
     dialog.setAttribute('aria-labelledby','legal-dialog-title');
   } else dialog.setAttribute('aria-labelledby',kind+'-title');
-  if(kind==='restore')document.querySelector('#restore-stage').textContent=DATA.ui.restoreStep.replace('{n}',Math.min(state.count+1,3));
+  if(kind==='restore')document.querySelector('#restore-stage').textContent=DATA.ui.restoreStep.replace('{n}',Math.min(state.count+1,total));
   if(!dialog.open){
     scrollTop=scrollY;document.documentElement.classList.add('modal-open');dialog.showModal();
   }
@@ -202,9 +212,10 @@ if(dialog){
 }
 document.querySelector('[data-open-legal]')?.addEventListener('click',e=>{e.preventDefault();openModal('legal','legal');});
 if(page==='guide'){
-  try{state=normalise(JSON.parse(localStorage.getItem(KEY)));}catch{storageFailed=true;}
-  if(isTransfer&&transfer.state)state=normalise(transfer.state);
+  try{state=readState(JSON.parse(localStorage.getItem(KEY)));}catch{storageFailed=true;}
+  if(isTransfer&&transfer.state)state=readState(transfer.state);
   const returning=state.visited, boxes=[...document.querySelectorAll('[data-step-check]')];
+  const notificationChoices=[...document.querySelectorAll('[name="notification"]')];
   function save(){
     state.visited=true;
     try{localStorage.setItem(KEY,JSON.stringify(state));storageFailed=false;}catch{storageFailed=true;}
@@ -217,28 +228,49 @@ if(page==='guide'){
       const button=s.querySelector('[data-step-toggle]');
       button.disabled=locked;button.setAttribute('aria-expanded',String(open));
       s.querySelector('.step-content').hidden=!open;
-      boxes[i].checked=i<state.count;boxes[i].disabled=locked;
+      boxes[i].checked=i<state.count;boxes[i].disabled=locked||(isFmbGuide&&i===2&&!state.notification);
     });
-    const p=document.querySelector('#progress');p.classList.toggle('sticky',progressSticky(state));
-    document.querySelector('#progress-count').textContent=state.count+' / 3';
-    document.querySelector('#progress-fill').style.width=(state.count/3*100)+'%';
+    notificationChoices.forEach(input=>{input.checked=input.value===state.notification;input.disabled=state.count<2;});
+    const p=document.querySelector('#progress');p.classList.toggle('sticky',progressSticky(state,total));
+    document.querySelector('#progress-count').textContent=state.count+' / '+total;
+    document.querySelector('#progress-fill').style.width=(state.count/total*100)+'%';
     document.querySelector('[role=progressbar]').setAttribute('aria-valuenow',state.count);
-    document.querySelector('#completion').hidden=state.count!==3;
-    document.querySelector('#restart').hidden=state.count!==3;
+    document.querySelector('#completion').hidden=state.count!==total;
+    document.querySelector('#restart').hidden=state.count!==total;
   }
-  boxes.forEach((b,i)=>b.addEventListener('change',()=>{state=checkStep(state,i,b.checked);save();render();}));
-  document.querySelectorAll('[data-step-toggle]').forEach((b,i)=>b.addEventListener('click',()=>{state=toggleStep(state,i);save();render();}));
-  function restart(){state=normalise({visited:true,count:0,open:0});save();render();}
+  boxes.forEach((b,i)=>b.addEventListener('change',()=>{
+    if(!(isFmbGuide&&i===2&&b.checked&&!state.notification))state=checkStep(state,i,b.checked,total);
+    if(isFmbGuide&&state.count<2)state.notification=null;
+    save();render();
+  }));
+  notificationChoices.forEach(input=>input.addEventListener('change',()=>{
+    if(state.count>=2&&input.checked){state.notification=input.value;save();render();}
+  }));
+  document.querySelectorAll('[data-step-toggle]').forEach((b,i)=>b.addEventListener('click',()=>{state=toggleStep(state,i,total);save();render();}));
+  function restart(){state=readState({visited:true,count:0,open:0});save();render();}
   document.querySelectorAll('[data-restart]').forEach(b=>b.addEventListener('click',()=>{restart();if(modal)closeModal();}));
   document.querySelector('[data-continue]').addEventListener('click',closeModal);
-  document.querySelector('[data-already]').addEventListener('click',()=>openModal('confirm',null,true));
-  document.querySelector('[data-confirm-return]').addEventListener('click',()=>openModal('restore',null,true));
-  document.querySelector('[data-confirm-done]').addEventListener('click',()=>{state={visited:true,count:3,open:null};save();render();closeModal();});
+  document.querySelector('[data-already]')?.addEventListener('click',()=>openModal('confirm',null,true));
+  document.querySelector('[data-confirm-return]')?.addEventListener('click',()=>openModal('restore',null,true));
+  document.querySelector('[data-confirm-done]')?.addEventListener('click',()=>{state={visited:true,count:total,open:null};save();render();closeModal();});
+  const leader=document.querySelector('[data-leader-link]');
+  if(leader){
+    const ack='vladimir1:markets4you:leader-redirect-ack:v1';
+    leader.addEventListener('click',event=>{
+      if(event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+      let acknowledged=false;try{acknowledged=localStorage.getItem(ack)==='1';}catch{}
+      if(!acknowledged){event.preventDefault();openModal('leader');}
+    });
+    document.querySelector('[data-leader-confirm]').addEventListener('click',()=>{
+      try{localStorage.setItem(ack,'1');}catch{}
+      closeModal();
+    });
+  }
   save();render();
   if(requestedDoc){
     openModal('legal',requestedDoc,true,history.state?.vladimirModal?.replaceOnClose??true);
     restoreTransferredReading(dialog.querySelector('[data-legal-doc]:not([hidden])'),dialog);
-  }else if(returning&&state.count<3&&!isTransfer&&!isHistoryReturn)openModal('restore',null,Boolean(history.state?.vladimirModal));
+  }else if(returning&&state.count<total&&!isTransfer&&!isHistoryReturn)openModal('restore',null,Boolean(history.state?.vladimirModal));
 }
 if(standaloneCopy)restoreTransferredReading(standaloneCopy,document.scrollingElement);
 const faq=document.querySelector('#faq');

@@ -231,14 +231,14 @@ html body.trading main.panel.project-panel p.tc-setup-time.prose-justified { tex
 }
 
 body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
-.tc-guide h1 { line-height: 1.2; }
-.tc-guide :is(.guide-intro,.howto,.risk) { padding: 12px 16px; border-radius: 12px; border-left-width: 3px; margin-bottom: 16px; }
+:is(.tc-guide,.fmb-guide) h1 { line-height: 1.2; }
+:is(.tc-guide,.fmb-guide) :is(.guide-intro,.howto,.risk) { padding: 12px 16px; border-radius: 12px; border-left-width: 3px; margin-bottom: 16px; }
 .tc-guide .guide-intro { border-color: #101315; background: #10131508; }
 .tc-guide .howto { border-color: #20B454; background: #20B4540D; }
 .tc-guide .risk { border-color: #F21D2A; background: #F21D2A0D; }
-.tc-guide :is(.guide-intro,.howto,.risk) h2 { font-size: 16px; line-height: 1.55; font-weight: 700; margin-bottom: 8px; }
-.tc-guide :is(.guide-intro,.howto,.risk) p { margin-block: 0 16px; font-weight: 400; }
-.tc-guide :is(.guide-intro,.howto,.risk) p:last-child { margin-bottom: 0; }
+:is(.tc-guide,.fmb-guide) :is(.guide-intro,.howto,.risk) h2 { font-size: 16px; line-height: 1.55; font-weight: 700; margin-bottom: 8px; }
+:is(.tc-guide,.fmb-guide) :is(.guide-intro,.howto,.risk) p { margin-block: 0 16px; font-weight: 400; }
+:is(.tc-guide,.fmb-guide) :is(.guide-intro,.howto,.risk) p:last-child { margin-bottom: 0; }
 .tc-guide .step-toggle:not(:disabled) { color: #101315; }
 .tc-guide .step:not(.locked) .step-number { background: #101315; color: white; }
 .tc-guide .step.complete { border-color: #20B454; }
@@ -254,7 +254,7 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
 :is(.trading,.tc-guide) :is(.back,.text-button) { color: #101315; background: #10131508; }
 .tc-guide .support-card { background: #1013150D; border-color: #10131533; }
 @media (hover:hover) { :is(.trading,.tc-guide) :is(.back,.text-button):hover { background: #10131514; border-color: #101315; } }
-.tc-guide main :is(h1,h2,h3,strong,b,.step-toggle,#faq summary,.button,.back,.text-button) {
+:is(.tc-guide,.fmb-guide) main :is(h1,h2,h3,strong,b,.step-toggle,#faq summary,.button,.back,.text-button) {
   -webkit-hyphens: none;
   hyphens: none;
   word-break: normal;
@@ -269,3 +269,22 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
 @media (hover:hover) {
   :is(.trading,.tc-guide) :is(.button,.back,.text-button,.dialog-close,.legal-tabs button):hover:not(:disabled) { box-shadow: 0 5px 16px #10131526; }
 }
+
+.fmb-guide .guide-intro { border-color: #0B1F3A; background: #0B1F3A08; }
+.fmb-guide .howto { border-color: #B7E600; background: #B7E6000D; }
+.fmb-guide :is(.risk,.step-note) { border-color: #F21D2A; background: #F21D2A0D; }
+.fmb-guide .step-toggle:not(:disabled),.fmb-guide #faq summary { color: #0B1F3A; }
+.fmb-guide .step:not(.locked) .step-number { background: #0B1F3A; color: white; }
+.fmb-guide .step.complete { border-color: #B7E600; }
+.fmb-guide .step.complete .step-number { background: #B7E600; color: #0B1F3A; }
+.fmb-guide :is(.step-label input,.notification-options input) { accent-color: #0B1F3A; }
+.fmb-guide #progress-fill { background: #B7E600; }
+.fmb-guide .completion { border-color: #B7E600; background: #B7E6000D; }
+.fmb-guide .storage-status { color: #F21D2A; }
+.fmb-guide :is(.back,.text-button) { color: #0B1F3A; background: #0B1F3A08; }
+.fmb-guide .support-card { background: #0B1F3A0D; border-color: #0B1F3A33; }
+.fmb-guide .notification-options { display: grid; gap: 12px; min-width: 0; margin: 16px 0 0; padding: 0; border: 0; }
+.fmb-guide .notification-options label { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
+.fmb-guide .notification-options input { flex: none; width: 20px; height: 20px; margin: 0; }
+.fmb-guide .modal-actions .button.secondary { color: #0B1F3A; background: #0B1F3A08; border-color: #0B1F3A; }
+.fmb-guide .dialog-close { color: #0B1F3A; }

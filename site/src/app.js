@@ -234,7 +234,12 @@ if(page==='guide'){
     state=checkStep(state,i,b.checked,total);save();render();
   }));
   document.querySelectorAll('[data-step-toggle]').forEach((b,i)=>b.addEventListener('click',()=>{state=toggleStep(state,i,total);save();render();}));
-  function restart(){state=readState({visited:true,count:0,open:0});save();render();}
+  function restart(){
+    if(body.classList.contains('fmb-guide')){
+      try{localStorage.removeItem('vladimir1:markets4you:leader-redirect-ack:v1');}catch{}
+    }
+    state=readState({visited:true,count:0,open:0});save();render();
+  }
   document.querySelectorAll('[data-restart]').forEach(b=>b.addEventListener('click',()=>{restart();if(modal)closeModal();}));
   document.querySelector('[data-continue]').addEventListener('click',closeModal);
   document.querySelector('[data-already]')?.addEventListener('click',()=>openModal('confirm',null,true));

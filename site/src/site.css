@@ -292,7 +292,6 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
   .fmb-guide .guide-nav .back:first-child { max-width: 200px; }
   .fmb-guide .guide-nav .back:last-child { max-width: 8.5rem; }
 }
-.fmb-guide .risk .risk-important { padding: 12px 16px; border-radius: 12px; background: #F21D2A0D; }
 .fmb-guide .risk-important > [aria-hidden] { margin-inline-end: 8px; }
 .fmb-guide [data-panel=leader] :is(p,li) { font-size: 16px; line-height: 1.55; text-wrap: wrap; hyphens: auto; word-break: normal; }
 .fmb-guide [data-panel=leader] :is(p,li):lang(th) { hyphens: none; }

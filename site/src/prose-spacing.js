@@ -1,5 +1,6 @@
 const leaderProse = '.fmb-guide [data-panel=leader] :is(p,li)';
 const selector = ':is(main:not(.placeholder), .legal-copy) :is(p:not([role="status"]), li), '+leaderProse;
+const guideProse = 'body.guide:is(.tc-guide,.fmb-guide) main.panel :is(.guide-intro,.howto,.risk,.step-content,.step-note,.answer,.completion) :is(p:not([role="status"]),li), body.fmb-guide dialog [data-panel=leader] :is(p,li)';
 const panel = document.querySelector('main:not(.placeholder)');
 const inlineSizes = new WeakMap();
 let pending;
@@ -145,7 +146,7 @@ function checkSpacing() {
       if(changed.has(span.closest('p,li,h1,h2,h3')))span.replaceWith(...span.childNodes);
     });
     fitOverflowingHeadings(changed);
-    const candidates = [...document.querySelectorAll(selector)].filter(block=>changed.has(block));
+    const candidates = [...document.querySelectorAll(selector)].filter(block=>changed.has(block)&&!block.matches(guideProse));
     const blocks = candidates.filter(block => (block.clientWidth >= 576 || block.matches(leaderProse)) && block.getClientRects().length);
     for (const block of candidates) block.classList.remove('prose-justified');
     // Try native justification at the current width and keep it only for readable paragraphs.

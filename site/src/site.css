@@ -295,7 +295,8 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
 .fmb-guide .risk-important > [aria-hidden] { margin-inline-end: 8px; }
 .fmb-guide [data-panel=leader] :is(p,li) { font-size: 16px; line-height: 1.55; text-wrap: wrap; hyphens: auto; word-break: normal; }
 .fmb-guide [data-panel=leader] :is(p,li):lang(th) { hyphens: none; }
-.fmb-guide [data-panel=leader] .prose-justified:not(:lang(th)) { text-align: justify; text-align-last: start; }
+body.guide:is(.tc-guide,.fmb-guide) main.panel :is(.guide-intro,.howto,.risk,.step-content,.step-note,.answer,.completion) :is(p:not([role="status"]),li):not(:lang(th)),
+body.fmb-guide dialog [data-panel=leader] :is(p,li):not(:lang(th)) { text-align: justify; text-align-last: start; }
 .fmb-guide [data-panel=leader] h3 { font-size: 16px; line-height: 1.55; margin: 0 0 8px; }
 .fmb-guide [data-panel=leader] ol { padding-inline-start: 24px; margin: 0; }
 .fmb-guide [data-panel=leader] li { padding-inline-start: 4px; margin-bottom: 12px; }

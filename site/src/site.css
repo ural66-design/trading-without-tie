@@ -198,7 +198,7 @@ main.panel, dialog { translate: var(--panel-center-offset,0px) 0; }
 :is(.fmb,.trading) .button-icon-content { display: inline-flex; align-items: center; justify-content: center; gap: 12px; flex: none; max-width: 100%; }
 .trading .button-icon-content { max-width: calc(100% + 32px); }
 :is(.fmb,.trading) .button-icon img { width: 20px; height: 20px; flex: none; }
-:is(.fmb,.trading) .button-icon-content > span { min-inline-size: 0; overflow-wrap: anywhere; text-align: start; }
+:is(.fmb,.trading) .button-icon-content > span { min-inline-size: 0; overflow-wrap: normal; text-align: start; }
 .fmb .fmb-telegram-info { border-inline-start-color: var(--positive); background: color-mix(in srgb, var(--positive) 10%, transparent); }
 .fmb .fmb-telegram-info strong { font-weight: 600; }
 @media (max-width: 600px) {
@@ -302,9 +302,21 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
 .fmb-guide [data-panel=leader] li:last-child { margin-bottom: 0; }
 .fmb-guide [data-leader-confirm] { background: #B7E600; border-color: #B7E600; color: #0B1F3A; width: 100%; }
 .fmb-guide :is(main,[data-panel=leader]) :is(p,li) { hyphenate-limit-chars: 8 4 4; }
-.fmb-guide main.panel h1 { hyphens: manual !important; }
-.fmb-guide a[href^="mailto:"] .protected-name { white-space: normal; overflow-wrap: anywhere; }
+body :is(h1,h2,h3,strong,b) { -webkit-hyphens: none; hyphens: none; word-break: normal; }
 @media (max-width: 280px) {
-  .fmb-guide .panel, .fmb-guide :is(.step-head,.step-content,.guide-intro,.howto,.risk,.answer) { padding-inline: 8px; }
-  .fmb-guide .step-content ol { padding-inline-start: 20px; }
+  .fmb .button-icon { padding-inline: 2px; }
+  .guide .panel { padding-inline: 0; }
+  .guide :is(.step-head,.step-content,.guide-intro,.howto,.risk,.answer) { padding-inline: 6px; }
+  .guide .step-content ol { padding-inline-start: 12px; }
+  .guide .step-content li { padding-inline-start: 0; }
+}
+a[href^="mailto:"],a[href^="mailto:"] .protected-name { white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 280px) { .project-panel { padding-inline: 8px; } }
+.protected-name.typography-address { white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 280px) {
+  .home .panel { padding-inline: 8px; }
+  .legal-page .panel { padding-inline: 3px; }
+  .project-panel :is(.tc-info,.fmb-copy-info) { padding-inline: 8px; }
+  .home .socials .actions { grid-template-columns: minmax(0,1fr); grid-auto-rows: 1fr; }
+  .home .social-button { display: flex; flex-direction: column; gap: 8px; padding-inline: 6px; }
 }

@@ -73,6 +73,10 @@ function protectLineEnds(element) {
       range.setStart(start.node,start.offset);
       if(atom&&element.contains(atom)&&atom.textContent.trimStart().startsWith(next.segment))range.setEndAfter(atom);
       else range.setEnd(end.node,end.offset+1);
+      if(language==='ru'&&!atom&&next.segment.includes('\u00ad')){
+        const split=position(next.index+next.segment.indexOf('\u00ad'));
+        range.setEnd(split.node,split.offset);
+      }
       const measure=document.createElement('span');
       measure.style.cssText='position:fixed;visibility:hidden;white-space:nowrap;width:max-content;max-width:none';
       measure.append(range.cloneContents());element.append(measure);

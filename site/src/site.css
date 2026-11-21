@@ -104,8 +104,7 @@ p { text-wrap: pretty; }
 body:not(.home) :is(main:not(.placeholder), .legal-copy) :is(p:not([role="status"]), li) {
   text-wrap: wrap;
 }
-:is(p,li) { word-spacing: var(--prose-extra-space, normal); }
-.prose-justified { text-align: justify; text-align-last: start; }
+.prose-line-spaced .prose-space { word-spacing: var(--prose-gap, normal); }
 .long-word {
   display: inline-block;
   max-inline-size: 100%;

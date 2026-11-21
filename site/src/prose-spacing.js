@@ -152,53 +152,83 @@ function prepare(block) {
 
 const context=document.createElement('canvas').getContext('2d');
 const spaceWidths=new Map();
-const roundingReserve=1/16;
-function measureProse(block, measureLines=false) {
-  const range=document.createRange(),characters=[];
-  let index=0;
-  for(const node of nodesOf(block)){
-    const font=getComputedStyle(node.parentElement).font;
-    if(!spaceWidths.has(font)){context.font=font;spaceWidths.set(font,context.measureText(' ').width);}
-    let offset=0;
-    for(const char of node.data){
-      range.setStart(node,offset);offset+=char.length;range.setEnd(node,offset);
-      const rect=[...range.getClientRects()].filter(x=>x.width>.02).at(-1);
-      if(rect)characters.push({rect,space:/[ \u00a0]/u.test(char),unit:spaceWidths.get(font),index});
-      index++;
+const lineReserve=.25;
+const spaceReserve=1/16;
+
+function textPieces(block) {
+  return nodesOf(block).flatMap(node=>{
+    const fontSpace=node.parentElement.closest('.guide-inline-scroll')?0:normalSpace(node.parentElement);
+    const parts=[];
+    for(const match of node.data.matchAll(/ +|[^ ]+/g)){
+      const start=match.index,end=start+match[0].length;
+      parts.push({node,start,end,space:match[0][0]===' ',normal:fontSpace});
     }
-  }
-  const same=(a,b)=>Math.abs((a.top+a.bottom-b.top-b.bottom)/2)<Math.min(a.height,b.height)*.55;
-  const lines=[];
-  let limit=Infinity;
-  for(let i=0;i<characters.length;i++){
-    const {rect,space,unit,index}=characters[i];
-    const previous=characters[i-1]?.rect,next=characters[i+1]?.rect;
-    const gap=space&&unit&&previous&&next&&same(previous,rect)&&same(next,rect);
-    if(gap){
-      limit=Math.min(limit,unit*1.5-roundingReserve-Math.max(rect.width,next.left-previous.right));
-      if(!measureLines&&limit<0)return {wide:true};
-    }
-    if(!measureLines)continue;
-    let line=lines.at(-1);
-    if(!line||!same(line.anchor,rect)){
-      line={anchor:rect,right:rect.right,count:0,end:index};
-      lines.push(line);
-    }
-    if(!space){
-      line.right=Math.max(line.right,rect.right);
-      line.end=index;
-    }
-    if(gap)line.count++;
-  }
-  return {wide:limit<0,lines,limit};
+    return parts;
+  });
 }
 
-function extraSpacing(block, layout) {
-  if(layout.lines.length<2||layout.wide||!Number.isFinite(layout.limit))return 0;
+function normalSpace(element) {
+  const font=getComputedStyle(element).font;
+  if(!spaceWidths.has(font)){
+    context.font=font;
+    spaceWidths.set(font,context.measureText(' ').width);
+  }
+  return spaceWidths.get(font);
+}
+
+function lineLayout(pieces) {
+  const range=document.createRange(),lines=[];
+  for(const [index,piece] of pieces.entries()){
+    range.setStart(piece.node,piece.start);
+    range.setEnd(piece.node,piece.end);
+    const fragments=[...range.getClientRects()].filter(rect=>rect.width>.02&&rect.height);
+    for(const rect of fragments){
+      const middle=(rect.top+rect.bottom)/2;
+      let line=lines.at(-1);
+      if(!line||Math.abs(line.middle-middle)>=Math.min(line.height,rect.height)*.5){
+        line={middle,height:rect.height,left:Infinity,right:-Infinity,word:-1,fragment:0,gaps:[]};
+        lines.push(line);
+      }
+      if(piece.space){
+        line.gaps.push({piece,rect});
+      }else if(piece.node.data.trim()){
+        line.left=Math.min(line.left,rect.left);
+        line.right=Math.max(line.right,rect.right);
+        line.word=index;
+        line.fragment=rect.width;
+        line.split=fragments.length>1;
+      }
+    }
+  }
+  return lines.filter(line=>line.word>=0);
+}
+
+function planSpacing(block,pieces,retry=false) {
   const css=getComputedStyle(block);
   const edge=block.getBoundingClientRect().right-parseFloat(css.borderRightWidth)-parseFloat(css.paddingRight);
-  const room=Math.min(...layout.lines.filter(line=>line.count).map(line=>(edge-line.right-roundingReserve)/line.count));
-  return Math.max(0, Math.min(room,layout.limit));
+  const lines=lineLayout(pieces),changes=new Map();
+  for(const line of lines.slice(0,-1)){
+    const slack=edge-line.right-(retry?3:lineReserve);
+    if(slack<=0)continue;
+    const gaps=line.gaps.filter(({rect})=>rect.left>line.left&&rect.right<line.right);
+    const room=gaps.map(({piece,rect})=>Math.max(0,piece.normal*1.5-rect.width-(retry ? .1875 : spaceReserve)));
+    const total=room.reduce((sum,value)=>sum+value,0);
+    if(!total)continue;
+    const share=Math.min(1,slack/total);
+    for(const [index,{piece}] of gaps.entries()){
+      const pixels=Math.floor(64*room[index]*share)/64;
+      if(pixels>0)changes.set(piece,pixels+'px');
+    }
+  }
+  return {block,pieces,lines,changes};
+}
+
+function preservesLines(plan) {
+  const after=lineLayout(plan.pieces);
+  return plan.lines.length===after.length&&after.every((line,i)=>
+    line.word===plan.lines[i].word&&line.split===plan.lines[i].split&&
+    (!line.split||Math.abs(line.fragment-plan.lines[i].fragment)<1.5)&&
+    line.gaps.every(({piece,rect})=>!piece.normal||rect.width<=1.5*piece.normal+.001));
 }
 
 function fitAtoms(block) {
@@ -216,77 +246,129 @@ function fitAtoms(block) {
 }
 
 
-function clearExtraSpacing(block) {
-  if(!block.style.getPropertyValue('--prose-extra-space'))return;
-  block.style.removeProperty('--prose-extra-space');
-  if(!block.style.length)block.removeAttribute('style');
+// Keep the original Text nodes so each resize starts with native line breaking.
+const formatted=new WeakMap(),applied=new WeakMap(),deferred=new Set();
+function hideSpacing(block) {
+  if(!block.classList.contains('prose-line-spaced'))return;
+  block.classList.remove('prose-line-spaced');
+  if(!block.classList.length)block.removeAttribute('class');
 }
 
-const formatted=new WeakMap();
+function restoreSpacing(block) {
+  hideSpacing(block);
+  for(const {original,inserted} of applied.get(block)??[]){
+    inserted[0].replaceWith(original);
+    for(const node of inserted.slice(1))node.remove();
+  }
+  applied.delete(block);
+}
+
+function applySpacing({block,pieces,changes}) {
+  const records=[];
+  for(let i=0;i<pieces.length;){
+    const original=pieces[i].node;
+    let j=i+1;
+    while(j<pieces.length&&pieces[j].node===original)j++;
+    const group=pieces.slice(i,j);
+    i=j;
+    if(!group.some(piece=>changes.has(piece)))continue;
+    const fragment=document.createDocumentFragment();
+    const inserted=[];
+    for(let k=0;k<group.length;){
+      const first=group[k],extra=changes.get(first);
+      let next=k+1;
+      if(!extra)while(next<group.length&&!changes.has(group[next]))next++;
+      const offset=first.start;
+      const text=document.createTextNode(original.data.slice(offset,group[next-1].end));
+      let inline=text;
+      if(extra){
+        inline=document.createElement('span');
+        inline.className='prose-space';
+        inline.style.setProperty('--prose-gap',extra);
+        inline.append(text);
+      }
+      fragment.append(inline);
+      inserted.push(inline);
+      for(const piece of group.slice(k,next)){
+        piece.node=text;
+        piece.start-=offset;
+        piece.end-=offset;
+      }
+      k=next;
+    }
+    original.replaceWith(fragment);
+    records.push({original,inserted});
+  }
+  applied.set(block,records);
+  block.classList.add('prose-line-spaced');
+}
+
 function refreshSpacing(candidates) {
-  const changed=[];
+  const pending=[],selection=document.getSelection();
+  const selected=selection&&!selection.isCollapsed&&selection.rangeCount?selection.getRangeAt(0):null;
   const fontsLoaded=document.fonts.status==='loaded';
   for(const block of candidates){
     if(!block.getClientRects().length||(!block.matches('summary')&&block.closest('details:not([open])')))continue;
-    const key=block.getBoundingClientRect().width+'|'+devicePixelRatio+'|'+getComputedStyle(block).font+'|'+block.textContent;
+    const css=getComputedStyle(block);
+    const key=block.getBoundingClientRect().width+'|'+devicePixelRatio+'|'+css.font+'|'+block.textContent;
     if(formatted.get(block)===key)continue;
-    changed.push({block,key});
+    if(selected?.intersectsNode(block)){
+      hideSpacing(block);
+      deferred.add(block);
+      continue;
+    }
+    deferred.delete(block);
+    const eligible=fontsLoaded&&block.matches('p,li')&&!block.closest('.home')&&!block.matches(':lang(th)')&&
+      !block.querySelector('p,li')&&/^(start|left)$/.test(css.textAlign);
+    pending.push({block,key,eligible});
   }
-  for(const {block} of changed){
-    block.classList.remove('prose-justified');
-    clearExtraSpacing(block);
-    fitAtoms(block);
-  }
-  const eligible=fontsLoaded?changed.map(({block})=>block).filter(block=>
-    block.matches('p,li')&&!block.closest('.home')&&!block.matches(':lang(th)')&&!block.querySelector('p,li')&&
-    /^(start|left)$/.test(getComputedStyle(block).textAlign)):[];
-
-  // Test browser justification before painting. Paragraphs with a wide gap
-  // instead keep native line breaks and can use a bounded amount of spacing.
-  for(const block of eligible)block.classList.add('prose-justified');
-  const rejected=eligible.filter(block=>measureProse(block).wide);
-  for(const block of rejected)block.classList.remove('prose-justified');
-
-  const fallback=rejected.map(block=>{
-    const layout=measureProse(block,true);
-    return {block,layout,extra:extraSpacing(block,layout)};
-  }).filter(({extra})=>extra>=.08);
-  for(const {block,extra} of fallback)block.style.setProperty('--prose-extra-space',extra+'px');
-  const rewrapped=fallback.filter(({block,layout})=>{
-    const result=measureProse(block,true);
-    return result.wide||result.lines.length!==layout.lines.length||
-      result.lines.some((line,i)=>line.end!==layout.lines[i].end);
-  });
-  for(const {block} of rewrapped)clearExtraSpacing(block);
-  if(fontsLoaded)for(const {block,key} of changed)formatted.set(block,key);
+  for(const {block} of pending)if(applied.has(block))restoreSpacing(block);
+  for(const {block} of pending)fitAtoms(block);
+  const plans=pending.filter(({eligible})=>eligible)
+    .map(({block})=>planSpacing(block,textPieces(block))).filter(plan=>plan.changes.size);
+  for(const plan of plans)applySpacing(plan);
+  const rejected=plans.filter(plan=>!preservesLines(plan));
+  for(const {block} of rejected)restoreSpacing(block);
+  // When engine rounding changes a break, retry with more room at the edge.
+  const retried=rejected.map(({block})=>planSpacing(block,textPieces(block),true)).filter(plan=>plan.changes.size);
+  for(const plan of retried)applySpacing(plan);
+  const unsafe=retried.filter(plan=>!preservesLines(plan));
+  for(const {block} of unsafe)restoreSpacing(block);
+  if(fontsLoaded)for(const {block,key} of pending)formatted.set(block,key);
 }
 const checkSpacing=()=>refreshSpacing(blocks);
 
-for(const block of blocks)prepare(block);
-const observer=new ResizeObserver(entries=>{
-  refreshSpacing(entries.map(entry=>entry.target));
-});
-for(const block of blocks)observer.observe(block,{box:'border-box'});
-const visibility=new MutationObserver(checkSpacing);
-for(const el of document.querySelectorAll('dialog,dialog [data-panel],dialog .legal-copy,#faq details')) {
-  visibility.observe(el,{attributes:true,attributeFilter:['open','hidden']});
-}
-document.fonts.ready.then(checkSpacing);
-document.fonts.addEventListener('loading',()=>{
-  for(const block of blocks){
-    block.classList.remove('prose-justified');
-    clearExtraSpacing(block);
-    formatted.delete(block);
+const initialized=Symbol.for('vladimir1.prose-spacing');
+if(!document[initialized]){
+  document[initialized]=true;
+  document.addEventListener('selectionchange',()=>{
+    if(deferred.size&&document.getSelection()?.isCollapsed)refreshSpacing([...deferred]);
+  });
+  for(const block of blocks)prepare(block);
+  const observer=new ResizeObserver(entries=>{
+    refreshSpacing(entries.map(entry=>entry.target));
+  });
+  for(const block of blocks)observer.observe(block,{box:'border-box'});
+  const visibility=new MutationObserver(checkSpacing);
+  for(const el of document.querySelectorAll('dialog,dialog [data-panel],dialog .legal-copy,#faq details')) {
+    visibility.observe(el,{attributes:true,attributeFilter:['open','hidden']});
   }
-});
-document.fonts.addEventListener('loadingdone',()=>{
-  spaceWidths.clear();
-  for(const block of blocks)formatted.delete(block);
-  checkSpacing();
-});
-// Viewport geometry is already current here. Waiting for another animation
-// frame would leave the previous width's justification active during reflow.
-window.addEventListener('resize',checkSpacing);
-for(const feature of ['horizontal-viewport-segments','vertical-viewport-segments']){
-  matchMedia('('+feature+' > 1)').addEventListener('change',checkSpacing);
+  document.fonts.ready.then(checkSpacing);
+  document.fonts.addEventListener('loading',()=>{
+    for(const block of blocks){
+      hideSpacing(block);
+      formatted.delete(block);
+    }
+  });
+  document.fonts.addEventListener('loadingdone',()=>{
+    spaceWidths.clear();
+    for(const block of blocks)formatted.delete(block);
+    checkSpacing();
+  });
+  // Viewport geometry is already current here. Waiting for another animation
+  // frame would leave the previous width's justification active during reflow.
+  window.addEventListener('resize',checkSpacing);
+  for(const feature of ['horizontal-viewport-segments','vertical-viewport-segments']){
+    matchMedia('('+feature+' > 1)').addEventListener('change',checkSpacing);
+  }
 }

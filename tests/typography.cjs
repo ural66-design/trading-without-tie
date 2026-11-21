@@ -123,24 +123,28 @@ async function measureResize(page, width, height) {
   await page.evaluate(() => {
     const line = [...document.querySelectorAll('.step-content li')]
       .find(item => item.textContent.includes('cuenta de Google/Facebook'));
-    const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
-    let node;
-    while ((node = walker.nextNode()) && !node.data.includes('cuenta de')) {}
-    const blank = node.data.indexOf('cuenta de') + 'cuenta'.length;
     const range = document.createRange();
     const canvas = document.createElement('canvas').getContext('2d');
-    canvas.font = getComputedStyle(node.parentElement).font;
-    const standard = canvas.measureText(' ').width;
     const samples = [];
     const sample = phase => {
-      range.setStart(node, blank - 1);
-      range.setEnd(node, blank);
-      const left = range.getBoundingClientRect();
-      range.setStart(node, blank + 1);
-      range.setEnd(node, blank + 2);
-      const right = range.getBoundingClientRect();
-      if (Math.abs(left.top - right.top) < 1) {
-        samples.push({phase, width: innerWidth, height: innerHeight, gap: right.left - left.right, standard});
+      const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+      const chars = [];
+      for(let node=walker.nextNode();node;node=walker.nextNode()){
+        for(let offset=0;offset<node.length;offset++)chars.push({node,offset,char:node.data[offset]});
+      }
+      const at = chars.map(part=>part.char).join('').indexOf('cuenta de');
+      if(at<0)throw Error('Resize test phrase not found');
+      const blank = at + 'cuenta'.length;
+      const rect = ({node,offset}) => {
+        range.setStart(node,offset);
+        range.setEnd(node,offset+1);
+        return range.getBoundingClientRect();
+      };
+      const left = rect(chars[blank-1]), right = rect(chars[blank+1]);
+      if(Math.abs(left.top-right.top)<1){
+        canvas.font = getComputedStyle(chars[blank].node.parentElement).font;
+        const standard=canvas.measureText(' ').width;
+        samples.push({phase,width:innerWidth,height:innerHeight,gap:right.left-left.right,standard});
       }
     };
     let frame;
@@ -196,15 +200,39 @@ async function main(){
       const fx=()=>p.evaluate(()=>({links:[...document.querySelectorAll('main a')].map(a=>a.getAttribute('href')),pairs:[...document.querySelectorAll('.protected-name')].map(x=>x.textContent.trim()),nested:document.querySelectorAll('.protected-name .protected-name').length,text:document.querySelector('main').textContent,html:document.querySelector('main').innerHTML}));
       const example=await fx();
       const expanded=await p.locator('#edge-fallback').evaluate(el=>{
-        const range=document.createRange();
+        const range=document.createRange(),rows=new Map(),edge=el.getBoundingClientRect().right;
+        const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);
+        for(let node=walker.nextNode();node;node=walker.nextNode()){
+          range.selectNodeContents(node);
+          const extra=parseFloat(getComputedStyle(node.parentElement).wordSpacing)||0;
+          for(const r of range.getClientRects()){
+            if(!r.width)continue;
+            const row=rows.get(r.top)??{right:0,expanded:0};
+            row.right=Math.max(row.right,r.right);
+            row.expanded+=Number(extra>0);
+            rows.set(r.top,row);
+          }
+        }
         range.selectNodeContents(el);
-        const style=getComputedStyle(el);
-        return {align:style.textAlign,spacing:parseFloat(style.wordSpacing),
-          lines:new Set([...range.getClientRects()].filter(r=>r.width>0).map(r=>r.top)).size};
+        return {text:range.toString(),lines:[...rows].sort((a,b)=>a[0]-b[0]).map(([,r])=>({gap:edge-r.right,expanded:r.expanded}))};
       });
-      assert.equal(expanded.align,'start');
-      assert.ok(expanded.spacing>0,'Expected bounded spacing on an underfilled paragraph');
-      assert.equal(expanded.lines,3);
+      assert.equal(expanded.lines.length,3);
+      assert.ok(expanded.lines[0].gap>10&&expanded.lines[0].expanded>0,'A short line should use its allowed extra spaces');
+      assert.ok(expanded.lines[1].gap<1&&expanded.lines[1].expanded>0,'The next line should reach the edge independently');
+      assert.equal(expanded.lines[2].expanded,0,'The last line should keep natural spaces');
+      assert.equal(expanded.text,'qqqqqq jj xxxx zzzzzzzzz ggggg mm vvvvvvvv');
+      const selected=await p.locator('#pair').evaluate(el=>{
+        const r=document.createRange(),selection=document.getSelection();
+        r.selectNodeContents(el);selection.removeAllRanges();selection.addRange(r);
+        return selection.toString();
+      });
+      assert.ok(selected.includes('Для каждой'));
+      await p.setViewportSize({width:280,height:850});
+      await settle(p);
+      assert.equal(await p.evaluate(()=>document.getSelection().toString()),selected);
+      await p.evaluate(()=>document.getSelection().removeAllRanges());
+      await p.setViewportSize({width:375,height:850});
+      await settle(p);
       const native=await p.evaluate(()=>{
         const lines=(element,term)=>{
           const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT),chars=[];

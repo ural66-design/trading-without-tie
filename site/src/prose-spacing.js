@@ -152,9 +152,10 @@ function prepare(block) {
     }
   }
   if(block.matches('p,li,summary,h1,h2,h3,h4,h5,h6'))hits.push(...sentencePairs(clean.text));
+  const home=block.closest('.home');
   for(const m of clean.text.matchAll(compoundWord)){
     const end=m.index+m[0].length;
-    if(clean.point(m.index)?.node.parentElement.closest(noHyphens)||quotes.some(([a,b])=>a<=m.index&&m.index<b)||
+    if(home||clean.point(m.index)?.node.parentElement.closest(noHyphens)||quotes.some(([a,b])=>a<=m.index&&m.index<b)||
        hits.some(([a,b])=>a<end&&m.index<b))hits.push([m.index,end]);
   }
   for(const e of block.querySelectorAll(atomic)){
@@ -187,9 +188,11 @@ function hasWideSpaces(block) {
     }
   }
   const same=(a,b)=>Math.abs((a.top+a.bottom-b.top-b.bottom)/2)<Math.min(a.height,b.height)*.55;
+  // Leave room for subpixel rounding between canvas and the final text layout.
+  const roundingReserve=1/16;
   for(let i=1;i<characters.length-1;i++){
     const {rect,space,unit}=characters[i],a=characters[i-1].rect,b=characters[i+1].rect;
-    if(space&&unit&&same(a,rect)&&same(b,rect)&&Math.max(rect.width,b.left-a.right)>unit*1.5+.04)return true;
+    if(space&&unit&&same(a,rect)&&same(b,rect)&&Math.max(rect.width,b.left-a.right)>unit*1.5-roundingReserve)return true;
   }
   return false;
 }
@@ -208,47 +211,55 @@ function fitAtoms(block) {
 }
 
 
-const formatted=new WeakMap(),inlineSizes=new WeakMap();
-let pending;
-function checkSpacing() {
-  if(pending)return;
-  pending=requestAnimationFrame(()=>{
-    pending=undefined;
-    if(document.fonts.status!=='loaded'){document.fonts.ready.then(checkSpacing);return;}
-    for(const block of blocks){
-      if(!block.getClientRects().length||(!block.matches('summary')&&block.closest('details:not([open])')))continue;
-      const key=block.getBoundingClientRect().width+'|'+devicePixelRatio+'|'+getComputedStyle(block).font+'|'+block.textContent;
-      if(formatted.get(block)===key)continue;
-      fitAtoms(block);
-      const guide=block.matches(guideProse);
-      const justify=guide?'guide-justify':'prose-justified';
-      const eligible=block.matches('p,li')&&!block.closest('.home')&&!block.matches(':lang(th),.tc-setup-time')&&(guide||block.clientWidth>=576||block.matches(leaderProse));
-      block.classList.toggle(justify,eligible);
-      if(eligible&&hasWideSpaces(block))block.classList.remove(justify);
-      formatted.set(block,key);
-    }
-  });
+const formatted=new WeakMap();
+function refreshSpacing(candidates) {
+  const changed=[];
+  const fontsLoaded=document.fonts.status==='loaded';
+  for(const block of candidates){
+    if(!block.getClientRects().length||(!block.matches('summary')&&block.closest('details:not([open])')))continue;
+    const key=block.getBoundingClientRect().width+'|'+devicePixelRatio+'|'+getComputedStyle(block).font+'|'+block.textContent;
+    if(formatted.get(block)===key)continue;
+    const guide=block.matches(guideProse);
+    const justify=guide?'guide-justify':'prose-justified';
+    const eligible=fontsLoaded&&block.matches('p,li')&&!block.closest('.home')&&!block.matches(':lang(th),.tc-setup-time')&&(guide||block.clientWidth>=576||block.matches(leaderProse));
+    changed.push({block,key,justify,eligible});
+  }
+  for(const {block,justify,eligible} of changed){
+    fitAtoms(block);
+    block.classList.toggle(justify,eligible);
+  }
+  // Read all trial layouts before removing rejected alignment. Everything runs
+  // in the same rendering update so the trial cannot reach a painted frame.
+  const rejected=changed.filter(({block,eligible})=>eligible&&hasWideSpaces(block));
+  for(const {block,justify} of rejected)block.classList.remove(justify);
+  if(fontsLoaded)for(const {block,key} of changed)formatted.set(block,key);
 }
+const checkSpacing=()=>refreshSpacing(blocks);
 
 for(const block of blocks)prepare(block);
 const observer=new ResizeObserver(entries=>{
-  let resized=false;
-  for(const entry of entries){
-    const width=entry.borderBoxSize[0]?.inlineSize??entry.contentRect.width;
-    if(inlineSizes.get(entry.target)!==width)resized=true;
-    inlineSizes.set(entry.target,width);
-  }
-  if(resized)checkSpacing();
+  refreshSpacing(entries.map(entry=>entry.target));
 });
-for(const block of blocks)observer.observe(block);
+for(const block of blocks)observer.observe(block,{box:'border-box'});
 const visibility=new MutationObserver(checkSpacing);
 for(const el of document.querySelectorAll('dialog,dialog [data-panel],dialog .legal-copy,#faq details')) {
   visibility.observe(el,{attributes:true,attributeFilter:['open','hidden']});
 }
 document.fonts.ready.then(checkSpacing);
+document.fonts.addEventListener('loading',()=>{
+  for(const block of blocks){
+    block.classList.remove('guide-justify','prose-justified');
+    formatted.delete(block);
+  }
+});
 document.fonts.addEventListener('loadingdone',()=>{
   spaceWidths.clear();
   for(const block of blocks)formatted.delete(block);
   checkSpacing();
 });
+// Viewport geometry is already current here. Waiting for another animation
+// frame would leave the previous width's justification active during reflow.
 window.addEventListener('resize',checkSpacing);
+for(const feature of ['horizontal-viewport-segments','vertical-viewport-segments']){
+  matchMedia('('+feature+' > 1)').addEventListener('change',checkSpacing);
+}

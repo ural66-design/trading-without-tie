@@ -14,7 +14,8 @@ const mime={html:'text/html',js:'text/javascript',css:'text/css',woff2:'font/wof
 function measure(input){
  const lang=document.documentElement.lang,range=document.createRange(),ctx=document.createElement('canvas').getContext('2d');
  const wordSeg=new Intl.Segmenter(lang,{granularity:'word'}),sentSeg=new Intl.Segmenter(lang,{granularity:'sentence'}),letter=/\p{L}/u;
- const pick='main :is(p,li,h1,h2,h3,h4,h5,h6,summary), dialog :is(p,li,h2,h3,summary)';
+ const home=document.body.classList.contains('home');
+ const pick='main :is(p,li,h1,h2,h3,h4,h5,h6,summary), dialog :is(p,li,h2,h3,summary)'+(home?', main .button':'');
  const all=[...document.querySelectorAll(pick)],issues=[],latent=[],stats={blocks:0,words:0,sentences:0,bound:0,gaps:0,rows:0,hyphen:0,soft:0,auto:0,hard:0,fragment:0,maxStreak:0,justifyBlocks:0,wrapStart:0};
  const normal=new Map(),getWidth=f=>{if(!normal.has(f)){ctx.font=f;normal.set(f,ctx.measureText(' ').width);}return normal.get(f);};
  const unit='(?:минут[а-яё]*|час[а-яё]*|секунд[а-яё]*|км|кг|minutes?|hours?|seconds?|km|kg|minutos?|horas?|segundos?|menit|minit|jam|dakika|saat|phút|giờ|นาที|ชั่วโมง|मिनट|घंट[ेा]|USD|EUR|USDT)';
@@ -48,6 +49,7 @@ function measure(input){
   for(const t of tokens){const ids=letters(t);if(ids.length<2)continue;let prev=ids[0],a=rect(prev);
    for(const i of ids.slice(1)){const b=rect(i);if(a&&b&&!same(a,b)&&b.top>a.top+2){
     const soft=text.slice(prev+1,i).includes('\u00ad');const reason=soft?'soft':'auto';stats[reason]++;stats.hyphen++;
+    if(home&&(lang!=='th'||soft))issues.push({rule:'home-word',...ref,example:t.segment.replace(/\u00ad/g,''),y:y(a),yNext:y(b)});
     const k=rows.findIndex(z=>same(z,a));if(k>=0)tails.set(k,reason);
     const firstHalf=ids.filter(j=>j<i&&same(rect(j),a)).length,secondHalf=ids.filter(j=>j>=i&&same(rect(j),b)).length;
     if(firstHalf<3||secondHalf<3){stats.fragment++;if(soft||lang!=='th')parts.add(t.segment.replace(/\u00ad/g,''));}
@@ -58,6 +60,7 @@ function measure(input){
   for(const m of plain.matchAll(/[\p{L}\p{M}]+(?:[-‐‑][\p{L}\p{M}]+)+/gu)){const start=translate[m.index],end=translate[m.index+m[0].length-1],p=locate(start)?.node.parentElement;const aa=rect(start),bb=rect(end);if(!aa||!bb||same(aa,bb))continue;
 
    const rigid=p?.closest('strong,b,h1,h2,h3,h4,h5,h6,.protected-name,.keep-words');
+   if(home)issues.push({rule:'home-compound',...ref,example:m[0],y:y(aa),yNext:y(bb)});
    if(rigid||[...plain.matchAll(quote)].some(q=>q.index<=m.index&&q.index+q[0].length>m.index))issues.push({rule:'protected-compound',...ref,example:m[0],y:y(aa),yNext:y(bb)});
    for(const h of m[0].matchAll(/[-‐‑]/gu)){const i=translate[m.index+h.index],j=translate[m.index+h.index+1],a=rect(i),b=rect(j);if(a&&b&&!same(a,b)){stats.hard++;const k=rows.findIndex(z=>same(z,a));if(k>=0)tails.set(k,'hard');}}
   }
@@ -86,7 +89,7 @@ function measure(input){
    let pi=i-1,ni=j;while(pi>=0&&/[\u00ad\u2060]/u.test(text[pi]))pi--;while(ni<text.length&&/[\u00ad\u2060]/u.test(text[ni]))ni++;
    const a=rect(pi),b=rect(ni),sr=rect(i);if(!same(a,b)||!same(a,sr))continue;
    const px=b.left-a.right,standard=getWidth(sr.font);if(px<.05||!standard)continue;stats.gaps++;
-   if(px>standard*1.5+.06){const line=rows.findIndex(z=>same(z,a));issues.push({rule:'space',...ref,line,left:text.slice(Math.max(0,i-22),i),right:text.slice(j,j+22),space:+sr.width.toFixed(3),gap:+px.toFixed(3),standard:+standard.toFixed(3),ratio:+(px/standard).toFixed(3),font:sr.font,y:y(a)});}
+   if(px>standard*1.5+.001){const line=rows.findIndex(z=>same(z,a));issues.push({rule:'space',...ref,line,left:text.slice(Math.max(0,i-22),i),right:text.slice(j,j+22),space:+sr.width.toFixed(3),gap:+px.toFixed(3),standard:+standard.toFixed(3),ratio:+(px/standard).toFixed(3),font:sr.font,y:y(a)});}
   }
   let streak=0,max=0;for(let i=0;i<rows.length;i++){streak=tails.has(i)?streak+1:0;max=Math.max(max,streak);}
   stats.maxStreak=Math.max(stats.maxStreak,max);
@@ -100,7 +103,8 @@ async function settle(page) {
   await page.evaluate(async()=>{await document.fonts.ready;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(r))));});
 }
 
-const negative = '<!doctype html><html lang="en"><main>'+
+const negative = '<!doctype html><html lang="en"><body class="home"><main>'+
+  '<p>pag-<br>automate</p><p>auto<br>mate</p>'+
   '<p>Risk is 1%. For <br>each trade.</p><p>Sign in with Google/<br>Facebook.</p><p>Use MetaTrader <br>4 here.</p>'+
   '<p><span style="word-spacing:2em">normal words</span></p>'+
   '<p id="false-bonds">It ends. <span class="protected-name">First stays</span> in <span class="protected-name">the rain</span>.</p></main>';
@@ -109,6 +113,50 @@ const fixture = '<!doctype html><html lang="ru"><meta charset="utf-8"><link rel=
   '<p id="quoted">Он сказал «Готово.» Вы здесь. (Сделка закрыта.) Мы ждём. Доктор г. Москва. Цена 1.25 и 1.5.</p>'+
   '<p>Вход через <span class="protected-name">Google</span>/<wbr>Facebook и MetaTrader <em>4 app.</em></p>'+
   '</main><script>window.keptLink=document.querySelector("#kept");</script><script type="module" src="/src/prose-spacing.js"></script>';
+
+async function measureResize(page, width, height) {
+  await page.evaluate(() => {
+    const line = [...document.querySelectorAll('.step-content li')]
+      .find(item => item.textContent.includes('cuenta de Google/Facebook'));
+    const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode()) && !node.data.includes('cuenta de')) {}
+    const blank = node.data.indexOf('cuenta de') + 'cuenta'.length;
+    const range = document.createRange();
+    const canvas = document.createElement('canvas').getContext('2d');
+    canvas.font = getComputedStyle(node.parentElement).font;
+    const standard = canvas.measureText(' ').width;
+    const samples = [];
+    const sample = phase => {
+      range.setStart(node, blank - 1);
+      range.setEnd(node, blank);
+      const left = range.getBoundingClientRect();
+      range.setStart(node, blank + 1);
+      range.setEnd(node, blank + 2);
+      const right = range.getBoundingClientRect();
+      if (Math.abs(left.top - right.top) < 1) {
+        samples.push({phase, width: innerWidth, height: innerHeight, gap: right.left - left.right, standard});
+      }
+    };
+    let frame;
+    const onResize = () => sample('resize');
+    const onFrame = () => {
+      sample('frame');
+      frame = requestAnimationFrame(onFrame);
+    };
+    addEventListener('resize', onResize);
+    frame = requestAnimationFrame(onFrame);
+    window.finishTypographyResize = () => {
+      removeEventListener('resize', onResize);
+      cancelAnimationFrame(frame);
+      return samples;
+    };
+  });
+  await page.setViewportSize({width, height});
+  await settle(page);
+  const samples = await page.evaluate(() => window.finishTypographyResize());
+  return samples.filter(sample => sample.width === width && sample.height === height);
+}
 
 async function main(){
   const selected=process.env.TYPO_ENGINES?.split(',')??['chromium','firefox','webkit'];
@@ -136,6 +184,8 @@ async function main(){
       assert.ok(failures.issues.some(x=>x.rule==='protected-atom'&&x.example==='Google/Facebook'));
       assert.ok(failures.issues.some(x=>x.rule==='protected-atom'&&x.example==='MetaTrader 4'));
       assert.ok(failures.issues.some(x=>x.rule==='space'));
+      assert.ok(failures.issues.some(x=>x.rule==='home-compound'&&x.example==='pag-automate'));
+      assert.ok(failures.issues.some(x=>x.rule==='home-word'&&x.example==='automate'));
       assert.deepEqual(await p.locator('#false-bonds .protected-name').allTextContents(),['First stays','the rain']);
       await p.goto(origin+'/test-typography-positive');await settle(p);
       const fx=()=>p.evaluate(()=>({links:[...document.querySelectorAll('main a')].map(a=>a.getAttribute('href')),pairs:[...document.querySelectorAll('.protected-name')].map(x=>x.textContent.trim()),nested:document.querySelectorAll('.protected-name .protected-name').length,text:document.querySelector('main').textContent,html:document.querySelector('main').innerHTML}));
@@ -153,6 +203,21 @@ async function main(){
       await p.evaluate(async()=>{await import('/src/prose-spacing.js?repeat');window.dispatchEvent(new Event('resize'));});
       await settle(p);
       assert.deepEqual(await fx(),example);
+      await p.goto(origin+'/fil/');
+      for(const [width,height] of [[390,440],[412,440],[412,915],[430,440],[430,915]]){
+        await p.setViewportSize({width,height});await settle(p);
+        const result=await p.evaluate(measure);
+        assert.deepEqual(result.issues.filter(issue=>issue.rule.startsWith('home-')),[],engine+' FIL '+width+'×'+height);
+      }
+      if(engine==='chromium'){
+        await p.setViewportSize({width:673,height:841});
+        await p.goto(origin+'/es/t-capital/instruction/');await settle(p);
+        for(const [width,height] of [[344,882],[673,841],[344,882]]){
+          const samples=await measureResize(p,width,height);
+          assert.ok(samples.some(sample=>sample.phase==='frame'),'Resize frame was not measured');
+          assert.deepEqual(samples.filter(sample=>sample.gap>1.5*sample.standard+.001),[],'A resized line stretched beyond 1.5 spaces');
+        }
+      }
       if (process.env.TYPO_FIXTURES_ONLY==='1') {
         console.log(engine+' regression fixtures passed');
         continue;
@@ -175,7 +240,7 @@ async function main(){
         if(!snapshot.text||!snapshot.hrefs||!snapshot.count||snapshot.nested)report.findings.push({engine,page:current,dom:snapshot});
         const guide=route.endsWith('/instruction/');
         if(guide)await p.evaluate(()=>{document.querySelectorAll('.step-content,#completion').forEach(e=>e.hidden=false);document.querySelectorAll('#faq details').forEach(e=>e.open=true);});
-        const sizes=engine==='chromium'?[280,320,375,768,1024,1440]:[320,375,768,1440];
+        const sizes=[280,320,375,768,1024,1440];
         if(guide&&engine==='chromium')sizes.push(344,412,673,853,344);
         for(const width of sizes){
           await p.setViewportSize({width,height:width===412?440:850});await settle(p);

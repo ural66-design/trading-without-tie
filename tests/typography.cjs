@@ -81,7 +81,6 @@ function measure(input){
    const k=a.index;if(eligible.some(x=>x.k===k))continue;eligible.push({k,end:a.index+a.segment.length});
    stats.sentences++;const protectedGap=/[\u00a0\u2060]/u.test(gap);if(protectedGap)stats.bound++;
    if(!same(r,v))issues.push({rule:'sentence',...ref,example:a.segment+' / '+b.segment,count,y:y(r),yNext:y(v),gap:gap.codePointAt(0),segmentation:source,context:text.slice(Math.max(0,a.index-38),b.index+b.segment.length+25).replace(/\u00ad/g,'')});
-   else if(letters(b).at(-1)!==next&&!same(r,rect(letters(b).at(-1))))issues.push({rule:'sentence-next-continues',...ref,example:a.segment+' '+b.segment,y:y(r),yNext:y(rect(letters(b).at(-1)))});
    else if(!protectedGap)latent.push({bi,example:a.segment+' '+b.segment,context:text.slice(Math.max(0,a.index-25),b.index+b.segment.length).replace(/\u00ad/g,'')});
   }
   // Measure the actual blank between measured adjacent non-space glyph boxes on the same line.
@@ -118,6 +117,99 @@ const fixture = '<!doctype html><html lang="ru"><meta charset="utf-8"><link rel=
   '<p id="edge-fallback" style="width:18.5ch;font:16px monospace">qqqqqq jj xxxx zzzzzzzzz ggggg mm vvvvvvvv</p>'+
   '<p id="thai-prose" lang="th">ทดสอบการตัดคำภาษาไทย</p>'+
   '</main><script>window.keptLink=document.querySelector("#kept");</script><script type="module" src="/src/prose-spacing.js"></script>';
+
+const sentenceCases = [
+  {id:'one', opening:'Я', next:'наблюдаю'},
+  {id:'two', opening:'Мы', next:'наблюдаем', punctuation:'!'},
+  {id:'three', opening:'Они', next:'действуют', punctuation:'?'},
+  {id:'four', opening:'Если', next:'поместится', punctuation:'.»'},
+  {id:'five', opening:'После', next:'рассмотрения'},
+  {id:'brand', opening:'Он', next:'Fast Money Bot', markup:'<span class="protected-name">Fast Money Bot</span>'},
+  {id:'bold', opening:'Мы', next:'действуем', markup:'<strong>действуем</strong>'},
+  {id:'link', opening:'Они', next:'действуют', markup:'<a href="#done">действуют</a>'},
+  {id:'hyphen', opening:'Мы', next:'auto-test', separator:' ', lang:'en'},
+  {id:'technical', opening:'Мы', next:'стоп-лосс', separator:' '},
+  {id:'quote', opening:'Мы', next:'действуем', beforeOpening:'«', tail:' продолжим дальше».'},
+];
+const sentenceFixture = '<!doctype html><html lang="ru"><meta charset="utf-8"><link rel="stylesheet" href="/src/site.css">'+
+  '<style>p[data-probe] {font:20px Verdana;text-wrap:wrap;margin:0}.prose-space{word-spacing:normal!important}</style><body><main>'+
+  sentenceCases.map(({id,opening,next,markup=next,punctuation='.',beforeOpening='',tail=' сегодня.',lang='ru',separator=' '})=>
+    '<p data-probe lang="'+lang+'" id="'+id+'">Конец'+punctuation+' '+beforeOpening+opening+separator+markup+tail+'</p>').join('')+
+  '<p data-probe id="punctuation">Доктор г. Москва спит. И. Петров работает. Цена 1.25 доллара. Адрес Vladimir1.com или a.b@example.org. (Готово.) Мы тестируем.</p>'+
+  '</main><aside><p data-probe id="plain">Конец? Они действуют сегодня.</p></aside>'+
+  '<script>window.savedLink=document.querySelector("#link a");window.clicked=false;savedLink.addEventListener("click",event=>{event.preventDefault();clicked=true;});</script>'+
+  '<script type="module" src="/src/prose-spacing.js"></script>';
+
+async function checkSentenceStarts(page, engine) {
+  await page.goto(origin+'/test-sentence-starts');await settle(page);
+  const result=await page.evaluate(cases=>{
+    const range=document.createRange();
+    function sweep(p,opening,next){
+      const walker=document.createTreeWalker(p,NodeFilter.SHOW_TEXT);
+      const chars=[];
+      for(let node=walker.nextNode();node;node=walker.nextNode()){
+        for(let index=0;index<node.length;index++)chars.push({node,index,char:node.data[index]});
+      }
+      const text=chars.map(x=>x.char).join('');
+      const from=text.indexOf(opening+' '+next),second=from+opening.length+1;
+      const position=index=>{
+        const char=chars[index];
+        range.setStart(char.node,char.index);range.setEnd(char.node,char.index+1);
+        return range.getBoundingClientRect();
+      };
+      const middle=second+next.length-1;
+      const modes={unbound:0,firstSplit:0,secondSplit:0,splitOnPriorLine:0,entireFits:0,insufficient:0};
+      for(let width=115;width<=360;width++){
+        p.style.width=width+'px';
+        const previous=position(2),first=position(from),firstEnd=position(second-2),other=position(second),last=position(middle);
+        if(first.top!==firstEnd.top&&Math.abs(first.top-firstEnd.top)>first.height*.5)modes.firstSplit++;
+        if(Math.abs(firstEnd.top-other.top)>firstEnd.height*.5)modes.unbound++;
+        if(Math.abs(other.top-last.top)>other.height*.5)modes.secondSplit++;
+        if(Math.abs(previous.top-first.top)<first.height*.5&&Math.abs(other.top-last.top)>other.height*.5&&
+           Math.abs(firstEnd.top-other.top)<other.height*.5)modes.splitOnPriorLine++;
+        if(Math.abs(previous.top-first.top)<first.height*.5&&Math.abs(other.top-last.top)<other.height*.5)modes.entireFits++;
+        if(Math.abs(previous.top-first.top)>first.height*.5)modes.insufficient++;
+      }
+      range.selectNodeContents(p);
+      return {...modes,text:range.toString(),nextHyphens:getComputedStyle(chars[second].node.parentElement).hyphens,
+        nextProtected:!!chars[second].node.parentElement.closest('.protected-name'),nextMode:getComputedStyle(chars[second].node.parentElement).whiteSpace,
+        leads:[...p.querySelectorAll('.sentence-lead')].map(el=>el.textContent).join('')};
+    }
+    const matrix=Object.fromEntries(cases.map(c=>[c.id,sweep(document.getElementById(c.id),c.opening,c.next)]));
+    const sample=document.querySelector('#punctuation');
+    return {matrix,plain:sweep(document.querySelector('#plain'),'Они','действуют'),
+      punctuation:[...sample.querySelectorAll('.sentence-lead')].map(e=>e.textContent.trim()),
+      link:document.querySelector('#link a')===window.savedLink};
+  },sentenceCases);
+  for(const c of sentenceCases){
+    const actual=result.matrix[c.id];
+    assert.equal(actual.firstSplit,0,engine+' first word split '+c.id);
+    assert.ok(actual.text.includes(c.opening+' '+c.next),engine+' readable and copyable text '+c.id);
+    if(c.id==='five'){
+      assert.ok(actual.unbound>0,'A five-letter word must retain the ordinary separator');
+      assert.equal(actual.leads,'');
+    }else{
+      assert.equal(actual.unbound,0,engine+' split after the short word '+c.id);
+      assert.ok(actual.entireFits>0&&actual.insufficient>0,engine+' width coverage '+c.id);
+    }
+  }
+  for(const id of ['one','two','three','four','five','link','hyphen']){
+    const actual=result.matrix[id];
+    assert.equal(actual.nextHyphens,'auto');
+    assert.equal(actual.nextMode,'normal');
+    assert.equal(actual.nextProtected,false);
+  }
+  assert.ok(result.matrix.hyphen.secondSplit>0,'An ordinary compound retains its native hyphen break');
+  for(const id of ['brand','technical','quote','bold'])assert.equal(result.matrix[id].secondSplit,0,engine+' protected '+id);
+  assert.deepEqual(result.punctuation,['Мы']);
+  assert.ok(result.link);
+  await page.locator('#link a').click();
+  assert.equal(await page.evaluate(()=>window.clicked),true);
+  if(result.plain.secondSplit>0){
+    assert.ok(result.matrix.three.splitOnPriorLine>0,engine+' native hyphen must fit beside the opening');
+    assert.ok(result.matrix.link.splitOnPriorLine>0,engine+' native hyphen must also work in the link');
+  }
+}
 
 async function measureResize(page, width, height) {
   await page.evaluate(() => {
@@ -182,6 +274,7 @@ async function main(){
         if(u.origin!==origin)return r.abort();
         if(u.pathname==='/test-typography-negative')return r.fulfill({body:negative,contentType:'text/html'});
         if(u.pathname==='/test-typography-positive')return r.fulfill({body:fixture,contentType:'text/html'});
+        if(u.pathname==='/test-sentence-starts')return r.fulfill({body:sentenceFixture,contentType:'text/html'});
         let f=path.join(root,'site',u.pathname);if(u.pathname.endsWith('/'))f=path.join(f,'index.html');
         if(!fs.existsSync(f))return r.abort();
         return r.fulfill({body:fs.readFileSync(f),contentType:mime[path.extname(f).slice(1)]??'application/octet-stream'});
@@ -266,12 +359,16 @@ async function main(){
         const result=await p.evaluate(measure);
         assert.deepEqual(result.issues,[]);assert.equal(result.rootOverflow,0);
       }
-      for(const pair of ['Для каждой','Вы здесь','Мы ждём','Google/Facebook','MetaTrader 4'])assert.ok(example.pairs.includes(pair),pair);
+      for(const term of ['Google/Facebook','MetaTrader 4'])assert.ok(example.pairs.includes(term),term);
+      const leads=(await p.locator('.sentence-lead').allTextContents()).map(text=>text.trim()).filter(Boolean);
+      assert.deepEqual(leads,['Для','Вы','Мы']);
+      assert.ok(!example.pairs.some(text=>/^(Для |Вы |Мы )/.test(text)));
       assert.ok(!example.pairs.some(text=>/^(После |и |г. |Доктор )/.test(text)));
       assert.equal(example.nested,0);
       await p.evaluate(async()=>{await import('/src/prose-spacing.js?repeat');window.dispatchEvent(new Event('resize'));});
       await settle(p);
       assert.deepEqual(await fx(),example);
+      await checkSentenceStarts(p,engine);
       await p.goto(origin+'/fil/');
       for(const [width,height] of [[390,440],[412,440],[412,915],[430,440],[430,915]]){
         await p.setViewportSize({width,height});await settle(p);

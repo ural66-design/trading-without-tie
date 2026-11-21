@@ -36,7 +36,7 @@ function textMap(nodes) {
   for (const node of nodes) {
     const from=text.length, offsets=[];
     for(let i=0;i<node.length;i++){
-      if(node.data[i]==='\u00ad')continue;
+      if(node.data[i]==='\u00ad'||node.data[i]==='\u2060')continue;
       offsets.push(i);
       text+=node.data[i];
     }
@@ -49,6 +49,8 @@ function textMap(nodes) {
   return {text,segments,point};
 }
 
+const graphemes = new Intl.Segmenter(language);
+
 function sentencePairs(text) {
   const starts=new Set([...sentenceSegmenter.segment(text)].slice(1).map(x=>x.index));
   // Quoted endings are not segmented uniformly in all engines.
@@ -56,7 +58,7 @@ function sentencePairs(text) {
     starts.add(m.index+m[0].length);
   }
   const abbrev=/(?:^|[^\p{L}])(?:т\.\s*[едкпнч]|г|ул|им|рис|стр|см|др|пр|мин|макс|руб|mr|mrs|ms|dr|prof|jr|sr|no|fig|vs|etc|e\.g|i\.e|p\. ej|p\. ex|srta|ud|dra|örn|bkz|vb|mis|dll|dsb|v\.v)\.$/iu;
-  const words=[...segmenter.segment(text)].filter(x=>x.isWordLike),pairs=[];
+  const words=[...segmenter.segment(text)].filter(x=>x.isWordLike),pairs=new Map();
   for(const start of starts){
     const previous=text.slice(0,start).trimEnd().replace(/[»”"’')\]]+$/u,'');
     if(!/[.!?।॥。！？]$/u.test(previous)||abbrev.test(previous)||/(?:^|\s)\p{Lu}\.$/u.test(previous))continue;
@@ -65,10 +67,14 @@ function sentencePairs(text) {
     const [first,next]=words.slice(i,i+2),size=(first.segment.normalize('NFC').match(/\p{L}/gu)||[]).length;
     if(!size||size>4||!/^\p{L}[\p{L}\p{M}]*$/u.test(first.segment)||!/\p{L}/u.test(next.segment))continue;
     if(!/^[\s«“„"‘'(\[]*$/u.test(text.slice(start,first.index)))continue;
-    if(!/^\s*$/u.test(text.slice(first.index+first.segment.length,next.index)))continue;
-    pairs.push([first.index,next.index+next.segment.length]);
+    const separator=text.slice(first.index+first.segment.length,next.index);
+    if(!/^\s*$/u.test(separator))continue;
+    // Spaced text needs protection only through the existing separator.
+    // In unspaced scripts include the next grapheme to cover the boundary.
+    const boundary=next.index+(separator?0:graphemes.segment(next.segment).containing(0).segment.length);
+    pairs.set(first.index,{from:first.index,boundary,to:next.index+next.segment.length});
   }
-  return pairs;
+  return [...pairs.values()];
 }
 
 function edgeThroughInline(block,node,offset,start) {
@@ -117,6 +123,20 @@ function protect(block,map,from,to) {
   range.insertNode(span);
 }
 
+function protectSentenceStart(map,from,boundary) {
+  // Wrap only text within each original element, so links and their handlers stay in place.
+  for(const part of map.segments){
+    const start=Math.max(from,part.from),end=Math.min(boundary,part.to);
+    if(start>=end||part.node.parentElement.closest(atomic))continue;
+    const range=document.createRange();
+    range.setStart(part.node,part.offsets[start-part.from]);
+    range.setEnd(part.node,part.offsets[end-part.from-1]+1);
+    const span=document.createElement('span');
+    span.className='sentence-lead';
+    range.surroundContents(span);
+  }
+}
+
 function prepare(block) {
   if(prepared.has(block))return;
   prepared.add(block);
@@ -128,8 +148,10 @@ function prepare(block) {
       if (word.isWordLike) hits.push([from+word.index, from+word.index+word.segment.length]);
     }
   }
-  if(block.matches('p,li,summary,h1,h2,h3,h4,h5,h6'))hits.push(...sentencePairs(clean.text));
+  const sentences=block.matches('p,li,summary,h1,h2,h3,h4,h5,h6')?sentencePairs(clean.text):[];
   const home=block.closest('.home');
+  // The approved home layout already forbids hyphenation within all words.
+  if(home)hits.push(...sentences.map(({from,to})=>[from,to]));
   for(const m of clean.text.matchAll(compoundWord)){
     const end=m.index+m[0].length;
     if(home||clean.point(m.index)?.node.parentElement.closest(noHyphens)||quotes.some(([a,b])=>a<=m.index&&m.index<b)||
@@ -148,6 +170,11 @@ function prepare(block) {
     else merged.push([a,b]);
   }
   for(const [a,b] of merged.reverse())protect(block,clean,a,b);
+  if(sentences.length&&!home){
+    const map=textMap(nodesOf(block));
+    // Work backwards to keep offsets in earlier parts of the same Text node valid.
+    for(const {from,boundary} of sentences.sort((a,b)=>b.from-a.from))protectSentenceStart(map,from,boundary);
+  }
 }
 
 const context=document.createElement('canvas').getContext('2d');

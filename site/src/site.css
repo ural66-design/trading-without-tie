@@ -83,7 +83,7 @@ a:is([href^="mailto:"],[href^="tel:"]) {
   -webkit-hyphens: none;
   hyphens: none;
 }
-.keep-words{white-space:nowrap;hyphens:none;-webkit-hyphens:none}
+.keep-words,.sentence-lead{white-space:nowrap;hyphens:none;-webkit-hyphens:none}
 strong{font-weight:700}
 
 /* Compact navigation and a stationary legal toolbar. */

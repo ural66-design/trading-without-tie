@@ -1,5 +1,3 @@
-const leaderProse = '.fmb-guide [data-panel=leader] :is(p,li)';
-const guideProse = 'body.guide:is(.tc-guide,.fmb-guide) main.panel :is(.guide-intro,.howto,.risk,.step-content,.step-note,.answer,.completion) :is(p:not([role="status"]),li), body.fmb-guide dialog [data-panel=leader] :is(p,li)';
 const atomic = '.protected-name,.keep-words,.long-word';
 const controls = 'script,style,input,select,textarea,[contenteditable],p[role=status],[aria-hidden=true]';
 const nameSeparator = '[\\s\\u00a0]*';
@@ -154,27 +152,55 @@ function prepare(block) {
 
 const context=document.createElement('canvas').getContext('2d');
 const spaceWidths=new Map();
-function hasWideSpaces(block) {
+const roundingReserve=1/16;
+function measureProse(block, measureLines=false) {
   const range=document.createRange(),characters=[];
+  let index=0;
   for(const node of nodesOf(block)){
     const font=getComputedStyle(node.parentElement).font;
     if(!spaceWidths.has(font)){context.font=font;spaceWidths.set(font,context.measureText(' ').width);}
-    let i=0;
+    let offset=0;
     for(const char of node.data){
-      range.setStart(node,i);i+=char.length;range.setEnd(node,i);
+      range.setStart(node,offset);offset+=char.length;range.setEnd(node,offset);
       const rect=[...range.getClientRects()].filter(x=>x.width>.02).at(-1);
-      if(rect)characters.push({rect,space:/[ \u00a0]/u.test(char),unit:spaceWidths.get(font)});
+      if(rect)characters.push({rect,space:/[ \u00a0]/u.test(char),unit:spaceWidths.get(font),index});
+      index++;
     }
   }
   const same=(a,b)=>Math.abs((a.top+a.bottom-b.top-b.bottom)/2)<Math.min(a.height,b.height)*.55;
-  // Leave room for subpixel rounding between canvas and the final text layout.
-  const roundingReserve=1/16;
-  for(let i=1;i<characters.length-1;i++){
-    const {rect,space,unit}=characters[i],a=characters[i-1].rect,b=characters[i+1].rect;
-    if(space&&unit&&same(a,rect)&&same(b,rect)&&Math.max(rect.width,b.left-a.right)>unit*1.5-roundingReserve)return true;
+  const lines=[];
+  let limit=Infinity;
+  for(let i=0;i<characters.length;i++){
+    const {rect,space,unit,index}=characters[i];
+    const previous=characters[i-1]?.rect,next=characters[i+1]?.rect;
+    const gap=space&&unit&&previous&&next&&same(previous,rect)&&same(next,rect);
+    if(gap){
+      limit=Math.min(limit,unit*1.5-roundingReserve-Math.max(rect.width,next.left-previous.right));
+      if(!measureLines&&limit<0)return {wide:true};
+    }
+    if(!measureLines)continue;
+    let line=lines.at(-1);
+    if(!line||!same(line.anchor,rect)){
+      line={anchor:rect,right:rect.right,count:0,end:index};
+      lines.push(line);
+    }
+    if(!space){
+      line.right=Math.max(line.right,rect.right);
+      line.end=index;
+    }
+    if(gap)line.count++;
   }
-  return false;
+  return {wide:limit<0,lines,limit};
 }
+
+function extraSpacing(block, layout) {
+  if(layout.lines.length<2||layout.wide||!Number.isFinite(layout.limit))return 0;
+  const css=getComputedStyle(block);
+  const edge=block.getBoundingClientRect().right-parseFloat(css.borderRightWidth)-parseFloat(css.paddingRight);
+  const room=Math.min(...layout.lines.filter(line=>line.count).map(line=>(edge-line.right-roundingReserve)/line.count));
+  return Math.max(0, Math.min(room,layout.limit));
+}
+
 function fitAtoms(block) {
   const style = getComputedStyle(block);
   const width = block.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight);
@@ -190,6 +216,12 @@ function fitAtoms(block) {
 }
 
 
+function clearExtraSpacing(block) {
+  if(!block.style.getPropertyValue('--prose-extra-space'))return;
+  block.style.removeProperty('--prose-extra-space');
+  if(!block.style.length)block.removeAttribute('style');
+}
+
 const formatted=new WeakMap();
 function refreshSpacing(candidates) {
   const changed=[];
@@ -198,19 +230,34 @@ function refreshSpacing(candidates) {
     if(!block.getClientRects().length||(!block.matches('summary')&&block.closest('details:not([open])')))continue;
     const key=block.getBoundingClientRect().width+'|'+devicePixelRatio+'|'+getComputedStyle(block).font+'|'+block.textContent;
     if(formatted.get(block)===key)continue;
-    const guide=block.matches(guideProse);
-    const justify=guide?'guide-justify':'prose-justified';
-    const eligible=fontsLoaded&&block.matches('p,li')&&!block.closest('.home')&&!block.matches(':lang(th),.tc-setup-time')&&(guide||block.clientWidth>=576||block.matches(leaderProse));
-    changed.push({block,key,justify,eligible});
+    changed.push({block,key});
   }
-  for(const {block,justify,eligible} of changed){
+  for(const {block} of changed){
+    block.classList.remove('prose-justified');
+    clearExtraSpacing(block);
     fitAtoms(block);
-    block.classList.toggle(justify,eligible);
   }
-  // Read all trial layouts before removing rejected alignment. Everything runs
-  // in the same rendering update so the trial cannot reach a painted frame.
-  const rejected=changed.filter(({block,eligible})=>eligible&&hasWideSpaces(block));
-  for(const {block,justify} of rejected)block.classList.remove(justify);
+  const eligible=fontsLoaded?changed.map(({block})=>block).filter(block=>
+    block.matches('p,li')&&!block.closest('.home')&&!block.matches(':lang(th)')&&!block.querySelector('p,li')&&
+    /^(start|left)$/.test(getComputedStyle(block).textAlign)):[];
+
+  // Test browser justification before painting. Paragraphs with a wide gap
+  // instead keep native line breaks and can use a bounded amount of spacing.
+  for(const block of eligible)block.classList.add('prose-justified');
+  const rejected=eligible.filter(block=>measureProse(block).wide);
+  for(const block of rejected)block.classList.remove('prose-justified');
+
+  const fallback=rejected.map(block=>{
+    const layout=measureProse(block,true);
+    return {block,layout,extra:extraSpacing(block,layout)};
+  }).filter(({extra})=>extra>=.08);
+  for(const {block,extra} of fallback)block.style.setProperty('--prose-extra-space',extra+'px');
+  const rewrapped=fallback.filter(({block,layout})=>{
+    const result=measureProse(block,true);
+    return result.wide||result.lines.length!==layout.lines.length||
+      result.lines.some((line,i)=>line.end!==layout.lines[i].end);
+  });
+  for(const {block} of rewrapped)clearExtraSpacing(block);
   if(fontsLoaded)for(const {block,key} of changed)formatted.set(block,key);
 }
 const checkSpacing=()=>refreshSpacing(blocks);
@@ -227,7 +274,8 @@ for(const el of document.querySelectorAll('dialog,dialog [data-panel],dialog .le
 document.fonts.ready.then(checkSpacing);
 document.fonts.addEventListener('loading',()=>{
   for(const block of blocks){
-    block.classList.remove('guide-justify','prose-justified');
+    block.classList.remove('prose-justified');
+    clearExtraSpacing(block);
     formatted.delete(block);
   }
 });

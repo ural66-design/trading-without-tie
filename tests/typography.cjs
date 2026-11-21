@@ -115,6 +115,7 @@ const fixture = '<!doctype html><html lang="ru"><meta charset="utf-8"><link rel=
   '<p id="ordinary-compound" lang="en" style="width:4.5ch">auto-test</p>'+
   '<p id="bold-words" lang="en" style="width:9ch"><strong>auto-test plain</strong></p>'+
   '<h4 id="heading-compound" lang="en" style="width:9ch">auto-test plain</h4>'+
+  '<p id="edge-fallback" style="width:18.5ch;font:16px monospace">qqqqqq jj xxxx zzzzzzzzz ggggg mm vvvvvvvv</p>'+
   '<p id="thai-prose" lang="th">ทดสอบการตัดคำภาษาไทย</p>'+
   '</main><script>window.keptLink=document.querySelector("#kept");</script><script type="module" src="/src/prose-spacing.js"></script>';
 
@@ -194,6 +195,16 @@ async function main(){
       await p.goto(origin+'/test-typography-positive');await settle(p);
       const fx=()=>p.evaluate(()=>({links:[...document.querySelectorAll('main a')].map(a=>a.getAttribute('href')),pairs:[...document.querySelectorAll('.protected-name')].map(x=>x.textContent.trim()),nested:document.querySelectorAll('.protected-name .protected-name').length,text:document.querySelector('main').textContent,html:document.querySelector('main').innerHTML}));
       const example=await fx();
+      const expanded=await p.locator('#edge-fallback').evaluate(el=>{
+        const range=document.createRange();
+        range.selectNodeContents(el);
+        const style=getComputedStyle(el);
+        return {align:style.textAlign,spacing:parseFloat(style.wordSpacing),
+          lines:new Set([...range.getClientRects()].filter(r=>r.width>0).map(r=>r.top)).size};
+      });
+      assert.equal(expanded.align,'start');
+      assert.ok(expanded.spacing>0,'Expected bounded spacing on an underfilled paragraph');
+      assert.equal(expanded.lines,3);
       const native=await p.evaluate(()=>{
         const lines=(element,term)=>{
           const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT),chars=[];

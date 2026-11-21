@@ -1,280 +1,254 @@
 const leaderProse = '.fmb-guide [data-panel=leader] :is(p,li)';
-const selector = ':is(main:not(.placeholder), .legal-copy) :is(p:not([role="status"]), li), '+leaderProse;
 const guideProse = 'body.guide:is(.tc-guide,.fmb-guide) main.panel :is(.guide-intro,.howto,.risk,.step-content,.step-note,.answer,.completion) :is(p:not([role="status"]),li), body.fmb-guide dialog [data-panel=leader] :is(p,li)';
-const panel = document.querySelector('main:not(.placeholder)');
-const inlineSizes = new WeakMap();
-let pending;
-let formattedBlocks = new WeakMap();
-const blockSignature = element => devicePixelRatio+'|'+element.getBoundingClientRect().width+'|'+getComputedStyle(element).font+'|'+element.textContent;
-
-function hasWideSpaces(element, spaceRatio = null) {
-    const style = getComputedStyle(element);
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    context.font = style.font;
-    const limit = Math.min(parseFloat(style.fontSize) * .65, context.measureText(' ').width * 2.2);
-    const range = document.createRange();
-    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
-    const characters = [];
-    const spaceWidths = new Map();
-    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-      for (let i = 0; i < node.length; i++) {
-        range.setStart(node, i); range.setEnd(node, i + 1);
-        const rect = [...range.getClientRects()].find(rect => rect.width > 0);
-        if (!rect) continue;
-        const space = /\s/u.test(node.data[i]);
-        let maximum = limit;
-        if (space && spaceRatio !== null) {
-          const font = getComputedStyle(node.parentElement).font;
-          if (!spaceWidths.has(font)) {
-            context.font = font;
-            spaceWidths.set(font, context.measureText(' ').width * spaceRatio);
-          }
-          maximum = spaceWidths.get(font);
-        }
-        characters.push({space,rect,maximum});
-      }
-    }
-    const sameLine = (a,b) => spaceRatio === null ? Math.abs(a.top-b.top)<2 :
-      Math.abs((a.top+a.bottom-b.top-b.bottom)/2) < Math.min(a.height,b.height)/2;
-    return characters.some((char,i) => char.space && char.rect.width > char.maximum + (spaceRatio === null ? 0 : .02) &&
-      characters[i-1] && characters[i+1] &&
-      sameLine(char.rect,characters[i-1].rect) && sameLine(char.rect,characters[i+1].rect));
-}
-
-const language = document.documentElement.lang;
-const segmenter = new Intl.Segmenter(language,{granularity:'word'});
-const typographySelector = 'main :is(p,li,h1,h2,h3), dialog [data-panel] :is(p,li,h2,h3)';
-function protectNamesAndValues(){
-  for(const span of document.querySelectorAll(isGuide ? '.legal-copy .protected-name' : '.protected-name')){
-    if(span.textContent.includes('@'))span.classList.add('typography-address');
-    const range=span.textContent.match(/^(\d+[–—-]\d+|\d+\s+a\s+\d+)\s+(.+)$/u);
-    if(range){span.textContent=range[1];span.after(document.createTextNode(' '+range[2]));}
-  }
-  const pattern=/Fast Money Bot|MetaTrader 4|Markets4you|Vladimir1\.com|T-Capital|Telegram(?:-бот[а-яё]*)?|Google|Facebook|e-mail|[$€£]\s?\d+(?:[.,]\d+)?|\d+(?:[.,]\d+)?%|\d+:\d+|\d+[–—]\d+|\d+\s+(?:минут\p{L}*|час\p{L}*|км|кг|minutes?|hours?|km|kg|minutos?|horas?|menit|minit|jam|dakika|saat|phút|giờ|นาที|ชั่วโมง|मिनट|घंटे)/gu;
-  // Protect quoted labels and hyphenated compounds before the browser lays out the text.
-  const quoted = '«[^«»\\n]{1,48}»|“[^“”\\n]{1,48}”|„[^„“\\n]{1,48}“';
-  const compound = '[\\p{L}\\p{N}]+(?:\\u00ad[\\p{L}\\p{N}]+)*[-‐‑][\\p{L}\\p{N}]+(?:\\u00ad[\\p{L}\\p{N}]+)*';
-  const protectedPattern = new RegExp(quoted + '|' + compound + '|' + pattern.source, 'gu');
-  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
-  const nodes=[];for(let node=walker.nextNode();node;node=walker.nextNode()){
-    if(node.parentElement.closest('main,dialog')&&!node.parentElement.closest('script,style,.protected-name,.keep-words')&&(!isGuide||node.parentElement.closest('.legal-copy')))nodes.push(node);
-  }
-  for(const node of nodes){
-    const bold=node.parentElement.closest('strong,b,h1,h2,h3,button,.button,summary');
-    const matcher=protectedPattern;
-    const matches=[...node.data.matchAll(matcher)];
-    if(!matches.length)continue;
-    const fragment=document.createDocumentFragment();let offset=0;
-    for(const m of matches){fragment.append(node.data.slice(offset,m.index));const span=document.createElement('span');span.className=(m[0].length>24&&/\s/u.test(m[0])&&/^[«“„]/u.test(m[0]))?'quoted-phrase':'protected-name';span.textContent=m[0].replace(/\u00ad/g,'');fragment.append(span);offset=m.index+m[0].length;}
-    fragment.append(node.data.slice(offset));node.replaceWith(fragment);
-  }
-  for(const google of document.querySelectorAll(isGuide ? '.legal-copy .protected-name' : 'main .protected-name')){
-    const slash=google.nextSibling,facebook=slash?.nextSibling;
-    if(google.textContent==='Google'&&slash?.nodeType===Node.TEXT_NODE&&slash.data==='/'&&facebook?.textContent==='Facebook')slash.after(document.createElement('wbr'));
-  }
-}
-
-const isGuide = document.body.matches('.guide:is(.tc-guide,.fmb-guide)');
-const guideHeadings = 'main.panel :is(h1,h2,h3,h4,h5,h6), dialog [data-panel=leader] :is(h1,h2,h3,h4,h5,h6)';
-const guideBlocks = guideProse + ', ' + guideHeadings;
-const atomic = '.protected-name,.keep-words';
-const controls = 'script,style,button,label,input,select,textarea,[aria-hidden=true]';
+const atomic = '.protected-name,.keep-words,.long-word';
+const controls = 'script,style,input,select,textarea,[contenteditable],p[role=status],[aria-hidden=true]';
 const nameSeparator = '[\\s\\u00a0]*';
-const names = /Fast[\s\u00a0]+Money[\s\u00a0]+Bot|MetaTrader[\s\u00a0]+4|Classic[\s\u00a0]+Pro|Markets4you|Vladimir1\.com|T[-‑]Capital|Myfxbook|Telegram(?:[-‑](?:бот|канал)[а-яё]*)?|YouTube|Google\s*\/\s*Facebook|Google|Facebook|Share4you|e-mail|\b(?:ID|IP)[-‑][\p{L}\p{M}]+|(?:стоп[-‑]лосс[\p{L}\p{M}]*|stop[-‑]loss(?:[-‑]nya)?|proof[-‑]of[-‑]address)/giu;
+const names = /Fast[\s\u00a0]+Money[\s\u00a0]+Bot|MetaTrader[\s\u00a0]*4|Classic[\s\u00a0]+Pro|Markets4you|Vladimir1\.com|T[-‑]Capital|Myfxbook|Telegram(?:[-‑](?:бот|канал)[а-яё]*)?|YouTube|Google\s*\/\s*Facebook|Google|Facebook|Share4you|e-mail|\b(?:ID|IP)[-‑][\p{L}\p{M}]+|(?:стоп[-‑]лосс[\p{L}\p{M}]*|stop[-‑]loss(?:[-‑]nya)?|proof[-‑]of[-‑]address)/giu;
 const number = '\\d+(?:[.,]\\d+)?';
 const units = '(?:минут[а-яё]*|час[а-яё]*|секунд[а-яё]*|км|кг|мин\\.|minutes?|hours?|seconds?|km|kg|minutos?|horas?|segundos?|menit|minit|jam|dakika|saat|phút|giờ|นาที|ชั่วโมง|मिनट|घंट[ेा]|USD|EUR|USDT)';
 const values = '[$€£]'+nameSeparator+number+'|'+number+nameSeparator+'%|\\d+\\s*[:–—−-]\\s*\\d+|'+number+nameSeparator+units+'(?![\\p{L}\\p{M}])';
 const guideAtoms = new RegExp(names.source + '|' + values, 'giu');
 const quotedText = /«[^»]+»|“[^”]+”|„[^“]+“|"[^"\n]+"/gu;
 const compoundWord = /[\p{L}\p{M}\p{N}]+(?:[-‐‑][\p{L}\p{M}\p{N}]+)+/gu;
-const sentenceSegmenter = isGuide ? new Intl.Segmenter(language, {granularity:'sentence'}) : null;
 
-function guideText(block) {
-  const nodes = [];
+const language = document.documentElement.lang;
+const segmenter = new Intl.Segmenter(language,{granularity:'word'});
+const sentenceSegmenter = new Intl.Segmenter(language,{granularity:'sentence'});
+const prose = 'main:not(.placeholder), dialog .legal-copy, dialog [data-panel=leader]';
+const textBlocks = 'p,li,h1,h2,h3,h4,h5,h6,summary,.button,.step-toggle';
+const blocks = [...new Set([...document.querySelectorAll(prose)].flatMap(e=>[...e.querySelectorAll(textBlocks)]))].filter(e=>!e.closest(controls));
+const technicalLinks = 'a[href^="mailto:"],a[href^="tel:"]';
+const noHyphens = 'h1,h2,h3,h4,h5,h6,strong,b,button,.button';
+const scrollTabStops = new WeakSet();
+const prepared = new WeakSet();
+
+function nodesOf(block) {
   const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
-  let text = '';
-  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-    nodes.push({node, offset:text.length});
-    text += node.data;
+  const nodes = [];
+  for (let node=walker.nextNode(); node; node=walker.nextNode()) {
+    const parent=node.parentElement;
+    if (parent.closest(textBlocks)===block && !parent.closest(controls)) nodes.push(node);
   }
-  return {text,nodes};
+  return nodes;
 }
 
-function prepareGuideText() {
-  for (const block of document.querySelectorAll(guideBlocks)) {
-    const {text,nodes} = guideText(block);
-    const quotes = [...text.matchAll(quotedText)].map(m => [m.index,m.index + m[0].length]);
-    for (const {node,offset} of nodes) {
-      const parent = node.parentElement;
-      if (parent.closest(controls)) continue;
-      if (parent.closest(atomic)) {
-        if (node.data.includes('\u00ad')) node.data = node.data.replaceAll('\u00ad','');
-        continue;
-      }
-      const plain = node.data.replaceAll('\u00ad','');
-      const indices = [];
-      for (let i = 0; i < node.length; i++) if (node.data[i] !== '\u00ad') indices.push(i);
-      const rigid = parent.closest('h1,h2,h3,h4,h5,h6,strong,b');
-      const matches = [...plain.matchAll(guideAtoms)];
-      for (const word of plain.matchAll(compoundWord)) {
-        const at = offset + indices[word.index];
-        if (rigid || quotes.some(([start,end]) => start <= at && at < end)) matches.push(word);
-      }
-      // Use the original offsets so ordinary soft hyphens survive unchanged.
-      const output = document.createDocumentFragment();
-      const clean = (start,end) => node.data.slice(start,end).split('').map((c,i) =>
-        c === '\u00ad' && (rigid || quotes.some(([a,b]) => a <= offset+start+i && offset+start+i < b)) ? '' : c).join('');
-      let cursor = 0;
-      for (const match of matches.sort((a,b) => a.index-b.index || b[0].length-a[0].length)) {
-        const start = indices[match.index];
-        const end = indices[match.index+match[0].length-1]+1;
-        if (start < cursor) continue;
-        output.append(clean(cursor,start));
-        const span = document.createElement('span');
-        span.className = 'protected-name';
-        span.textContent = match[0];
-        if (parent.closest('a[href^="mailto:"]')) span.classList.add('typography-address');
-        output.append(span);
-        cursor = end;
-      }
-      const tail = clean(cursor,node.length);
-      if (cursor) {
-        output.append(tail);
-        node.replaceWith(output);
-      } else if (tail !== node.data) node.data = tail;
+function textMap(nodes) {
+  let text='';
+  const segments=[];
+  for (const node of nodes) {
+    const from=text.length, offsets=[];
+    for(let i=0;i<node.length;i++){
+      if(node.data[i]==='\u00ad')continue;
+      offsets.push(i);
+      text+=node.data[i];
     }
-    if (block.matches(guideProse)) bindSentenceStarts(block);
+    if(offsets.length)segments.push({node,from,to:text.length,offsets});
+  }
+  const point=i=>{
+    const s=segments.find(entry=>entry.from<=i&&i<entry.to);
+    return s&&{node:s.node,offset:s.offsets[i-s.from]};
+  };
+  return {text,segments,point};
+}
+
+function sentencePairs(text) {
+  const starts=new Set([...sentenceSegmenter.segment(text)].slice(1).map(x=>x.index));
+  // Quoted endings are not segmented uniformly in all engines.
+  for(const m of text.matchAll(/(?:\.[»”"’')\]]*\s+|[!?।॥。！？][»”"’')\]]*\s*)(?=[«“„"‘'(\[]*[\p{Lu}\p{Script=Thai}\p{Script=Devanagari}])/gu)){
+    starts.add(m.index+m[0].length);
+  }
+  const abbrev=/(?:^|[^\p{L}])(?:т\.\s*[едкпнч]|г|ул|им|рис|стр|см|др|пр|мин|макс|руб|mr|mrs|ms|dr|prof|jr|sr|no|fig|vs|etc|e\.g|i\.e|p\. ej|p\. ex|srta|ud|dra|örn|bkz|vb|mis|dll|dsb|v\.v)\.$/iu;
+  const words=[...segmenter.segment(text)].filter(x=>x.isWordLike),pairs=[];
+  for(const start of starts){
+    const previous=text.slice(0,start).trimEnd().replace(/[»”"’')\]]+$/u,'');
+    if(!/[.!?।॥。！？]$/u.test(previous)||abbrev.test(previous)||/(?:^|\s)\p{Lu}\.$/u.test(previous))continue;
+    const i=words.findIndex(w=>w.index>=start);
+    if(i<0||i+1>=words.length)continue;
+    const [first,next]=words.slice(i,i+2),size=(first.segment.normalize('NFC').match(/\p{L}/gu)||[]).length;
+    if(!size||size>4||!/^\p{L}[\p{L}\p{M}]*$/u.test(first.segment)||!/\p{L}/u.test(next.segment))continue;
+    if(!/^[\s«“„"‘'(\[]*$/u.test(text.slice(start,first.index)))continue;
+    if(!/^\s*$/u.test(text.slice(first.index+first.segment.length,next.index)))continue;
+    pairs.push([first.index,next.index+next.segment.length]);
+  }
+  return pairs;
+}
+
+function trimSoftHyphens(block,map,quotes) {
+  for(const {node,from} of map.segments){
+    if(!node.data.includes('\u00ad'))continue;
+    if(node.parentElement.closest(noHyphens+','+atomic)){
+      node.data=node.data.replaceAll('\u00ad','');
+      continue;
+    }
+    let at=from;
+    node.data=[...node.data].map(char=>{
+      if(char!=='\u00ad'){at+=char.length;return char;}
+      if(quotes.some(([a,b])=>a<=at&&at<b))return '';
+      if(language!=='ru'||!block.closest('.guide'))return char;
+      const left=map.text.slice(0,at).match(/\p{L}+$/u)?.[0]??'';
+      const right=map.text.slice(at).match(/^\p{L}+/u)?.[0]??'';
+      return left.length>=4&&right.length>=4?char:'';
+    }).join('');
   }
 }
 
-function bindSentenceStarts(block) {
-  const {text,nodes} = guideText(block);
-  const segments = [...sentenceSegmenter.segment(text)];
-  const abbreviations = /(?:^|[^\p{L}])(?:т\.\s*[едкпнч]|г|ул|им|рис|стр|см|др|пр|мин|макс|руб|mr|mrs|ms|dr|prof|jr|sr|no|fig|vs|etc|e\.g|i\.e|p\. ej|p\. ex|srta|ud|dra|örn|bkz|vb|mis|dll|dsb|v\.v)\.$/iu;
-  const position = i => nodes.findLast(({offset}) => offset <= i);
-  for (const {index,segment} of segments.slice(1).reverse()) {
-    const previous = text.slice(0,index).trimEnd().replace(/[»”"’')\]]+$/u,'');
-    if (!/[.!?।॥。！？]$/u.test(previous) || abbreviations.test(previous) ||
-        /(?:^|\s)\p{Lu}\.$/u.test(previous)) continue;
-    const words = [...segmenter.segment(segment)].filter(t => /\p{L}/u.test(t.segment));
-    if (words.length < 2) continue;
-    const [first,next] = words;
-    const count = (first.segment.normalize('NFC').match(/\p{L}/gu) || []).length;
-    if (count < 1 || count > 4 || !/^[\s«“„"‘'(\[]*$/u.test(segment.slice(0,first.index))) continue;
-    if (position(index+first.index).node.parentElement.closest(atomic)) continue;
-    const end = index+first.index+first.segment.length;
-    const following = index+next.index;
-    const gap = text.slice(end,following);
-    if (!/^[ \t\r\n\u00a0]*$/u.test(gap)) continue;
-    const {node,offset} = position(end);
-    if (node.parentElement.closest(controls)) continue;
-    if (/^[ \t\r\n]+$/u.test(gap)) {
-      // A no-break space binds the words across inline elements and preserves syllable breaks.
-      for (let i = following-1; i >= end; i--) {
-        const part = position(i);
-        part.node.replaceData(i-part.offset,1,i === end ? '\u00a0' : '');
+function edgeThroughInline(block,node,offset,start) {
+  while(node.parentNode!==block && node.parentElement?.matches('span,b,strong,em,i,small,a') &&
+    (start?offset===0&&!node.previousSibling:offset===(node.nodeType===3?node.length:node.childNodes.length)&&!node.nextSibling)){
+    node=node.parentNode;
+    offset=start?0:node.childNodes.length;
+  }
+  return {node,offset};
+}
+
+function protect(block,map,from,to) {
+  const first=map.point(from),last=map.point(to-1);
+  if(!first||!last||first.node.parentElement.closest(technicalLinks)||last.node.parentElement.closest(technicalLinks))return;
+  if(first.node.parentElement.closest(atomic)?.contains(last.node))return;
+  const a=edgeThroughInline(block,first.node,first.offset,true);
+  const b=edgeThroughInline(block,last.node,last.offset+1,false);
+  const range=document.createRange();
+  range.setStart(a.node,a.offset);
+  range.setEnd(b.node,b.offset);
+  if(a.node.nodeType===1&&a.node!==range.commonAncestorContainer)range.setStartBefore(a.node);
+  if(b.node.nodeType===1&&b.node!==range.commonAncestorContainer)range.setEndAfter(b.node);
+  const common=range.commonAncestorContainer;
+  // Preserve link elements and handlers when a match straddles only part of a link.
+  if([...block.querySelectorAll('a')].some(link=>!link.contains(common)&&
+    (link.contains(range.startContainer)||link.contains(range.endContainer)))){
+    for(const wbr of block.querySelectorAll('wbr'))if(range.intersectsNode(wbr))wbr.remove();
+    for(const part of [...map.segments].reverse()){
+      const start=Math.max(from,part.from),end=Math.min(to,part.to);
+      if(start>=end)continue;
+      for(let i=end-1;i>=start;i--){
+        const offset=part.offsets[i-part.from];
+        if(i<to-1&&(i===part.to-1||/[\s\-‐/]/u.test(part.node.data[offset])))part.node.insertData(offset+1,'\u2060');
       }
-    } else if (!gap && language === 'th') {
-      node.insertData(end-offset,'\u2060');
+    }
+    return;
+  }
+  const contents=range.extractContents();
+  for(const wbr of contents.querySelectorAll('wbr'))wbr.remove();
+  for(const nested of contents.querySelectorAll('.protected-name'))nested.classList.remove('protected-name');
+  const walk=document.createTreeWalker(contents,NodeFilter.SHOW_TEXT);
+  for(let n=walk.nextNode();n;n=walk.nextNode())if(n.data.includes('\u00ad'))n.data=n.data.replaceAll('\u00ad','');
+  const span=document.createElement('span');
+  span.className='protected-name';
+  span.append(contents);
+  range.insertNode(span);
+}
+
+function prepare(block) {
+  if(prepared.has(block))return;
+  prepared.add(block);
+  const nodes=nodesOf(block),map=textMap(nodes);
+  const quotes=[...map.text.matchAll(quotedText)].map(m=>[m.index,m.index+m[0].length]);
+  trimSoftHyphens(block,map,quotes);
+  const clean=textMap(nodes);
+  const hits=[...clean.text.matchAll(guideAtoms)].map(m=>[m.index,m.index+m[0].length]);
+  for (const [from,to] of quotes) {
+    for (const word of segmenter.segment(clean.text.slice(from,to))) {
+      if (word.isWordLike) hits.push([from+word.index, from+word.index+word.segment.length]);
     }
   }
+  if(block.matches('p,li,summary,h1,h2,h3,h4,h5,h6'))hits.push(...sentencePairs(clean.text));
+  for(const m of clean.text.matchAll(compoundWord)){
+    const end=m.index+m[0].length;
+    if(clean.point(m.index)?.node.parentElement.closest(noHyphens)||quotes.some(([a,b])=>a<=m.index&&m.index<b)||
+       hits.some(([a,b])=>a<end&&m.index<b))hits.push([m.index,end]);
+  }
+  for(const e of block.querySelectorAll(atomic)){
+    const segments=clean.segments.filter(x=>e.contains(x.node));
+    if(!segments.length)continue;
+    const from=segments[0].from,to=segments.at(-1).to;
+    if(hits.some(([a,b])=>a<to&&from<b))hits.push([from,to]);
+  }
+  const merged=[];
+  for(const [a,b] of hits.sort((x,y)=>x[0]-y[0]||y[1]-x[1])){
+    const last=merged.at(-1);
+    if(last&&a<last[1])last[1]=Math.max(last[1],b);
+    else merged.push([a,b]);
+  }
+  for(const [a,b] of merged.reverse())protect(block,clean,a,b);
 }
 
-function fitGuideAtoms(block) {
+const context=document.createElement('canvas').getContext('2d');
+const spaceWidths=new Map();
+function hasWideSpaces(block) {
+  const range=document.createRange(),characters=[];
+  for(const node of nodesOf(block)){
+    const font=getComputedStyle(node.parentElement).font;
+    if(!spaceWidths.has(font)){context.font=font;spaceWidths.set(font,context.measureText(' ').width);}
+    let i=0;
+    for(const char of node.data){
+      range.setStart(node,i);i+=char.length;range.setEnd(node,i);
+      const rect=[...range.getClientRects()].filter(x=>x.width>.02).at(-1);
+      if(rect)characters.push({rect,space:/[ \u00a0]/u.test(char),unit:spaceWidths.get(font)});
+    }
+  }
+  const same=(a,b)=>Math.abs((a.top+a.bottom-b.top-b.bottom)/2)<Math.min(a.height,b.height)*.55;
+  for(let i=1;i<characters.length-1;i++){
+    const {rect,space,unit}=characters[i],a=characters[i-1].rect,b=characters[i+1].rect;
+    if(space&&unit&&same(a,rect)&&same(b,rect)&&Math.max(rect.width,b.left-a.right)>unit*1.5+.04)return true;
+  }
+  return false;
+}
+function fitAtoms(block) {
   const style = getComputedStyle(block);
   const width = block.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight);
+  if (width <= 0) return;
   for (const span of block.querySelectorAll(atomic)) {
-    if (span.closest('a[href^="mailto:"]') || span.matches('.typography-address,.address')) continue;
+    if (span.closest('a[href^="mailto:"]') || span.matches('.typography-address,.address') || span.parentElement.closest(textBlocks)!==block) continue;
     span.classList.remove('guide-inline-scroll');
-    const oversized = span.getBoundingClientRect().width > width + .5;
+    const oversized = Math.max(span.getBoundingClientRect().width,span.scrollWidth) > width + .5;
     span.classList.toggle('guide-inline-scroll', oversized);
-    if (oversized) span.setAttribute('tabindex','0');
-    else if (span.getAttribute('tabindex') === '0') span.removeAttribute('tabindex');
+    if (oversized && !span.hasAttribute('tabindex')) { span.tabIndex=0; scrollTabStops.add(span); }
+    else if (!oversized && scrollTabStops.has(span)) { span.removeAttribute('tabindex'); scrollTabStops.delete(span); }
   }
 }
 
-protectNamesAndValues();
-if (isGuide) prepareGuideText();
 
-function fitOverflowingHeadings(changed){
-  for(const heading of document.querySelectorAll('main :is(h1,h2,h3),dialog :is(h2,h3)')){
-    if(!changed.has(heading))continue;
-    if(heading.dataset.typographySize!==undefined){heading.style.fontSize=heading.dataset.typographySize;delete heading.dataset.typographySize;}
-    if(heading.matches('.guide main h1'))continue;
-    const style=getComputedStyle(heading),available=heading.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight);
-    const walker=document.createTreeWalker(heading,NodeFilter.SHOW_TEXT),range=document.createRange();let widest=0;
-    for(let node=walker.nextNode();node;node=walker.nextNode())for(const word of segmenter.segment(node.data)){
-      if(!word.isWordLike)continue;range.setStart(node,word.index);range.setEnd(node,word.index+word.segment.length);
-      widest=Math.max(widest,...[...range.getClientRects()].map(r=>r.width));
-    }
-    for(const atom of heading.querySelectorAll('.protected-name,.keep-words'))widest=Math.max(widest,atom.getBoundingClientRect().width);
-    if(widest>available+.5){heading.dataset.typographySize=heading.style.fontSize;heading.style.fontSize=(Math.floor(parseFloat(style.fontSize)*available/widest*100)/100)+'px';}
-  }
-}
-
+const formatted=new WeakMap(),inlineSizes=new WeakMap();
+let pending;
 function checkSpacing() {
-  if (pending) return;
-  pending = requestAnimationFrame(() => {
-    pending = undefined;
+  if(pending)return;
+  pending=requestAnimationFrame(()=>{
+    pending=undefined;
     if(document.fonts.status!=='loaded'){document.fonts.ready.then(checkSpacing);return;}
-    const changed = new Set([...document.querySelectorAll(isGuide ? guideBlocks : typographySelector)].filter(block=>block.getClientRects().length&&(!isGuide||!block.closest('details:not([open])'))&&formattedBlocks.get(block)!==blockSignature(block)));
-    if(!changed.size)return;
-    document.querySelectorAll('[data-typography-bond]').forEach(span=>{
-      if(changed.has(span.closest('p,li,h1,h2,h3')))span.replaceWith(...span.childNodes);
-    });
-    if (isGuide) {
-      for (const block of changed) fitGuideAtoms(block);
-    } else fitOverflowingHeadings(changed);
-    const candidates = [...document.querySelectorAll(selector)].filter(block=>changed.has(block)&&!block.matches(guideProse));
-    const blocks = candidates.filter(block => (block.clientWidth >= 576 || block.matches(leaderProse)) && block.getClientRects().length);
-    for (const block of candidates) block.classList.remove('prose-justified');
-    // Try native justification at the current width and keep it only for readable paragraphs.
-    for (const block of blocks) block.classList.add('prose-justified');
-    const wideSpaces = blocks.filter(block => getComputedStyle(block).textAlign === 'justify' && hasWideSpaces(block));
-    for (const block of wideSpaces) block.classList.remove('prose-justified');
-    for (const block of changed) {
-      if (!block.matches(guideProse) || !block.matches('p,li')) continue;
-      if (block.matches(':lang(th)')) continue;
-      block.classList.add('guide-justify');
-      if (hasWideSpaces(block, 1.5)) block.classList.remove('guide-justify');
+    for(const block of blocks){
+      if(!block.getClientRects().length||(!block.matches('summary')&&block.closest('details:not([open])')))continue;
+      const key=block.getBoundingClientRect().width+'|'+devicePixelRatio+'|'+getComputedStyle(block).font+'|'+block.textContent;
+      if(formatted.get(block)===key)continue;
+      fitAtoms(block);
+      const guide=block.matches(guideProse);
+      const justify=guide?'guide-justify':'prose-justified';
+      const eligible=block.matches('p,li')&&!block.closest('.home')&&!block.matches(':lang(th),.tc-setup-time')&&(guide||block.clientWidth>=576||block.matches(leaderProse));
+      block.classList.toggle(justify,eligible);
+      if(eligible&&hasWideSpaces(block))block.classList.remove(justify);
+      formatted.set(block,key);
     }
-    for(const block of changed)formattedBlocks.set(block,blockSignature(block));
   });
 }
 
-const observer = new ResizeObserver(entries => {
-  let resized = false;
-  for (const entry of entries) {
-    const width = entry.borderBoxSize[0]?.inlineSize ?? entry.contentRect.width;
-    if (inlineSizes.get(entry.target) !== width) resized = true;
-    inlineSizes.set(entry.target, width);
+for(const block of blocks)prepare(block);
+const observer=new ResizeObserver(entries=>{
+  let resized=false;
+  for(const entry of entries){
+    const width=entry.borderBoxSize[0]?.inlineSize??entry.contentRect.width;
+    if(inlineSizes.get(entry.target)!==width)resized=true;
+    inlineSizes.set(entry.target,width);
   }
-  if (resized) checkSpacing();
+  if(resized)checkSpacing();
 });
-if (panel) observer.observe(panel, { box: 'border-box' });
-if (isGuide) {
-  for (const block of document.querySelectorAll(guideBlocks)) observer.observe(block);
+for(const block of blocks)observer.observe(block);
+const visibility=new MutationObserver(checkSpacing);
+for(const el of document.querySelectorAll('dialog,dialog [data-panel],dialog .legal-copy,#faq details')) {
+  visibility.observe(el,{attributes:true,attributeFilter:['open','hidden']});
 }
-const leaderPanel = document.querySelector('.fmb-guide [data-panel=leader]');
-if (leaderPanel) observer.observe(leaderPanel, { box: 'border-box' });
-
-const visibility = new MutationObserver(checkSpacing);
-for (const documentPanel of document.querySelectorAll('dialog .legal-copy, dialog [data-panel]')) {
-  visibility.observe(documentPanel, { attributes: true, attributeFilter: ['hidden'] });
-}
-const dialog = document.querySelector('dialog');
-if (dialog) visibility.observe(dialog, { attributes: true, attributeFilter: ['open'] });
-
-for (const details of document.querySelectorAll('#faq details')) {
-  visibility.observe(details, { attributes: true, attributeFilter: ['open'] });
-}
-document.querySelector('main')?.addEventListener('click', event => {
-  if (event.target.closest('[data-step-toggle]')) checkSpacing();
-});
-document.querySelector('main')?.addEventListener('change', event => {
-  if (event.target.matches('[data-step-check]')) checkSpacing();
-});
 document.fonts.ready.then(checkSpacing);
-document.fonts.addEventListener('loadingdone',()=>{formattedBlocks=new WeakMap();checkSpacing();});
+document.fonts.addEventListener('loadingdone',()=>{
+  spaceWidths.clear();
+  for(const block of blocks)formatted.delete(block);
+  checkSpacing();
+});
 window.addEventListener('resize',checkSpacing);

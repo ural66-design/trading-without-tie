@@ -325,4 +325,7 @@ a[href^="mailto:"],a[href^="mailto:"] .protected-name { white-space: normal; ove
 
 .quoted-phrase { -webkit-hyphens: none; hyphens: none; }
 
-body.guide:is(.tc-guide,.fmb-guide) .guide-inline-scroll { display: inline-block; max-inline-size: 100%; overflow-x: auto; vertical-align: bottom; }
+.guide-inline-scroll { display: inline-block; max-inline-size: 100%; overflow-x: auto; vertical-align: bottom; }
+
+/* Use the prepared soft hyphens in Russian instructions across browser dictionaries. */
+body.guide:lang(ru) :is(main,[data-panel=leader]) :is(p,li) { -webkit-hyphens: manual; hyphens: manual; }

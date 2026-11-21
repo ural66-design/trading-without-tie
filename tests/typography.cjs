@@ -108,10 +108,14 @@ const negative = '<!doctype html><html lang="en"><body class="home"><main>'+
   '<p>Risk is 1%. For <br>each trade.</p><p>Sign in with Google/<br>Facebook.</p><p>Use MetaTrader <br>4 here.</p>'+
   '<p><span style="word-spacing:2em">normal words</span></p>'+
   '<p id="false-bonds">It ends. <span class="protected-name">First stays</span> in <span class="protected-name">the rain</span>.</p></main>';
-const fixture = '<!doctype html><html lang="ru"><meta charset="utf-8"><link rel="stylesheet" href="/src/site.css"><main>'+
+const fixture = '<!doctype html><html lang="ru"><meta charset="utf-8"><link rel="stylesheet" href="/src/site.css"><body><main>'+
   '<p id="pair">Риск до <span>1%</span>. <strong>Для</strong> <a id="kept" href="/ru/">каждой</a> сделки. После сделки идём и ждём решения.</p>'+
   '<p id="quoted">Он сказал «Готово.» Вы здесь. (Сделка закрыта.) Мы ждём. Доктор г. Москва. Цена 1.25 и 1.5.</p>'+
   '<p>Вход через <span class="protected-name">Google</span>/<wbr>Facebook и MetaTrader <em>4 app.</em></p>'+
+  '<p id="ordinary-compound" lang="en" style="width:4.5ch">auto-test</p>'+
+  '<p id="bold-words" lang="en" style="width:9ch"><strong>auto-test plain</strong></p>'+
+  '<h4 id="heading-compound" lang="en" style="width:9ch">auto-test plain</h4>'+
+  '<p id="thai-prose" lang="th">ทดสอบการตัดคำภาษาไทย</p>'+
   '</main><script>window.keptLink=document.querySelector("#kept");</script><script type="module" src="/src/prose-spacing.js"></script>';
 
 async function measureResize(page, width, height) {
@@ -190,6 +194,32 @@ async function main(){
       await p.goto(origin+'/test-typography-positive');await settle(p);
       const fx=()=>p.evaluate(()=>({links:[...document.querySelectorAll('main a')].map(a=>a.getAttribute('href')),pairs:[...document.querySelectorAll('.protected-name')].map(x=>x.textContent.trim()),nested:document.querySelectorAll('.protected-name .protected-name').length,text:document.querySelector('main').textContent,html:document.querySelector('main').innerHTML}));
       const example=await fx();
+      const native=await p.evaluate(()=>{
+        const lines=(element,term)=>{
+          const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT),chars=[];
+          for(let n=walker.nextNode();n;n=walker.nextNode())for(let i=0;i<n.length;i++)chars.push({n,i,c:n.data[i]});
+          const start=chars.map(x=>x.c).join('').indexOf(term);
+          const first=chars[start],last=chars[start+term.length-1];
+          const range=document.createRange();
+          range.setStart(first.n,first.i);
+          range.setEnd(last.n,last.i+1);
+          return new Set([...range.getClientRects()].filter(r=>r.width>0).map(r=>r.top)).size;
+        };
+        const ordinary=document.querySelector('#ordinary-compound');
+        const bold=document.querySelector('#bold-words strong');
+        const heading=document.querySelector('#heading-compound');
+        return {
+          ordinary:getComputedStyle(ordinary).hyphens,
+          hardBreak:lines(ordinary,'auto-test'),
+          boldMode:getComputedStyle(bold).hyphens,
+          boldText:lines(bold,'auto-test plain'),
+          boldCompound:lines(bold,'auto-test'),
+          headingMode:getComputedStyle(heading).hyphens,
+          headingCompound:lines(heading,'auto-test'),
+          thai:getComputedStyle(document.querySelector('#thai-prose')).hyphens
+        };
+      });
+      assert.deepEqual(native,{ordinary:'auto',hardBreak:2,boldMode:'none',boldText:2,boldCompound:1,headingMode:'none',headingCompound:1,thai:'none'});
       assert.deepEqual(example.links,['/ru/']);
       assert.equal(await p.evaluate(()=>document.querySelector('#kept')===window.keptLink),true);
       for (const width of [280,320,375]) {
@@ -227,6 +257,18 @@ async function main(){
         await p.goto(href);await settle(p);
         assert.equal(await p.locator('html').getAttribute('lang'),l);
         const raw=fs.readFileSync(path.join(root,'site',current,'index.html'),'utf8');
+        assert.doesNotMatch(raw,/&shy;|&#0*173;?|&#x0*ad;?|\u00ad/iu,current);
+        const policy=await p.evaluate(()=>{
+          const expected=document.body.matches('.home')?'none':'auto';
+          const ordinary=[...document.querySelectorAll('main :is(p,li), dialog :is(.legal-copy,[data-panel=leader]) :is(p,li)')];
+          return ordinary.filter(el=>{
+            if(el.closest('.protected-name,.keep-words,.quoted-phrase'))return false;
+            const css=getComputedStyle(el),limit=css.getPropertyValue('hyphenate-limit-chars');
+            const mode=el.matches(':lang(th)')?'none':expected;
+            return css.hyphens!==mode||css.wordBreak!=='normal'||css.overflowWrap!=='normal'||(limit&&!/^auto(?: auto){0,2}$/.test(limit));
+          }).map(el=>[el.tagName,el.className,getComputedStyle(el).hyphens]);
+        });
+        assert.deepEqual(policy,[],current+' has inconsistent prose hyphenation');
         const snapshot=await p.evaluate(raw=>{
           const valid=new DOMParser().parseFromString(raw,'text/html');
           const clean=t=>t.replace(/[\u00ad\u2060]/g,'').replace(/\s+/g,' ').trim();

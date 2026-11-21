@@ -73,25 +73,6 @@ function sentencePairs(text) {
   return pairs;
 }
 
-function trimSoftHyphens(block,map,quotes) {
-  for(const {node,from} of map.segments){
-    if(!node.data.includes('\u00ad'))continue;
-    if(node.parentElement.closest(noHyphens+','+atomic)){
-      node.data=node.data.replaceAll('\u00ad','');
-      continue;
-    }
-    let at=from;
-    node.data=[...node.data].map(char=>{
-      if(char!=='\u00ad'){at+=char.length;return char;}
-      if(quotes.some(([a,b])=>a<=at&&at<b))return '';
-      if(language!=='ru'||!block.closest('.guide'))return char;
-      const left=map.text.slice(0,at).match(/\p{L}+$/u)?.[0]??'';
-      const right=map.text.slice(at).match(/^\p{L}+/u)?.[0]??'';
-      return left.length>=4&&right.length>=4?char:'';
-    }).join('');
-  }
-}
-
 function edgeThroughInline(block,node,offset,start) {
   while(node.parentNode!==block && node.parentElement?.matches('span,b,strong,em,i,small,a') &&
     (start?offset===0&&!node.previousSibling:offset===(node.nodeType===3?node.length:node.childNodes.length)&&!node.nextSibling)){
@@ -141,10 +122,8 @@ function protect(block,map,from,to) {
 function prepare(block) {
   if(prepared.has(block))return;
   prepared.add(block);
-  const nodes=nodesOf(block),map=textMap(nodes);
-  const quotes=[...map.text.matchAll(quotedText)].map(m=>[m.index,m.index+m[0].length]);
-  trimSoftHyphens(block,map,quotes);
-  const clean=textMap(nodes);
+  const clean=textMap(nodesOf(block));
+  const quotes=[...clean.text.matchAll(quotedText)].map(m=>[m.index,m.index+m[0].length]);
   const hits=[...clean.text.matchAll(guideAtoms)].map(m=>[m.index,m.index+m[0].length]);
   for (const [from,to] of quotes) {
     for (const word of segmenter.segment(clean.text.slice(from,to))) {

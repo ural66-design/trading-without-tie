@@ -77,8 +77,12 @@ h1{font-size:clamp(28px,3vw,32px);line-height:1.2;letter-spacing:-.025em;margin:
 @media(max-width:600px) and (max-height:700px){.home{--avatar:104px}.home .panel{padding:calc(var(--avatar) - var(--overlap) + 8px) 16px 12px}.home h1{margin-bottom:8px}.home .panel>p:last-of-type{margin-bottom:4px}.home .actions{margin-top:8px}.home .socials{margin-top:12px}}
 
 /* Keep native line-breaking rules for each document language. */
-:root{-webkit-hyphens:manual;hyphens:manual}
-.home .panel{-webkit-hyphens:none;hyphens:none}
+:root { -webkit-hyphens: auto; hyphens: auto; word-break: normal; }
+.home, :lang(th), :is(h1,h2,h3,h4,h5,h6,strong,b,button,summary,.button,.back,.text-button,.quoted-phrase),
+a:is([href^="mailto:"],[href^="tel:"]) {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
 .keep-words{white-space:nowrap;hyphens:none;-webkit-hyphens:none}
 strong{font-weight:700}
 
@@ -97,20 +101,8 @@ strong{font-weight:700}
 h1, h2, h3 { text-wrap: balance; }
 p { text-wrap: pretty; }
 
-/* Apply browser-native typography to prose, leaving controls and the homepage alone. */
 body:not(.home) :is(main:not(.placeholder), .legal-copy) :is(p:not([role="status"]), li) {
   text-wrap: wrap;
-  -webkit-hyphens: auto;
-  hyphens: auto;
-  word-break: normal;
-}
-body:not(.home) :is(main:not(.placeholder), .legal-copy) :is(p, li) a:is([href^="mailto:"], [href^="tel:"]) {
-  -webkit-hyphens: none;
-  hyphens: none;
-}
-body:not(.home) :is(main:not(.placeholder), .legal-copy) :is(p, li):lang(th) {
-  -webkit-hyphens: none;
-  hyphens: none;
 }
 body:not(.home) :is(main:not(.placeholder), .legal-copy) :is(p:not([role="status"]), li).prose-justified:not(:lang(th)) {
   text-align: justify;
@@ -216,20 +208,7 @@ html body.trading main.panel.project-panel p.tc-setup-time.prose-justified { tex
 .trading .tc-connect { grid-column: 1 / -1; background: #20B454; border-color: #20B454; color: #101315; }
 @media (max-width: 600px) { .trading .tc-actions { grid-template-columns: minmax(0, 1fr); } }
 
-.trading main.project-panel :is(h1, h2, h3, strong, b, .button, .back, .button-icon-content, .button-icon-content > span) {
-  -webkit-hyphens: none;
-  hyphens: none;
-  word-break: normal;
-  overflow-wrap: normal;
-}
-
 .fmb .fmb-copy-info h2 { font-size: 16px; line-height: inherit; font-weight: 700; margin-bottom: 8px; }
-.fmb main.project-panel :is(h1, h2, h3, strong, b) {
-  -webkit-hyphens: none;
-  hyphens: none;
-  word-break: normal;
-  overflow-wrap: normal;
-}
 
 body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
 :is(.tc-guide,.fmb-guide) h1 { font-size: 26px; font-weight: 700; line-height: 1.25; }
@@ -256,13 +235,6 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
 :is(.trading,.tc-guide) :is(.back,.text-button) { color: #101315; background: #10131508; }
 .tc-guide .support-card { background: #1013150D; border-color: #10131533; }
 @media (hover:hover) { :is(.trading,.tc-guide) :is(.back,.text-button):hover { background: #10131514; border-color: #101315; } }
-:is(.tc-guide,.fmb-guide) main :is(h1,h2,h3,strong,b,.step-toggle,#faq summary,.button,.back,.text-button) {
-  -webkit-hyphens: none;
-  hyphens: none;
-  word-break: normal;
-  overflow-wrap: normal;
-}
-
 .tc-guide .modal-actions .button.secondary { background: #10131508; border-color: #101315; color: #101315; }
 .tc-guide .dialog-close { color: #101315; }
 .tc-guide .legal-tabs button { color: #101315; border-color: #10131533; }
@@ -294,8 +266,7 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
   .fmb-guide .guide-nav .back:last-child { max-width: 8.5rem; }
 }
 .fmb-guide .risk-important > [aria-hidden] { margin-inline-end: 8px; }
-.fmb-guide [data-panel=leader] :is(p,li) { font-size: 16px; line-height: 1.55; text-wrap: wrap; hyphens: auto; word-break: normal; }
-.fmb-guide [data-panel=leader] :is(p,li):lang(th) { hyphens: none; }
+.fmb-guide [data-panel=leader] :is(p,li) { font-size: 16px; line-height: 1.55; text-wrap: wrap; }
 body.guide:is(.tc-guide,.fmb-guide) main.panel :is(.guide-intro,.howto,.risk,.step-content,.step-note,.answer,.completion) :is(p:not([role="status"]),li).guide-justify:not(:lang(th)),
 body.fmb-guide dialog [data-panel=leader] :is(p,li).guide-justify:not(:lang(th)) { text-align: justify; text-align-last: start; }
 .fmb-guide [data-panel=leader] h3 { font-size: 16px; line-height: 1.55; margin: 0 0 8px; }
@@ -303,8 +274,6 @@ body.fmb-guide dialog [data-panel=leader] :is(p,li).guide-justify:not(:lang(th))
 .fmb-guide [data-panel=leader] li { padding-inline-start: 4px; margin-bottom: 12px; }
 .fmb-guide [data-panel=leader] li:last-child { margin-bottom: 0; }
 .fmb-guide [data-leader-confirm] { background: #B7E600; border-color: #B7E600; color: #0B1F3A; width: 100%; }
-.fmb-guide :is(main,[data-panel=leader]) :is(p,li) { hyphenate-limit-chars: 8 4 4; }
-body :is(h1,h2,h3,strong,b) { -webkit-hyphens: none; hyphens: none; word-break: normal; }
 @media (max-width: 280px) {
   .fmb .button-icon { padding-inline: 2px; }
   .guide .panel { padding-inline: 0; }
@@ -323,9 +292,4 @@ a[href^="mailto:"],a[href^="mailto:"] .protected-name { white-space: normal; ove
   .home .social-button { display: flex; flex-direction: column; gap: 8px; padding-inline: 6px; }
 }
 
-.quoted-phrase { -webkit-hyphens: none; hyphens: none; }
-
 .guide-inline-scroll { display: inline-block; max-inline-size: 100%; overflow-x: auto; vertical-align: bottom; }
-
-/* Use the prepared soft hyphens in Russian instructions across browser dictionaries. */
-body.guide:lang(ru) :is(main,[data-panel=leader]) :is(p,li) { -webkit-hyphens: manual; hyphens: manual; }

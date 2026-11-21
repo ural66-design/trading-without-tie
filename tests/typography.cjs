@@ -211,6 +211,60 @@ async function checkSentenceStarts(page, engine) {
   }
 }
 
+async function checkOrdinaryHyphens(page, engine) {
+  await page.goto(origin+'/ru/fast-money-bot/instruction/');
+  await settle(page);
+  const measured=await page.evaluate(()=>{
+    const main=document.querySelector('main');
+    const targets=['потребоваться','депозита','торговле'];
+    const result={};
+    for(const word of targets){
+      const walker=document.createTreeWalker(main,NodeFilter.SHOW_TEXT);
+      let source;
+      for(let node=walker.nextNode();node;node=walker.nextNode()){
+        if(node.data.includes(word)&&node.parentElement.closest('.risk')){source=node;break;}
+      }
+      if(!source)throw Error('Missing risk example '+word);
+      const original=source.parentElement;
+      const style=getComputedStyle(original);
+      const probe=document.createElement('p');
+      probe.lang='ru';
+      probe.style.cssText='margin:0;text-align:start;text-wrap:wrap';
+      probe.style.font=style.font;
+      const phrase='Об этом '+word+' может быть сказано.';
+      probe.textContent=phrase;
+      const actual=probe.cloneNode(false);
+      actual.style.hyphens=style.hyphens;
+      actual.style.webkitHyphens=style.webkitHyphens;
+      actual.style.wordBreak=style.wordBreak;
+      actual.style.whiteSpace=style.whiteSpace;
+      actual.textContent=phrase;
+      document.body.append(probe,actual);
+      const range=document.createRange(), start=phrase.indexOf(word);
+      function splits(p,width){
+        p.style.width=width+'px';
+        range.setStart(p.firstChild,start);range.setEnd(p.firstChild,start+word.length);
+        return new Set([...range.getClientRects()].filter(r=>r.width>0).map(r=>r.top)).size>1;
+      }
+      let native=0,available=0;
+      for(let width=48;width<=210;width++){
+        native+=Number(splits(probe,width));
+        available+=Number(splits(actual,width));
+      }
+      result[word]={native,available,hyphens:style.hyphens,wordBreak:style.wordBreak,
+        protected:!!original.closest('.protected-name,.keep-words,.long-word')};
+      probe.remove();actual.remove();
+    }
+    return result;
+  });
+  for(const [word,result] of Object.entries(measured)){
+    assert.equal(result.protected,false,engine+' ordinary word enclosed: '+word);
+    assert.equal(result.hyphens,'auto',word);
+    assert.equal(result.wordBreak,'normal',word);
+    assert.equal(result.available,result.native,engine+' lost dictionary breaks: '+word);
+  }
+}
+
 async function measureResize(page, width, height) {
   await page.evaluate(() => {
     const line = [...document.querySelectorAll('.step-content li')]
@@ -369,6 +423,7 @@ async function main(){
       await settle(p);
       assert.deepEqual(await fx(),example);
       await checkSentenceStarts(p,engine);
+      await checkOrdinaryHyphens(p,engine);
       await p.goto(origin+'/fil/');
       for(const [width,height] of [[390,440],[412,440],[412,915],[430,440],[430,915]]){
         await p.setViewportSize({width,height});await settle(p);

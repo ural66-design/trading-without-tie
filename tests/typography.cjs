@@ -115,6 +115,8 @@ const fixture = '<!doctype html><html lang="ru"><meta charset="utf-8"><link rel=
   '<p id="bold-words" lang="en" style="width:9ch"><strong>auto-test plain</strong></p>'+
   '<h4 id="heading-compound" lang="en" style="width:9ch">auto-test plain</h4>'+
   '<p id="edge-fallback" style="width:18.5ch;font:16px monospace">qqqqqq jj xxxx zzzzzzzzz ggggg mm vvvvvvvv</p>'+
+  '<p id="tail-good" style="width:18ch;font:16px monospace">aaaaaaa bbbbbbbb c ddddddddd</p>'+
+  '<p id="tail-poor" style="width:18ch;font:16px monospace">aaaaaaa bbbbbbbbbb cccc</p>'+
   '<p id="thai-prose" lang="th">ทดสอบการตัดคำภาษาไทย</p>'+
   '</main><script>window.keptLink=document.querySelector("#kept");</script><script type="module" src="/src/prose-spacing.js"></script>';
 
@@ -263,6 +265,31 @@ async function checkOrdinaryHyphens(page, engine) {
     assert.equal(result.wordBreak,'normal',word);
     assert.equal(result.available,result.native,engine+' lost dictionary breaks: '+word);
   }
+}
+
+async function checkParagraphEndings(page) {
+  const rows=selector=>page.locator(selector).evaluate(p=>{
+    const walker=document.createTreeWalker(p,NodeFilter.SHOW_TEXT),range=document.createRange(),rows=new Map();
+    for(let node=walker.nextNode();node;node=walker.nextNode()){
+      for(let i=0;i<node.length;i++){
+        const char=node.data[i];
+        if(char===' ')continue;
+        range.setStart(node,i);range.setEnd(node,i+1);
+        const box=range.getBoundingClientRect();
+        if(box.width>0)rows.set(box.top,(rows.get(box.top)??'')+char);
+      }
+    }
+    return {lines:[...rows.values()],text:p.textContent};
+  });
+  const good=await rows('#tail-good'),poor=await rows('#tail-poor');
+  assert.deepEqual(good,{lines:['aaaaaaabbbbbbbb','cddddddddd'],text:'aaaaaaa bbbbbbbb c ddddddddd'});
+  assert.deepEqual(poor,{lines:['aaaaaaabbbbbbbbbb','cccc'],text:'aaaaaaa bbbbbbbbbb cccc'});
+  await page.locator('#tail-good').evaluate(p=>{p.style.width='32ch';});
+  await settle(page);
+  assert.equal((await rows('#tail-good')).lines.length,1);
+  await page.locator('#tail-good').evaluate(p=>{p.style.width='18ch';});
+  await settle(page);
+  assert.deepEqual(await rows('#tail-good'),good);
 }
 
 async function measureResize(page, width, height) {
@@ -422,6 +449,7 @@ async function main(){
       await p.evaluate(async()=>{await import('/src/prose-spacing.js?repeat');window.dispatchEvent(new Event('resize'));});
       await settle(p);
       assert.deepEqual(await fx(),example);
+      await checkParagraphEndings(p);
       await checkSentenceStarts(p,engine);
       await checkOrdinaryHyphens(p,engine);
       await p.goto(origin+'/fil/');

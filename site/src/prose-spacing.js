@@ -203,9 +203,10 @@ function normalSpace(element) {
   return spaceWidths.get(font);
 }
 
-function lineLayout(pieces) {
+function lineLayout(pieces,start=0) {
   const range=document.createRange(),lines=[];
-  for(const [index,piece] of pieces.entries()){
+  for(let index=start;index<pieces.length;index++){
+    const piece=pieces[index];
     range.setStart(piece.node,piece.start);
     range.setEnd(piece.node,piece.end);
     const fragments=[...range.getClientRects()].filter(rect=>rect.width>.02&&rect.height);
@@ -213,7 +214,7 @@ function lineLayout(pieces) {
       const middle=(rect.top+rect.bottom)/2;
       let line=lines.at(-1);
       if(!line||Math.abs(line.middle-middle)>=Math.min(line.height,rect.height)*.5){
-        line={middle,height:rect.height,left:Infinity,right:-Infinity,word:-1,fragment:0,gaps:[]};
+        line={middle,height:rect.height,left:Infinity,right:-Infinity,firstWord:-1,word:-1,fragment:0,gaps:[]};
         lines.push(line);
       }
       if(piece.space){
@@ -221,6 +222,7 @@ function lineLayout(pieces) {
       }else if(piece.node.data.trim()){
         line.left=Math.min(line.left,rect.left);
         line.right=Math.max(line.right,rect.right);
+        if(line.firstWord<0)line.firstWord=index;
         line.word=index;
         line.fragment=rect.width;
         line.split=fragments.length>1;
@@ -230,10 +232,12 @@ function lineLayout(pieces) {
   return lines.filter(line=>line.word>=0);
 }
 
-function planSpacing(block,pieces,retry=false) {
+function planSpacing(block,pieces,retry=false,start=0) {
   const css=getComputedStyle(block);
-  const edge=block.getBoundingClientRect().right-parseFloat(css.borderRightWidth)-parseFloat(css.paddingRight);
-  const lines=lineLayout(pieces),changes=new Map();
+  const box=block.getBoundingClientRect();
+  const edge=box.right-parseFloat(css.borderRightWidth)-parseFloat(css.paddingRight);
+  const width=edge-box.left-parseFloat(css.borderLeftWidth)-parseFloat(css.paddingLeft);
+  const lines=lineLayout(pieces,start),changes=new Map();
   for(const line of lines.slice(0,-1)){
     const slack=edge-line.right-(retry?3:lineReserve);
     if(slack<=0)continue;
@@ -247,14 +251,101 @@ function planSpacing(block,pieces,retry=false) {
       if(pixels>0)changes.set(piece,pixels+'px');
     }
   }
-  return {block,pieces,lines,changes};
+  return {block,pieces,lines,changes,edge,width};
+}
+
+function sameEnding(a,b) {
+  return a.word===b.word&&a.split===b.split&&(!a.split||Math.abs(a.fragment-b.fragment)<1.5);
+}
+
+function hasSingleLastWord({lines,pieces}) {
+  if(lines.length<2)return false;
+  const last=lines.at(-1);
+  if(last.gaps.some(({rect})=>rect.left>last.left&&rect.right<last.right))return false;
+  const text=pieces.slice(last.firstWord,last.word+1).map(({node,start,end})=>node.data.slice(start,end)).join('');
+  let words=0;
+  for(const part of segmenter.segment(text)){
+    if(part.isWordLike&&++words>1)return false;
+  }
+  return words===1;
+}
+
+function penultimateGap({lines,edge,changes}) {
+  const line=lines.at(-2);
+  return edge-line.right-line.gaps.reduce((total,{piece})=>total+(parseFloat(changes.get(piece))||0),0);
+}
+
+const tailGaps=new WeakMap();
+
+function resetTail(block) {
+  const gap=tailGaps.get(block);
+  if(!gap)return;
+  gap.inserted[0].replaceWith(gap.original);
+  for(const node of gap.inserted.slice(1))node.remove();
+  tailGaps.delete(block);
+}
+
+function joinTail({block,lines,pieces}) {
+  const first=lines.at(-1).firstWord;
+  if(lines.at(-2).word===first)return false;
+  const gap=pieces[first-1];
+  if(!gap?.space||gap.node.parentElement.closest(atomic))return false;
+  const {node,start,end}=gap;
+  const span=document.createElement('span');
+  span.style.whiteSpace='nowrap';
+  span.textContent=node.data.slice(start,end);
+  const inserted=[document.createTextNode(node.data.slice(0,start)),span,document.createTextNode(node.data.slice(end))];
+  node.replaceWith(...inserted);
+  tailGaps.set(block,{original:node,inserted});
+  return pieces.map(piece=>{
+    if(piece.node!==node)return piece;
+    if(piece===gap)return {...piece,node:span.firstChild,start:0,end:end-start};
+    if(piece.end<=start)return {...piece,node:inserted[0]};
+    return {...piece,node:inserted[2],start:piece.start-end,end:piece.end-end};
+  });
+}
+
+function betterEnding(plan,next) {
+  const limit=.15*plan.width;
+  const prior=penultimateGap(plan);
+  const cap=prior<=limit?limit:prior+.05*plan.width;
+  return next.lines.length===plan.lines.length&&!hasSingleLastWord(next)&&
+    plan.lines.slice(0,-2).every((line,i)=>sameEnding(line,next.lines[i]))&&
+    penultimateGap(next)<=cap&&next.lines.at(-1).right<=next.edge+.5;
+}
+
+function improveEndings(plans) {
+  // Try the last existing separator only, without rewriting or splitting either word.
+  const trials=[];
+  for(const [index,plan] of plans.entries()){
+    if(!hasSingleLastWord(plan))continue;
+    const pieces=joinTail(plan);
+    if(pieces)trials.push({index,plan,pieces});
+  }
+  const rejected=[];
+  for(const {index,plan,pieces} of trials){
+    let row=Math.max(0,plan.lines.length-3);
+    while(row>0&&plan.lines[row-1].word===plan.lines[row].firstWord)row--;
+    if(row){
+      // Rule out expensive full measurements when the last rows already fail.
+      const tail=planSpacing(plan.block,pieces,false,plan.lines[row].firstWord);
+      if(!betterEnding({...plan,lines:plan.lines.slice(row)},tail)){
+        rejected.push(plan.block);
+        continue;
+      }
+    }
+    const next=planSpacing(plan.block,pieces);
+    if(betterEnding(plan,next))plans[index]=next;
+    else rejected.push(plan.block);
+  }
+  for(const block of rejected)resetTail(block);
+  return plans;
 }
 
 function preservesLines(plan) {
   const after=lineLayout(plan.pieces);
   return plan.lines.length===after.length&&after.every((line,i)=>
-    line.word===plan.lines[i].word&&line.split===plan.lines[i].split&&
-    (!line.split||Math.abs(line.fragment-plan.lines[i].fragment)<1.5)&&
+    sameEnding(line,plan.lines[i])&&
     line.gaps.every(({piece,rect})=>!piece.normal||rect.width<=1.5*piece.normal+.001));
 }
 
@@ -349,10 +440,13 @@ function refreshSpacing(candidates) {
       !block.querySelector('p,li')&&/^(start|left)$/.test(css.textAlign);
     pending.push({block,key,eligible});
   }
-  for(const {block} of pending)if(applied.has(block))restoreSpacing(block);
+  for(const {block} of pending){
+    if(applied.has(block))restoreSpacing(block);
+    resetTail(block);
+  }
   for(const {block} of pending)fitAtoms(block);
-  const plans=pending.filter(({eligible})=>eligible)
-    .map(({block})=>planSpacing(block,textPieces(block))).filter(plan=>plan.changes.size);
+  const layouts=pending.filter(({eligible})=>eligible).map(({block})=>planSpacing(block,textPieces(block)));
+  const plans=improveEndings(layouts).filter(plan=>plan.changes.size);
   for(const plan of plans)applySpacing(plan);
   const rejected=plans.filter(plan=>!preservesLines(plan));
   for(const {block} of rejected)restoreSpacing(block);

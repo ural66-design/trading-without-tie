@@ -115,7 +115,7 @@ const fixture = '<!doctype html><html lang="ru"><meta charset="utf-8"><link rel=
   '<p id="bold-words" lang="en" style="width:9ch"><strong>auto-test plain</strong></p>'+
   '<h4 id="heading-compound" lang="en" style="width:9ch">auto-test plain</h4>'+
   '<p id="edge-fallback" style="width:18.5ch;font:16px monospace">qqqqqq jj xxxx zzzzzzzzz ggggg mm vvvvvvvv</p>'+
-  '<p id="tail-good" style="width:18ch;font:16px monospace">aaaaaaa bbbbbbbb c ddddddddd</p>'+
+  '<p id="tail-good" style="width:18ch;font:16px monospace">aaaaaaa bbbbbbbb c ddd</p>'+
   '<p id="tail-poor" style="width:18ch;font:16px monospace">aaaaaaa bbbbbbbbbb cccc</p>'+
   '<p id="thai-prose" lang="th">ทดสอบการตัดคำภาษาไทย</p>'+
   '</main><script>window.keptLink=document.querySelector("#kept");</script><script type="module" src="/src/prose-spacing.js"></script>';
@@ -282,7 +282,8 @@ async function checkParagraphEndings(page) {
     return {lines:[...rows.values()],text:p.textContent};
   });
   const good=await rows('#tail-good'),poor=await rows('#tail-poor');
-  assert.deepEqual(good,{lines:['aaaaaaabbbbbbbb','cddddddddd'],text:'aaaaaaa bbbbbbbb c ddddddddd'});
+  // A whole short word is allowed on its own when the previous line is better filled.
+  assert.deepEqual(good,{lines:['aaaaaaabbbbbbbbc','ddd'],text:'aaaaaaa bbbbbbbb c ddd'});
   assert.deepEqual(poor,{lines:['aaaaaaabbbbbbbbbb','cccc'],text:'aaaaaaa bbbbbbbbbb cccc'});
   await page.locator('#tail-good').evaluate(p=>{p.style.width='32ch';});
   await settle(page);
@@ -290,6 +291,29 @@ async function checkParagraphEndings(page) {
   await page.locator('#tail-good').evaluate(p=>{p.style.width='18ch';});
   await settle(page);
   assert.deepEqual(await rows('#tail-good'),good);
+}
+
+async function checkMinimumEnding(page) {
+  await page.setViewportSize({width:360,height:850});
+  await page.goto(origin+'/ru/fast-money-bot/instruction/');
+  await settle(page);
+  const suffix=await page.locator('.guide-intro p').filter({hasText:/начнётся автоматически\.$/u}).evaluate(p=>{
+    const walker=document.createTreeWalker(p,NodeFilter.SHOW_TEXT),range=document.createRange(),chars=[];
+    for(let n=walker.nextNode();n;n=walker.nextNode()){
+      for(let i=0;i<n.length;i++)chars.push({n,i,char:n.data[i]});
+    }
+    const tail='автоматически.',at=chars.map(c=>c.char).join('').lastIndexOf(tail);
+    if(at<0)throw Error('Missing final word');
+    const glyphs=chars.slice(at,at+tail.length).map(({n,i,char})=>{
+      range.setStart(n,i);range.setEnd(n,i+1);
+      const box=range.getBoundingClientRect();
+      return {char,y:box.top};
+    });
+    const last=glyphs.at(-1).y;
+    return glyphs.filter(x=>Math.abs(x.y-last)<1).map(x=>x.char).join('');
+  });
+  assert.ok((suffix.match(/\p{L}/gu)||[]).length>=4,'Short isolated suffix: '+suffix);
+  await page.setViewportSize({width:375,height:850});
 }
 
 async function measureResize(page, width, height) {
@@ -452,6 +476,7 @@ async function main(){
       await checkParagraphEndings(p);
       await checkSentenceStarts(p,engine);
       await checkOrdinaryHyphens(p,engine);
+      await checkMinimumEnding(p);
       await p.goto(origin+'/fil/');
       for(const [width,height] of [[390,440],[412,440],[412,915],[430,440],[430,915]]){
         await p.setViewportSize({width,height});await settle(p);

@@ -258,21 +258,54 @@ function sameEnding(a,b) {
   return a.word===b.word&&a.split===b.split&&(!a.split||Math.abs(a.fragment-b.fragment)<1.5);
 }
 
-function hasSingleLastWord({lines,pieces}) {
-  if(lines.length<2)return false;
-  const last=lines.at(-1);
-  if(last.gaps.some(({rect})=>rect.left>last.left&&rect.right<last.right))return false;
-  const text=pieces.slice(last.firstWord,last.word+1).map(({node,start,end})=>node.data.slice(start,end)).join('');
-  let words=0;
-  for(const part of segmenter.segment(text)){
-    if(part.isWordLike&&++words>1)return false;
+function lastFragment(piece,line) {
+  const value=piece.node.data.slice(piece.start,piece.end);
+  const units=[...graphemes.segment(value)];
+  const range=document.createRange();
+  let from=0,to=units.length;
+  while(from<to){
+    const i=(from+to)>>1;
+    const offset=piece.start+units[i].index;
+    range.setStart(piece.node,offset);
+    range.setEnd(piece.node,offset+units[i].segment.length);
+    const box=range.getBoundingClientRect();
+    if(box.top+box.height/2<line.middle-line.height*.5)from=i+1;
+    else to=i;
   }
-  return words===1;
+  return value.slice(units[from]?.index??value.length);
 }
 
-function penultimateGap({lines,edge,changes}) {
-  const line=lines.at(-2);
-  return edge-line.right-line.gaps.reduce((total,{piece})=>total+(parseFloat(changes.get(piece))||0),0);
+function ending({lines,pieces}) {
+  if(lines.length<2)return {single:false,short:false};
+  const last=lines.at(-1);
+  if(last.gaps.some(({rect})=>rect.left>last.left&&rect.right<last.right))return {single:false,short:false};
+  const first=pieces[last.firstWord];
+  const previousWord=lines.at(-2).word;
+  const splitPiece=previousWord===last.firstWord;
+  const continuation=splitPiece||(first.continuesWord&&previousWord+1===last.firstWord);
+  const piecesOnLast=pieces.slice(last.firstWord,last.word+1);
+  const text=piecesOnLast.map((piece,i)=>i===0&&splitPiece?lastFragment(piece,last):piece.node.data.slice(piece.start,piece.end)).join('');
+  let words=0,letters=0;
+  for(const part of segmenter.segment(text)){
+    if(!part.isWordLike)continue;
+    if(++words>1)return {single:false,short:false};
+    letters=(part.segment.normalize('NFC').match(/\p{L}/gu)||[]).length;
+  }
+  return {single:words===1,short:words===1&&continuation&&letters<4&&
+    !first.node.parentElement.closest(atomic+','+noHyphens+','+technicalLinks)};
+}
+
+function remainingGap(plan,line) {
+  const extra=line.gaps.reduce((total,{piece})=>total+(parseFloat(plan.changes.get(piece))||0),0);
+  return Math.max(0,plan.edge-line.right-extra);
+}
+
+function layoutScore(plan) {
+  const gaps=plan.lines.slice(0,-1).map(line=>remainingGap(plan,line));
+  let score=0;
+  const limit=.15*plan.width;
+  for(const gap of gaps)score+=gap+2*Math.max(0,gap-limit);
+  return {score,worst:Math.max(0,...gaps),gaps};
 }
 
 const tailGaps=new WeakMap();
@@ -285,60 +318,104 @@ function resetTail(block) {
   tailGaps.delete(block);
 }
 
-function joinTail({block,lines,pieces}) {
-  const first=lines.at(-1).firstWord;
-  if(lines.at(-2).word===first)return false;
-  const gap=pieces[first-1];
-  if(!gap?.space||gap.node.parentElement.closest(atomic))return false;
-  const {node,start,end}=gap;
+function holdPiece({block,pieces},index,start,end) {
+  const target=pieces[index],node=target.node;
   const span=document.createElement('span');
   span.style.whiteSpace='nowrap';
   span.textContent=node.data.slice(start,end);
   const inserted=[document.createTextNode(node.data.slice(0,start)),span,document.createTextNode(node.data.slice(end))];
   node.replaceWith(...inserted);
   tailGaps.set(block,{original:node,inserted});
-  return pieces.map(piece=>{
-    if(piece.node!==node)return piece;
-    if(piece===gap)return {...piece,node:span.firstChild,start:0,end:end-start};
-    if(piece.end<=start)return {...piece,node:inserted[0]};
-    return {...piece,node:inserted[2],start:piece.start-end,end:piece.end-end};
+  return pieces.flatMap(piece=>{
+    if(piece.node!==node)return [piece];
+    if(piece.end<=start)return [{...piece,node:inserted[0]}];
+    if(piece.start>=end)return [{...piece,node:inserted[2],start:piece.start-end,end:piece.end-end}];
+    const middle={...piece,node:span.firstChild,start:0,end:end-start,continuesWord:!piece.space&&piece.start<start};
+    return piece.start<start?[{...piece,node:inserted[0],end:start},middle]:[middle];
   });
 }
 
-function betterEnding(plan,next) {
-  const limit=.15*plan.width;
-  const prior=penultimateGap(plan);
-  const cap=prior<=limit?limit:prior+.05*plan.width;
-  return next.lines.length===plan.lines.length&&!hasSingleLastWord(next)&&
-    plan.lines.slice(0,-2).every((line,i)=>sameEnding(line,next.lines[i]))&&
-    penultimateGap(next)<=cap&&next.lines.at(-1).right<=next.edge+.5;
+function shortSuffix({lines,pieces}) {
+  const last=lines.at(-1),index=last.firstWord;
+  if(lines.at(-2).word!==index)return;
+  const piece=pieces[index];
+  const value=piece.node.data.slice(piece.start,piece.end);
+  if(/\s/u.test(value))return;
+  const letters=[...graphemes.segment(value)].filter(({segment})=>/\p{L}/u.test(segment));
+  if(letters.length<=4)return;
+  return {index,start:piece.start+letters.at(-4).index,end:piece.end,row:Math.max(0,lines.length-3)};
+}
+
+function betterEnding(plan,next,row,original) {
+  if(!next.lines.length||next.lines.length>plan.lines.length||
+    next.lines.some(line=>line.right>next.edge+.5))return false;
+  if(!plan.lines.slice(0,row).every((line,i)=>next.lines[i]&&sameEnding(line,next.lines[i])))return false;
+  const after=ending(next);
+  if(after.short)return false;
+  const beforeScore=layoutScore(plan),afterScore=layoutScore(next);
+  const limit=Math.max(.15*plan.width,beforeScore.worst+.03*plan.width);
+  const repairedShort=original.short&&!after.short;
+  if(afterScore.worst>limit+(repairedShort ? .04*plan.width:0))return false;
+  const cost=afterScore.score-beforeScore.score-(plan.lines.length-next.lines.length)*.1*plan.width;
+  if(cost<-.5)return true;
+  return repairedShort&&cost<=.17*plan.width;
+}
+
+function trialBoundaries(plan,original,quality) {
+  const rows=plan.lines;
+  if(rows.length<2)return [];
+  const last=rows.length-1;
+  const worst=quality.gaps.indexOf(quality.worst)+1;
+  const suffix=original.short?shortSuffix(plan):undefined;
+  // Restrict the search to two plausible local changes.
+  const indices=original.single?[last,Math.max(1,last-1)]:[worst];
+  const boundaries=[...new Set(indices)].flatMap(i=>{
+    const first=rows[i].firstWord;
+    if(rows[i-1].word===first&&!original.short)return [];
+    const index=first-1;
+    const gap=plan.pieces[index];
+    if(!gap?.space||gap.node.parentElement.closest(atomic))return [];
+    return [{index,start:gap.start,end:gap.end,row:Math.max(0,i-2)}];
+  });
+  return suffix?[suffix,...boundaries.slice(0,1)]:boundaries;
 }
 
 function improveEndings(plans) {
-  // Try the last existing separator only, without rewriting or splitting either word.
-  const trials=[];
+  let pending=[];
   for(const [index,plan] of plans.entries()){
-    if(!hasSingleLastWord(plan))continue;
-    const pieces=joinTail(plan);
-    if(pieces)trials.push({index,plan,pieces});
+    // Contact links may wrap internally as an emergency fallback. Do not force them
+    // onto the previous line using a temporary join elsewhere in the paragraph.
+    if(plan.lines.length<2||plan.block.querySelector(technicalLinks+',.typography-address,.address'))continue;
+    const original=ending(plan),quality=layoutScore(plan);
+    if(!original.short&&quality.worst<.15*plan.width)continue;
+    const boundaries=trialBoundaries(plan,original,quality);
+    if(boundaries.length)pending.push({index,plan,original,boundaries});
   }
-  const rejected=[];
-  for(const {index,plan,pieces} of trials){
-    let row=Math.max(0,plan.lines.length-3);
-    while(row>0&&plan.lines[row-1].word===plan.lines[row].firstWord)row--;
-    if(row){
-      // Rule out expensive full measurements when the last rows already fail.
-      const tail=planSpacing(plan.block,pieces,false,plan.lines[row].firstWord);
-      if(!betterEnding({...plan,lines:plan.lines.slice(row)},tail)){
-        rejected.push(plan.block);
-        continue;
+  for(let attempt=0;attempt<2&&pending.length;attempt++){
+    const trials=pending.flatMap(entry=>{
+      const boundary=entry.boundaries[attempt];
+      if(!boundary)return [];
+      const pieces=holdPiece(entry.plan,boundary.index,boundary.start,boundary.end);
+      return [{...entry,boundary,pieces}];
+    });
+    pending=[];
+    for(const {index,plan,original,boundaries,boundary,pieces} of trials){
+      let row=boundary.row;
+      // Validate a short suffix window first. Earlier rows are retained in the full check.
+      while(row>0&&plan.lines[row-1].word===plan.lines[row].firstWord)row--;
+      if(row){
+        const tail=planSpacing(plan.block,pieces,false,plan.lines[row].firstWord);
+        if(!betterEnding({...plan,lines:plan.lines.slice(row)},tail,0,original)){
+          pending.push({index,plan,original,boundaries});
+          continue;
+        }
       }
+      const next=planSpacing(plan.block,pieces);
+      if(betterEnding(plan,next,row,original))plans[index]=next;
+      else pending.push({index,plan,original,boundaries});
     }
-    const next=planSpacing(plan.block,pieces);
-    if(betterEnding(plan,next))plans[index]=next;
-    else rejected.push(plan.block);
+    for(const {plan:{block}} of pending)resetTail(block);
   }
-  for(const block of rejected)resetTail(block);
   return plans;
 }
 

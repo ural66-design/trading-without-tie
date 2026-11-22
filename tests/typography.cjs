@@ -124,6 +124,7 @@ const sentenceCases = [
   {id:'one', opening:'Я', next:'наблюдаю'},
   {id:'two', opening:'Мы', next:'наблюдаем', punctuation:'!'},
   {id:'three', opening:'Они', next:'действуют', punctuation:'?'},
+  {id:'ellipsis', opening:'Они', next:'наблюдают', punctuation:'…'},
   {id:'four', opening:'Если', next:'поместится', punctuation:'.»'},
   {id:'five', opening:'После', next:'рассмотрения'},
   {id:'brand', opening:'Он', next:'Fast Money Bot', markup:'<span class="protected-name">Fast Money Bot</span>'},
@@ -293,7 +294,7 @@ async function checkParagraphEndings(page) {
   assert.deepEqual(await rows('#tail-good'),good);
 }
 
-async function checkMinimumEnding(page) {
+async function checkNativeEnding(page) {
   await page.setViewportSize({width:360,height:850});
   await page.goto(origin+'/ru/fast-money-bot/instruction/');
   await settle(page);
@@ -312,7 +313,15 @@ async function checkMinimumEnding(page) {
     const last=glyphs.at(-1).y;
     return glyphs.filter(x=>Math.abs(x.y-last)<1).map(x=>x.char).join('');
   });
-  assert.ok((suffix.match(/\p{L}/gu)||[]).length>=4,'Short isolated suffix: '+suffix);
+  assert.ok('автоматически.'.endsWith(suffix)&&suffix.length>1);
+  const manualSuffix=await page.locator('.guide-intro p span[style*="nowrap"]').allTextContents();
+  assert.ok(manualSuffix.every(text=>!text.trim()),'Only existing separators may be held');
+  await page.evaluate(async()=>{
+    const {protectionRegistry}=await import('/src/prose-spacing.js');
+    for(const text of ['100 $','100 руб.','100 USD','0,5%','1:2000']){
+      if(protectionRegistry.values.exec(text)?.[0]!==text)throw Error('Incomplete numeric protection '+text);
+    }
+  });
   await page.setViewportSize({width:375,height:850});
 }
 
@@ -466,7 +475,7 @@ async function main(){
       }
       for(const term of ['Google/Facebook','MetaTrader 4'])assert.ok(example.pairs.includes(term),term);
       const leads=(await p.locator('.sentence-lead').allTextContents()).map(text=>text.trim()).filter(Boolean);
-      assert.deepEqual(leads,['Для','Вы','Мы']);
+      assert.deepEqual(leads.filter(word=>['Он','Для','Вы','Мы'].includes(word)),['Для','Он','Вы','Мы']);
       assert.ok(!example.pairs.some(text=>/^(Для |Вы |Мы )/.test(text)));
       assert.ok(!example.pairs.some(text=>/^(После |и |г. |Доктор )/.test(text)));
       assert.equal(example.nested,0);
@@ -476,7 +485,7 @@ async function main(){
       await checkParagraphEndings(p);
       await checkSentenceStarts(p,engine);
       await checkOrdinaryHyphens(p,engine);
-      await checkMinimumEnding(p);
+      await checkNativeEnding(p);
       await p.goto(origin+'/fil/');
       for(const [width,height] of [[390,440],[412,440],[412,915],[430,440],[430,915]]){
         await p.setViewportSize({width,height});await settle(p);

@@ -5,7 +5,15 @@ const names = /Fast[\s\u00a0]+Money[\s\u00a0]+Bot|MetaTrader[\s\u00a0]*4|Classic
 const number = '\\d+(?:[.,]\\d+)?';
 const units = '(?:минут[а-яё]*|час[а-яё]*|секунд[а-яё]*|км|кг|мин\\.|minutes?|hours?|seconds?|km|kg|minutos?|horas?|segundos?|menit|minit|jam|dakika|saat|phút|giờ|นาที|ชั่วโมง|मिनट|घंट[ेा]|USD|EUR|USDT)';
 const values = '[$€£]'+nameSeparator+number+'|'+number+nameSeparator+'%|\\d+\\s*[:–—−-]\\s*\\d+|'+number+nameSeparator+units+'(?![\\p{L}\\p{M}])';
-const guideAtoms = new RegExp(names.source + '|' + values, 'giu');
+// Export the same matchers used by the formatter for corpus and regression checks.
+export const protectionRegistry = {
+  brands: /Fast\s+Money\s+Bot|T[-‑]Capital|MetaTrader\s*4|Markets4you|Classic\s+Pro|Myfxbook|Vladimir1\.com|YouTube|Google\s*\/\s*Facebook|Google|Facebook|Share4you|Bot\s+Telegram|Telegram(?:\s+ID|[-‑](?:бот(?:а|е|у)?|канал(?:а|е|у)?))?/iu,
+  terms: /стоп[-‑]лосс(?:ов|а|ом|е|ы)?|stop[-‑]loss(?:es|[-‑]nya)?|स्टॉप[-‑]लॉस|proof[-‑]of[-‑]address|e-mail|ID[-‑]карт[ауые]|IP[-‑]адрес(?:а|ов|е|ом)?/iu,
+  values: new RegExp('[$€£]'+nameSeparator+number+'|'+number+nameSeparator+'(?:[%$€£]|руб\\.|'+units+')|'+number+'\\s*[:–—−-]\\s*'+number, 'iu')
+};
+const homeAtoms = new RegExp(names.source+'|'+values,'giu');
+const wordEdge = '[\\p{L}\\p{M}\\p{N}_]';
+const guideAtoms = new RegExp('(?<!'+wordEdge+')('+Object.values(protectionRegistry).map(r=>r.source).join('|')+')(?!'+wordEdge+')','giu');
 const quotedText = /«[^»]+»|“[^”]+”|„[^“]+“|"[^"\n]+"/gu;
 const compoundWord = /[\p{L}\p{M}\p{N}]+(?:[-‐‑][\p{L}\p{M}\p{N}]+)+/gu;
 
@@ -13,7 +21,7 @@ const language = document.documentElement.lang;
 const segmenter = new Intl.Segmenter(language,{granularity:'word'});
 const sentenceSegmenter = new Intl.Segmenter(language,{granularity:'sentence'});
 const prose = 'main:not(.placeholder), dialog .legal-copy, dialog [data-panel=leader]';
-const textBlocks = 'p,li,h1,h2,h3,h4,h5,h6,summary,.button,.step-toggle';
+const textBlocks = 'p,li,blockquote,figcaption,dd,td,h1,h2,h3,h4,h5,h6,summary,.button,.step-toggle';
 const blocks = [...new Set([...document.querySelectorAll(prose)].flatMap(e=>[...e.querySelectorAll(textBlocks)]))].filter(e=>!e.closest(controls));
 const technicalLinks = 'a[href^="mailto:"],a[href^="tel:"]';
 const noHyphens = 'h1,h2,h3,h4,h5,h6,strong,b,button,.button';
@@ -51,26 +59,29 @@ function textMap(nodes) {
 
 const graphemes = new Intl.Segmenter(language);
 
-function sentencePairs(text) {
+function sentencePairs(text,home,control) {
   const starts=new Set([...sentenceSegmenter.segment(text)].slice(1).map(x=>x.index));
+  if(!home)starts.add(0);
   // Quoted endings are not segmented uniformly in all engines.
-  for(const m of text.matchAll(/(?:\.[»”"’')\]]*\s+|[!?।॥。！？][»”"’')\]]*\s*)(?=[«“„"‘'(\[]*[\p{Lu}\p{Script=Thai}\p{Script=Devanagari}])/gu)){
+  for(const m of text.matchAll(/(?:\.[»”"’')\]]*\s+|[!?।॥。！？][»”"’')\]]*\s*)(?=[¿¡«“„"‘'(\[]*[\p{Lu}\p{Script=Thai}\p{Script=Devanagari}])/gu)){
     starts.add(m.index+m[0].length);
   }
+  if(!home)for(const m of text.matchAll(/…[»”"'’)\]]*\s+(?=[¿¡«“„"'(\[]*[\p{Lu}\p{Script=Thai}\p{Script=Devanagari}])/gu))starts.add(m.index+m[0].length);
   const abbrev=/(?:^|[^\p{L}])(?:т\.\s*[едкпнч]|г|ул|им|рис|стр|см|др|пр|мин|макс|руб|mr|mrs|ms|dr|prof|jr|sr|no|fig|vs|etc|e\.g|i\.e|p\. ej|p\. ex|srta|ud|dra|örn|bkz|vb|mis|dll|dsb|v\.v)\.$/iu;
   const words=[...segmenter.segment(text)].filter(x=>x.isWordLike),pairs=new Map();
   for(const start of starts){
     const previous=text.slice(0,start).trimEnd().replace(/[»”"’')\]]+$/u,'');
-    if(!/[.!?।॥。！？]$/u.test(previous)||abbrev.test(previous)||/(?:^|\s)\p{Lu}\.$/u.test(previous))continue;
+    if(start&&(!/[.!?…。।॥！？]$/u.test(previous)||abbrev.test(previous)||/(?:^|\s)\p{Lu}\.$/u.test(previous)))continue;
     const i=words.findIndex(w=>w.index>=start);
     if(i<0||i+1>=words.length)continue;
     const [first,next]=words.slice(i,i+2),size=(first.segment.normalize('NFC').match(/\p{L}/gu)||[]).length;
     if(!size||size>4||!/^\p{L}[\p{L}\p{M}]*$/u.test(first.segment)||!/\p{L}/u.test(next.segment))continue;
-    if(!/^[\s«“„"‘'(\[]*$/u.test(text.slice(start,first.index)))continue;
+    if(!/^[\s¿¡«“„"‘'(\[]*$/u.test(text.slice(start,first.index)))continue;
     const separator=text.slice(first.index+first.segment.length,next.index);
     if(!/^\s*$/u.test(separator))continue;
     // Spaced text needs protection only through the existing separator.
     // In unspaced scripts include the next grapheme to cover the boundary.
+    if(!separator&&!home&&!control)continue;
     const boundary=next.index+(separator?0:graphemes.segment(next.segment).containing(0).segment.length);
     pairs.set(first.index,{from:first.index,boundary,to:next.index+next.segment.length});
   }
@@ -142,22 +153,22 @@ function prepare(block) {
   prepared.add(block);
   const clean=textMap(nodesOf(block));
   const quotes=[...clean.text.matchAll(quotedText)].map(m=>[m.index,m.index+m[0].length]);
-  const hits=[...clean.text.matchAll(guideAtoms)].map(m=>[m.index,m.index+m[0].length]);
+  const home=block.closest('.home');
+  const hits=[...clean.text.matchAll(home?homeAtoms:guideAtoms)].map(m=>[m.index,m.index+m[0].length]);
   for (const [from,to] of quotes) {
     for (const word of segmenter.segment(clean.text.slice(from,to))) {
       if (word.isWordLike) hits.push([from+word.index, from+word.index+word.segment.length]);
     }
   }
-  const sentences=block.matches('p,li,summary,h1,h2,h3,h4,h5,h6')?sentencePairs(clean.text):[];
-  const home=block.closest('.home');
+  const sentences=block.matches('p,li,blockquote,figcaption,dd,td,summary,h1,h2,h3,h4,h5,h6')?sentencePairs(clean.text,home,block.matches('summary,button,.button')):[];
   // The approved home layout already forbids hyphenation within all words.
   if(home)hits.push(...sentences.map(({from,to})=>[from,to]));
   for(const m of clean.text.matchAll(compoundWord)){
     const end=m.index+m[0].length;
     if(home||clean.point(m.index)?.node.parentElement.closest(noHyphens)||quotes.some(([a,b])=>a<=m.index&&m.index<b)||
-       hits.some(([a,b])=>a<end&&m.index<b))hits.push([m.index,end]);
+       (home&&hits.some(([a,b])=>a<end&&m.index<b)))hits.push([m.index,end]);
   }
-  for(const e of block.querySelectorAll(atomic)){
+  for(const e of home?block.querySelectorAll(atomic):[]){
     const segments=clean.segments.filter(x=>e.contains(x.node));
     if(!segments.length)continue;
     const from=segments[0].from,to=segments.at(-1).to;
@@ -166,7 +177,7 @@ function prepare(block) {
   const merged=[];
   for(const [a,b] of hits.sort((x,y)=>x[0]-y[0]||y[1]-x[1])){
     const last=merged.at(-1);
-    if(last&&a<last[1])last[1]=Math.max(last[1],b);
+    if(last&&a<last[1]){if(home)last[1]=Math.max(last[1],b);}
     else merged.push([a,b]);
   }
   for(const [a,b] of merged.reverse())protect(block,clean,a,b);
@@ -282,7 +293,7 @@ function ending({lines,pieces}) {
   const first=pieces[last.firstWord];
   const previousWord=lines.at(-2).word;
   const splitPiece=previousWord===last.firstWord;
-  const continuation=splitPiece||(first.continuesWord&&previousWord+1===last.firstWord);
+  const continuation=splitPiece;
   const piecesOnLast=pieces.slice(last.firstWord,last.word+1);
   const text=piecesOnLast.map((piece,i)=>i===0&&splitPiece?lastFragment(piece,last):piece.node.data.slice(piece.start,piece.end)).join('');
   let words=0,letters=0;
@@ -291,7 +302,8 @@ function ending({lines,pieces}) {
     if(++words>1)return {single:false,short:false};
     letters=(part.segment.normalize('NFC').match(/\p{L}/gu)||[]).length;
   }
-  return {single:words===1,short:words===1&&continuation&&letters<4&&
+  return {single:words===1,short:words===1&&continuation&&letters<4&&language!=='vi'&&
+    /^[\p{Script=Latin}\p{Script=Cyrillic}\p{M}\p{P}]+$/u.test(text)&&
     !first.node.parentElement.closest(atomic+','+noHyphens+','+technicalLinks)};
 }
 
@@ -326,24 +338,12 @@ function holdPiece({block,pieces},index,start,end) {
   const inserted=[document.createTextNode(node.data.slice(0,start)),span,document.createTextNode(node.data.slice(end))];
   node.replaceWith(...inserted);
   tailGaps.set(block,{original:node,inserted});
-  return pieces.flatMap(piece=>{
-    if(piece.node!==node)return [piece];
-    if(piece.end<=start)return [{...piece,node:inserted[0]}];
-    if(piece.start>=end)return [{...piece,node:inserted[2],start:piece.start-end,end:piece.end-end}];
-    const middle={...piece,node:span.firstChild,start:0,end:end-start,continuesWord:!piece.space&&piece.start<start};
-    return piece.start<start?[{...piece,node:inserted[0],end:start},middle]:[middle];
+  return pieces.map(piece=>{
+    if(piece.node!==node)return piece;
+    if(piece===target)return {...piece,node:span.firstChild,start:0,end:end-start};
+    if(piece.end<=start)return {...piece,node:inserted[0]};
+    return {...piece,node:inserted[2],start:piece.start-end,end:piece.end-end};
   });
-}
-
-function shortSuffix({lines,pieces}) {
-  const last=lines.at(-1),index=last.firstWord;
-  if(lines.at(-2).word!==index)return;
-  const piece=pieces[index];
-  const value=piece.node.data.slice(piece.start,piece.end);
-  if(/\s/u.test(value))return;
-  const letters=[...graphemes.segment(value)].filter(({segment})=>/\p{L}/u.test(segment));
-  if(letters.length<=4)return;
-  return {index,start:piece.start+letters.at(-4).index,end:piece.end,row:Math.max(0,lines.length-3)};
 }
 
 function betterEnding(plan,next,row,original) {
@@ -351,11 +351,12 @@ function betterEnding(plan,next,row,original) {
     next.lines.some(line=>line.right>next.edge+.5))return false;
   if(!plan.lines.slice(0,row).every((line,i)=>next.lines[i]&&sameEnding(line,next.lines[i])))return false;
   const after=ending(next);
-  if(after.short)return false;
+  if(after.short&&!original.short)return false;
   const beforeScore=layoutScore(plan),afterScore=layoutScore(next);
   const limit=Math.max(.15*plan.width,beforeScore.worst+.03*plan.width);
   const repairedShort=original.short&&!after.short;
-  if(afterScore.worst>limit+(repairedShort ? .04*plan.width:0))return false;
+  if(afterScore.worst>limit)return false;
+  if(repairedShort&&afterScore.gaps.some((gap,i)=>gap>beforeScore.gaps[i]+.02*plan.width))return false;
   const cost=afterScore.score-beforeScore.score-(plan.lines.length-next.lines.length)*.1*plan.width;
   if(cost<-.5)return true;
   return repairedShort&&cost<=.17*plan.width;
@@ -366,7 +367,6 @@ function trialBoundaries(plan,original,quality) {
   if(rows.length<2)return [];
   const last=rows.length-1;
   const worst=quality.gaps.indexOf(quality.worst)+1;
-  const suffix=original.short?shortSuffix(plan):undefined;
   // Restrict the search to two plausible local changes.
   const indices=original.single?[last,Math.max(1,last-1)]:[worst];
   const boundaries=[...new Set(indices)].flatMap(i=>{
@@ -377,7 +377,7 @@ function trialBoundaries(plan,original,quality) {
     if(!gap?.space||gap.node.parentElement.closest(atomic))return [];
     return [{index,start:gap.start,end:gap.end,row:Math.max(0,i-2)}];
   });
-  return suffix?[suffix,...boundaries.slice(0,1)]:boundaries;
+  return boundaries;
 }
 
 function improveEndings(plans) {
@@ -460,6 +460,7 @@ function restoreSpacing(block) {
 
 function applySpacing({block,pieces,changes}) {
   const records=[];
+  applied.set(block,records);
   for(let i=0;i<pieces.length;){
     const original=pieces[i].node;
     let j=i+1;
@@ -494,7 +495,6 @@ function applySpacing({block,pieces,changes}) {
     original.replaceWith(fragment);
     records.push({original,inserted});
   }
-  applied.set(block,records);
   block.classList.add('prose-line-spaced');
 }
 
@@ -513,8 +513,8 @@ function refreshSpacing(candidates) {
       continue;
     }
     deferred.delete(block);
-    const eligible=fontsLoaded&&block.matches('p,li')&&!block.closest('.home')&&!block.matches(':lang(th)')&&
-      !block.querySelector('p,li')&&/^(start|left)$/.test(css.textAlign);
+    const eligible=fontsLoaded&&block.matches('p,li,blockquote,figcaption,dd,td')&&!block.closest('.home,nav,form,button,code,pre')&&!block.matches(':lang(th)')&&
+      !block.querySelector('p,li,blockquote,figcaption,dd,td')&&/^(start|left)$/.test(css.textAlign);
     pending.push({block,key,eligible});
   }
   for(const {block} of pending){
@@ -534,17 +534,30 @@ function refreshSpacing(candidates) {
   for(const {block} of unsafe)restoreSpacing(block);
   if(fontsLoaded)for(const {block,key} of pending)formatted.set(block,key);
 }
-const checkSpacing=()=>refreshSpacing(blocks);
+// Roll back reversible layout trials if a measurement fails mid-pass.
+function safelyRefresh(candidates) {
+  try {
+    refreshSpacing(candidates);
+  } catch (error) {
+    for(const block of candidates){
+      if(applied.has(block))restoreSpacing(block);
+      resetTail(block);
+      formatted.delete(block);
+    }
+    console.error(error);
+  }
+}
+const checkSpacing=()=>safelyRefresh(blocks);
 
 const initialized=Symbol.for('vladimir1.prose-spacing');
 if(!document[initialized]){
   document[initialized]=true;
   document.addEventListener('selectionchange',()=>{
-    if(deferred.size&&document.getSelection()?.isCollapsed)refreshSpacing([...deferred]);
+    if(deferred.size&&document.getSelection()?.isCollapsed)safelyRefresh([...deferred]);
   });
   for(const block of blocks)prepare(block);
   const observer=new ResizeObserver(entries=>{
-    refreshSpacing(entries.map(entry=>entry.target));
+    safelyRefresh(entries.map(entry=>entry.target));
   });
   for(const block of blocks)observer.observe(block,{box:'border-box'});
   const visibility=new MutationObserver(checkSpacing);

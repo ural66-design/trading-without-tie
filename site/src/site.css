@@ -16,7 +16,7 @@ h1{font-size:clamp(28px,3vw,32px);line-height:1.2;letter-spacing:-.025em;margin:
 .language-menu{position:absolute;right:0;top:100%;width:max-content;max-width:calc(100vw - 32px);padding-top:8px}
 .language-menu>div{padding:4px;background:#fff;border:1px solid #d8e0e8;border-radius:16px;box-shadow:0 12px 40px #0a2e4f26;max-height:calc(100dvh - 84px);overflow:auto}
 .language-menu a{display:flex;gap:12px;align-items:center;min-height:44px;padding:8px 12px;border-radius:10px;white-space:nowrap;text-decoration:none;color:#1f2933;font-weight:400}
-.language-menu a:hover,.language-menu a[aria-current=page]{background:#eaf0f4}
+.language-menu a[aria-current=page]{background:#eaf0f4}
 .home{
   --avatar:clamp(136px,21dvh,184px);
   --overlap:calc(var(--avatar)*.3);

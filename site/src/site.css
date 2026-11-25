@@ -330,3 +330,27 @@ a[href^="mailto:"],a[href^="mailto:"] .protected-name { white-space: normal; ove
 }
 
 .guide-inline-scroll { display: inline-block; max-inline-size: 100%; overflow-x: auto; vertical-align: bottom; }
+
+body.fmb-guide.telegram-guide {
+  padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right))
+    max(20px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+}
+.fmb-guide.telegram-guide :is(.guide-nav,.language-picker,.legal-language-slot) { display: none; }
+
+@media (min-width: 601px) {
+  /* Keep the existing mobile guide measurements in wider Telegram windows. */
+  .fmb-guide.telegram-guide main.panel { max-width: 600px; padding: 16px 4px; }
+  .fmb-guide.telegram-guide .panel h1 { font-size: 22px; margin-bottom: 16px; }
+  .fmb-guide.telegram-guide :is(.guide-intro,.howto,.risk) { padding-inline: 9px; margin-bottom: 12px; }
+  .fmb-guide.telegram-guide :is(.step-note,.completion) { padding-inline: 9px; }
+  .fmb-guide.telegram-guide :is(.step-head,.step-content,.answer,#faq summary) { padding: 12px 9px; }
+  .fmb-guide.telegram-guide .step-content .step-note { margin-inline: -9px; }
+  .fmb-guide.telegram-guide .step-content ol { padding-inline-start: 20px; margin-bottom: 16px; }
+  .fmb-guide.telegram-guide .progress { margin-block: 16px; padding-inline: 9px; }
+  .fmb-guide.telegram-guide .step { margin-bottom: 12px; }
+  .fmb-guide.telegram-guide :is(#faq,.guide-footer) { margin-top: 24px; }
+  .fmb-guide.telegram-guide .step-label {
+    flex: 0 0 44px; min-height: 44px; justify-content: center; gap: 0; font-size: 0;
+  }
+  .fmb-guide.telegram-guide .step-label input { margin: 0; }
+}

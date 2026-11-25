@@ -1,5 +1,8 @@
 import {normalise,checkStep,toggleStep,progressSticky} from './state.js?v=20261120fmb';
 const body=document.body, page=body.dataset.page,lang=document.documentElement.lang;
+if(page==='guide'&&body.classList.contains('fmb-guide')&&new URLSearchParams(location.search).get('view')==='telegram'){
+  body.classList.add('telegram-guide');
+}
 const viewport=document.documentElement;
 const stackedViewport=matchMedia('(vertical-viewport-segments > 1)');
 function centerPanels(){

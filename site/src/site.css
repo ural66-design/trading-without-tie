@@ -287,6 +287,8 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
   .progress { margin-block: 16px; padding-inline: 9px; }
   .step { margin-bottom: 12px; }
   :is(#faq,.guide-footer) { margin-top: 24px; }
+  body.legal-page main.panel { padding-inline: 7px; }
+  .legal-dialog [data-legal-doc] { padding-inline: 3px; }
   .legal-copy h2 { margin-block: 20px 12px; }
   .fmb-guide .guide-return { display: flex; flex: 1 0 max-content; min-width: 0; }
   .fmb-guide .guide-return .back { flex: none; width: fit-content; max-width: 100%; white-space: normal; }
@@ -300,8 +302,12 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
   .legal-dialog { --legal-control-top: calc(16px + env(safe-area-inset-top)); }
   .legal-dialog .dialog-close {
     top: var(--legal-control-top);
+    padding-block: 1px 5px;
+    line-height: 1;
     margin: var(--legal-control-top) 9px calc(-44px - var(--legal-control-top)) 0;
   }
+  .legal-dialog .dialog-close:lang(hi) { padding-block: 5px 2px; line-height: normal; }
+  .legal-dialog .dialog-close:lang(th) { padding-block: 2px 4px; line-height: normal; }
   .legal-dialog .legal-language-slot .language-picker { right: 56px; }
 
   dialog:not(.legal-dialog) { padding: 16px 9px; max-width: min(480px, calc(100vw - 16px)); }

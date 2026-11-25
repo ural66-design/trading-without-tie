@@ -250,8 +250,8 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
 .fmb-guide .guide-nav { display: flex; flex-wrap: wrap; }
 .fmb-guide .guide-nav .back { flex: 1 0 max-content; white-space: nowrap; }
 @media (min-width: 401px) {
-  .fmb-guide .guide-nav .back:first-child { max-width: 200px; }
-  .fmb-guide .guide-nav .back:last-child { max-width: 8.5rem; }
+  .fmb-guide .guide-return .back { max-width: 200px; }
+  .fmb-guide .guide-nav > .back:last-child { max-width: 8.5rem; }
 }
 .fmb-guide .risk-important > [aria-hidden] { margin-inline-end: 8px; }
 .fmb-guide [data-panel=leader] :is(p,li) { font-size: 16px; line-height: 1.55; text-wrap: wrap; }
@@ -260,6 +260,8 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
 .fmb-guide [data-panel=leader] li { padding-inline-start: 4px; margin-bottom: 12px; }
 .fmb-guide [data-panel=leader] li:last-child { margin-bottom: 0; }
 .fmb-guide [data-leader-confirm] { background: #B7E600; border-color: #B7E600; color: #0B1F3A; width: 100%; }
+.guide-return { display: contents; }
+
 @media (max-width: 600px) {
   body:not(.home), body:is(.trading,.fmb,.guide) {
     padding-inline: max(8px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-right));
@@ -286,9 +288,28 @@ body.guide.tc-guide { --accent: #101315; --positive: #20B454; }
   .step { margin-bottom: 12px; }
   :is(#faq,.guide-footer) { margin-top: 24px; }
   .legal-copy h2 { margin-block: 20px 12px; }
+  .fmb-guide .guide-return { display: flex; flex: 1 0 max-content; min-width: 0; }
+  .fmb-guide .guide-return .back { flex: none; width: fit-content; max-width: 100%; white-space: normal; }
+  .fmb-guide .guide-nav > .back:last-child { align-self: stretch; }
+
+  .guide .step-head { flex-wrap: nowrap; }
+  .guide .step-toggle { flex-basis: auto; min-width: 0; }
+  .guide .step-label { flex: 0 0 44px; min-height: 44px; justify-content: center; gap: 0; font-size: 0; }
+  .guide .step-label input { margin: 0; }
+
+  .legal-dialog { --legal-control-top: calc(16px + env(safe-area-inset-top)); }
+  .legal-dialog .dialog-close {
+    top: var(--legal-control-top);
+    margin: var(--legal-control-top) 9px calc(-44px - var(--legal-control-top)) 0;
+  }
+  .legal-dialog .legal-language-slot .language-picker { right: 56px; }
+
   dialog:not(.legal-dialog) { padding: 16px 9px; max-width: min(480px, calc(100vw - 16px)); }
 }
 
+@media (min-width: 401px) and (max-width: 600px) {
+  .fmb-guide .guide-return { max-width: 200px; }
+}
 @media (max-width: 280px) {
   .fmb .button-icon { padding-inline: 2px; }
   .guide .step-content ol { padding-inline-start: 12px; }

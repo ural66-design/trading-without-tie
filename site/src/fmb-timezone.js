@@ -1,4 +1,4 @@
-// Until the HTTPS endpoint is approved, no request or SDK load is made.
+// The shared module skips normal browser visits and pages without an endpoint.
 const endpoint = document.querySelector('meta[name="fmb-timezone-endpoint"]')?.content;
 if (endpoint && new URLSearchParams(location.search).get('view') === 'telegram') {
   const sync = async () => {
@@ -8,13 +8,19 @@ if (endpoint && new URLSearchParams(location.search).get('view') === 'telegram')
       if (!initData || !zone) return;
       const url = new URL(endpoint);
       if (url.protocol !== 'https:') return;
-      await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ initData, zone }),
-        credentials: 'omit',
-        signal: AbortSignal.timeout(4000),
-      });
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 4000);
+      try {
+        await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ initData, zone }),
+          credentials: 'omit',
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timeout);
+      }
     } catch {
       // The guide remains usable when sync is unavailable.
     }

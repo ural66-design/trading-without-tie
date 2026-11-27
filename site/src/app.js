@@ -1,5 +1,5 @@
 import {normalise,checkStep,toggleStep,progressSticky} from './state.js?v=20261120fmb';
-import {createItemPositioner} from './fmb-item-position.js?v=4';
+import {bindFaq, createItemPositioner} from './fmb-item-position.js?v=5';
 const body=document.body, page=body.dataset.page,lang=document.documentElement.lang;
 const fmbGuide=page==='guide'&&body.classList.contains('fmb-guide');
 if(page==='guide'&&body.classList.contains('fmb-guide')&&new URLSearchParams(location.search).get('view')==='telegram'){
@@ -210,6 +210,7 @@ if(dialog){
   });
 }
 document.querySelector('[data-open-legal]')?.addEventListener('click',e=>{e.preventDefault();openModal('legal','legal');});
+const faq=document.querySelector('#faq');
 let guidePositioner;
 if(fmbGuide){
   const room=document.createElement('div');
@@ -221,6 +222,7 @@ if(fmbGuide){
     return margin+(progress.classList.contains('sticky')?progress.offsetHeight+8:0);
   });
 }
+const closeGuideFaq=faq?bindFaq(faq,guidePositioner,{closeOutside:true}):null;
 if(page==='guide'){
   try{state=readState(JSON.parse(localStorage.getItem(KEY)));}catch{storageFailed=true;}
   if(isTransfer&&transfer.state)state=readState(transfer.state);
@@ -230,13 +232,14 @@ if(page==='guide'){
     try{localStorage.setItem(KEY,JSON.stringify(state));storageFailed=false;}catch{storageFailed=true;}
     document.querySelector('#storage-status').hidden=!storageFailed;
   }
-  function render(){
-    document.querySelectorAll('.step').forEach((s,i)=>{
+  const steps=[...document.querySelectorAll('.step')];
+  function render(keepStepBodies=false){
+    steps.forEach((s,i)=>{
       const locked=i>state.count,open=state.open===i&&!locked;
       s.classList.toggle('locked',locked);s.classList.toggle('complete',i<state.count);
       const button=s.querySelector('[data-step-toggle]');
       button.disabled=locked;button.setAttribute('aria-expanded',String(open));
-      s.querySelector('.step-content').hidden=!open;
+      if(!keepStepBodies)s.querySelector('.step-content').hidden=!open;
       boxes[i].checked=i<state.count;boxes[i].disabled=locked;
     });
     const p=document.querySelector('#progress');p.classList.toggle('sticky',progressSticky(state,total));
@@ -248,17 +251,19 @@ if(page==='guide'){
   }
   const stepHeads=[...document.querySelectorAll('.step-head')];
   function changeStep(next, destination){
-    if(next!==state&&guidePositioner){
-      // Any open step, completion panel or FAQ answer can shrink during this action.
-      guidePositioner.prepare(document.querySelector('main.panel').offsetHeight);
+    const animate=next!==state&&guidePositioner;
+    if(animate){
+      const changes=closeGuideFaq?.()??[];
+      for(const i of new Set([state.open,next.open])){
+        if(i===null)continue;
+        const box=steps[i], content=box.querySelector('.step-content');
+        changes.push({box,content,open:i===next.open,show:open=>{content.hidden=!open;}});
+      }
+      const shrinking=state.count===total&&next.count<total?
+        document.querySelector('#completion').offsetHeight+document.querySelector('#restart').offsetHeight:0;
+      guidePositioner.transition(changes,destination??stepHeads[next.open],shrinking);
     }
-    const changed=next!==state;
-    state=next;save();render();
-    if(changed&&guidePositioner){
-      const target=destination??stepHeads[state.open];
-      if(target)guidePositioner.position(target);
-      else guidePositioner.hold();
-    }
+    state=next;save();render(animate);
   }
   boxes.forEach((b,i)=>b.addEventListener('change',()=>{
     const next=checkStep(state,i,b.checked,total);
@@ -268,6 +273,7 @@ if(page==='guide'){
     changeStep(toggleStep(state,i,total));
   }));
   function restart(){
+    guidePositioner?.reset();
     if(body.classList.contains('fmb-guide')){
       try{localStorage.removeItem('vladimir1:markets4you:leader-redirect-ack:v1');}catch{}
     }
@@ -277,7 +283,7 @@ if(page==='guide'){
   document.querySelector('[data-continue]').addEventListener('click',closeModal);
   document.querySelector('[data-already]')?.addEventListener('click',()=>openModal('confirm',null,true));
   document.querySelector('[data-confirm-return]')?.addEventListener('click',()=>openModal('restore',null,true));
-  document.querySelector('[data-confirm-done]')?.addEventListener('click',()=>{state={visited:true,count:total,open:null};save();render();closeModal();});
+  document.querySelector('[data-confirm-done]')?.addEventListener('click',()=>{guidePositioner?.reset();state={visited:true,count:total,open:null};save();render();closeModal();});
   const leader=document.querySelector('[data-leader-link]');
   if(leader){
     const ack='vladimir1:markets4you:leader-redirect-ack:v1';
@@ -299,30 +305,3 @@ if(page==='guide'){
   }else if(returning&&state.count<total&&!isTransfer&&!isHistoryReturn)openModal('restore',null,Boolean(history.state?.vladimirModal));
 }
 if(standaloneCopy)restoreTransferredReading(standaloneCopy,document.scrollingElement);
-const faq=document.querySelector('#faq');
-if(faq){
-  const items=[...faq.querySelectorAll('details')];
-  function closeQuestions(){
-    const open=items.find(item=>item.open);
-    if(open&&guidePositioner)guidePositioner.prepare(open.querySelector('.answer').offsetHeight);
-    items.forEach(item=>item.open=false);
-  }
-  items.forEach(item=>{
-    const heading=item.querySelector('summary');
-    heading.addEventListener('click',e=>{
-      e.preventDefault();
-      const open=item.open;
-      closeQuestions();
-      item.open=!open;
-      if(!guidePositioner)return;
-      if(open)guidePositioner.hold();
-      else guidePositioner.position(heading);
-    });
-  });
-  document.addEventListener('click',e=>{
-    if(!faq.contains(e.target)&&items.some(item=>item.open)){
-      closeQuestions();
-      guidePositioner?.hold(faq);
-    }
-  });
-}

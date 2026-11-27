@@ -1,65 +1,48 @@
 export function createItemPositioner(scrollRoom, topInset) {
-  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  let frame, target, waiting, idleTimer, touch;
-  let smoothScroll = false;
-  let touchScrolling = false;
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  const panels = new Map();
+  let frame, cleanup, touch;
+  let pan = false, dragging = false;
 
-  function reserve(top, closingHeight = 0) {
-    const pageEnd = scrollRoom.getBoundingClientRect().top + window.scrollY
+  function reserve(top, shrinking = 0) {
+    const end = scrollRoom.getBoundingClientRect().top + scrollY
       + parseFloat(getComputedStyle(document.body).paddingBottom);
-    const height = Math.max(0, Math.ceil(top + document.documentElement.clientHeight - pageEnd + closingHeight));
-    const nextHeight = height + 'px';
-    if (scrollRoom.style.height !== nextHeight) scrollRoom.style.height = nextHeight;
+    scrollRoom.style.height = Math.max(0, Math.ceil(top + document.documentElement.clientHeight - end + shrinking)) + 'px';
   }
 
-  function cleanAfterScroll() {
-    clearTimeout(idleTimer);
-    idleTimer = setTimeout(() => {
-      if (waiting || frame !== undefined || touchScrolling) return;
-      smoothScroll = false;
-      if (scrollRoom.offsetHeight) reserve(window.scrollY);
+  function releaseRoom() {
+    clearTimeout(cleanup);
+    cleanup = setTimeout(() => {
+      if (frame === undefined && !dragging && scrollRoom.offsetHeight) reserve(scrollY);
     }, 350);
   }
 
-  function cancelPosition() {
-    target = null;
-    waiting = null;
-    cancelAnimationFrame(frame);
-    frame = undefined;
-    if (smoothScroll) {
-      smoothScroll = false;
-      window.scrollTo({top: window.scrollY, behavior: 'auto'});
-    }
-    cleanAfterScroll();
+  function cancelPan() {
+    pan = false;
+    releaseRoom();
   }
 
-  function hold(container) {
-    if (container && (!target || !container.contains(target))) return;
-    cancelPosition();
-  }
-
-  window.addEventListener('scroll', cleanAfterScroll, {passive: true});
+  window.addEventListener('scroll', releaseRoom, {passive: true});
   window.addEventListener('wheel', event => {
-    if (event.deltaY && !event.ctrlKey) cancelPosition();
+    if (event.deltaY && !event.ctrlKey) cancelPan();
   }, {passive: true});
   window.addEventListener('touchstart', event => {
     if (event.touches.length === 1) touch = event.touches[0];
   }, {passive: true});
   window.addEventListener('touchmove', event => {
-    if (!touch || event.touches.length !== 1) return;
-    const point = event.touches[0];
-    const vertical = Math.abs(point.clientY - touch.clientY);
-    if (!touchScrolling && vertical >= 8 && vertical >= Math.abs(point.clientX - touch.clientX)) {
-      touchScrolling = true;
-      cancelPosition();
+    if (!touch || dragging || event.touches.length !== 1) return;
+    const point = event.touches[0], dy = Math.abs(point.clientY - touch.clientY);
+    if (dy >= 8 && dy >= Math.abs(point.clientX - touch.clientX)) {
+      dragging = true;
+      cancelPan();
     }
   }, {passive: true});
   function endTouch(event) {
     if (event.touches.length) return;
     touch = undefined;
-    if (!touchScrolling) return;
-    touchScrolling = false;
-    cleanAfterScroll();
+    if (!dragging) return;
+    dragging = false;
+    releaseRoom();
   }
   window.addEventListener('touchend', endTouch, {passive: true});
   window.addEventListener('touchcancel', endTouch, {passive: true});
@@ -68,39 +51,99 @@ export function createItemPositioner(scrollRoom, topInset) {
     if (!['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) return;
     if (event.target.isContentEditable || event.target.closest?.('select, textarea, input:not([type="checkbox"], [type="radio"], [type="button"])')) return;
     if (event.key === ' ' && event.target.closest?.('input, button, summary, [role="button"]')) return;
-    cancelPosition();
+    cancelPan();
   });
 
-  return {
-    prepare(closingHeight) {
-      reserve(window.scrollY, closingHeight);
-      cleanAfterScroll();
-    },
-    hold,
-    position(element, transition) {
-      if (touchScrolling) return;
-      target = element;
-      cancelAnimationFrame(frame);
-      frame = undefined;
-      const request = {};
-      waiting = request;
-      function align() {
-        if (waiting !== request) return;
-        waiting = null;
-        frame = requestAnimationFrame(() => {
-          frame = undefined;
-          if (!element.getClientRects().length) return;
-          const top = Math.max(0, element.getBoundingClientRect().top + window.scrollY - topInset(element));
-          reserve(Math.max(top, window.scrollY));
-          if (Math.abs(top - window.scrollY) > 1) {
-            smoothScroll = !reducedMotion.matches;
-            window.scrollTo({top, behavior: smoothScroll ? 'smooth' : 'auto'});
-          }
-          cleanAfterScroll();
-        });
+  function finish() {
+    for (const {box, open, show} of panels.values()) {
+      show(open);
+      box.style.removeProperty('height');
+    }
+    panels.clear();
+    frame = undefined;
+    pan = false;
+    releaseRoom();
+  }
+
+  function transition(changes, heading, shrinking = 0) {
+    cancelAnimationFrame(frame);
+    pan = Boolean(heading) && !dragging;
+    for (const change of changes) panels.set(change.box, change);
+    const items = [...panels.values()];
+    for (const item of items) item.start = item.box.getBoundingClientRect().height;
+    const closing = items.reduce((sum, {open, content}) =>
+      sum + (open ? 0 : content.getBoundingClientRect().height), shrinking);
+    reserve(scrollY, closing);
+
+    const reduced = motion.matches;
+    for (const {box, show, open, start} of items) {
+      if (!reduced) box.style.height = start + 'px';
+      show(reduced ? open : true);
+    }
+    // The visibility observer formats newly opened text before this frame.
+    frame = requestAnimationFrame(started => {
+      const from = scrollY;
+      for (const {box} of items) box.style.removeProperty('height');
+      // Measure descendants first when a topic and its questions are both changing.
+      const nestedFirst = items.sort((a, b) => a.box.contains(b.box) ? 1 : b.box.contains(a.box) ? -1 : 0);
+      for (const item of nestedFirst) {
+        const {box, content, open} = item;
+        item.end = box.getBoundingClientRect().height - (open || reduced ? 0 : content.getBoundingClientRect().height);
+        box.style.height = item.end + 'px';
       }
-      if (transition) transition.then(align, align);
-      else align();
-    },
+      const to = pan && heading.getClientRects().length ?
+        Math.max(0, heading.getBoundingClientRect().top + scrollY - topInset(heading)) : from;
+      reserve(Math.max(from, to), items.reduce((sum, item) => sum + Math.max(0, item.end - item.start), 0));
+      const duration = reduced ? 0 : 260;
+      function paint(now) {
+        const time = duration ? Math.min(1, (now - started) / duration) : 1;
+        const eased = time * time * (3 - 2 * time);
+        for (const {box, start, end} of items) box.style.height = start + (end - start) * eased + 'px';
+        if (pan && Math.abs(from + (to - from) * eased - scrollY) > 0.5) {
+          window.scrollTo(0, from + (to - from) * eased);
+        }
+        if (time === 1) finish();
+        else frame = requestAnimationFrame(paint);
+      }
+      paint(started);
+    });
+  }
+
+  return {
+    transition,
+    reset() { cancelAnimationFrame(frame); finish(); },
+    isOpen(box, fallback) { return panels.get(box)?.open ?? fallback; },
   };
+}
+
+export function bindFaq(faq, positioner, {closeOutside = false} = {}) {
+  const questions = [...faq.querySelectorAll('details')];
+  if (positioner) for (const detail of questions) detail.removeAttribute('name');
+  const isOpen = detail => positioner?.isOpen(detail, detail.open) ?? detail.open;
+  function change(box, open) {
+    return {box, open, content: box.lastElementChild, show: value => { box.open = value; }};
+  }
+  function close() {
+    return questions.filter(detail => isOpen(detail)).map(detail => change(detail, false));
+  }
+  function apply(changes, heading) {
+    if (positioner) positioner.transition(changes, heading);
+    else for (const {open, show} of changes) show(open);
+  }
+  faq.addEventListener('click', event => {
+    const heading = event.target.closest('summary');
+    if (!heading) return;
+    event.preventDefault();
+    const box = heading.parentElement;
+    const open = !isOpen(box);
+    const siblings = open || !positioner ? questions.filter(detail => detail !== box &&
+      (!positioner || detail.parentElement === box.parentElement) && isOpen(detail)) : [];
+    apply([...siblings.map(detail => change(detail, false)), change(box, open)], open ? heading : null);
+  });
+  if (closeOutside) document.addEventListener('click', event => {
+    if (faq.contains(event.target)) return;
+    const changes = close();
+    if (changes.length) apply(changes, null);
+  });
+  return close;
 }

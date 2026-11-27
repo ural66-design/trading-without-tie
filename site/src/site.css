@@ -336,6 +336,8 @@ body.fmb-guide.telegram-guide {
     max(20px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
 }
 .fmb-guide.telegram-guide :is(.guide-nav,.language-picker,.legal-language-slot) { display: none; }
+.fmb-guide.telegram-guide[data-page="fmb-faq"] :is(.language-picker,.legal-language-slot) { display: block; }
+.fmb-guide.telegram-guide[data-page="fmb-faq"] main.panel { padding-top: calc(max(16px, env(safe-area-inset-top)) + 52px); }
 
 @media (min-width: 601px) {
   /* Keep the existing mobile guide measurements in wider Telegram windows. */

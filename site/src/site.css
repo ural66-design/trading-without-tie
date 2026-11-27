@@ -365,3 +365,16 @@ body.fmb-guide.telegram-guide {
 .fmb-guide[data-page="fmb-faq"] #faq { margin-top: 0; }
 #faq .faq-topic:last-child, #faq .faq-questions > details:last-child { margin-bottom: 0; }
 .faq-questions { padding: 12px 9px; }
+
+.fmb-guide[data-page="guide"] {
+  --fmb-guide-scroll-top: max(8px, env(safe-area-inset-top));
+  overflow-anchor: none;
+}
+.fmb-guide[data-page="guide"].telegram-guide {
+  --fmb-guide-scroll-top: max(8px, env(safe-area-inset-top),
+    calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px)));
+}
+.fmb-guide[data-page="guide"] .progress.sticky { top: var(--fmb-guide-scroll-top); }
+.fmb-guide[data-page="guide"] :is(.step-head, #completion, #faq summary) {
+  scroll-margin-top: var(--fmb-guide-scroll-top);
+}

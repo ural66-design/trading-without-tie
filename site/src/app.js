@@ -1,5 +1,7 @@
 import {normalise,checkStep,toggleStep,progressSticky} from './state.js?v=20261120fmb';
+import {createItemPositioner} from './fmb-item-position.js?v=1';
 const body=document.body, page=body.dataset.page,lang=document.documentElement.lang;
+const fmbGuide=page==='guide'&&body.classList.contains('fmb-guide');
 if(page==='guide'&&body.classList.contains('fmb-guide')&&new URLSearchParams(location.search).get('view')==='telegram'){
   body.classList.add('telegram-guide');
 }
@@ -208,6 +210,17 @@ if(dialog){
   });
 }
 document.querySelector('[data-open-legal]')?.addEventListener('click',e=>{e.preventDefault();openModal('legal','legal');});
+let guidePositioner;
+if(fmbGuide){
+  const room=document.createElement('div');
+  room.setAttribute('aria-hidden','true');
+  body.append(room);
+  const progress=document.querySelector('#progress');
+  guidePositioner=createItemPositioner(room, target=>{
+    const margin=parseFloat(getComputedStyle(target).scrollMarginTop);
+    return margin+(progress.classList.contains('sticky')?progress.offsetHeight+8:0);
+  });
+}
 if(page==='guide'){
   try{state=readState(JSON.parse(localStorage.getItem(KEY)));}catch{storageFailed=true;}
   if(isTransfer&&transfer.state)state=readState(transfer.state);
@@ -233,10 +246,27 @@ if(page==='guide'){
     document.querySelector('#completion').hidden=state.count!==total;
     document.querySelector('#restart').hidden=state.count!==total;
   }
+  const stepHeads=[...document.querySelectorAll('.step-head')];
+  function changeStep(next, destination){
+    if(next!==state&&guidePositioner){
+      // Any open step, completion panel or FAQ answer can shrink during this action.
+      guidePositioner.prepare(document.querySelector('main.panel').offsetHeight);
+    }
+    const changed=next!==state;
+    state=next;save();render();
+    if(changed&&guidePositioner){
+      const target=destination??stepHeads[state.open];
+      if(target)guidePositioner.position(target);
+      else guidePositioner.hold();
+    }
+  }
   boxes.forEach((b,i)=>b.addEventListener('change',()=>{
-    state=checkStep(state,i,b.checked,total);save();render();
+    const next=checkStep(state,i,b.checked,total);
+    changeStep(next,next.count===total?document.querySelector('#completion'):null);
   }));
-  document.querySelectorAll('[data-step-toggle]').forEach((b,i)=>b.addEventListener('click',()=>{state=toggleStep(state,i,total);save();render();}));
+  document.querySelectorAll('[data-step-toggle]').forEach((b,i)=>b.addEventListener('click',()=>{
+    changeStep(toggleStep(state,i,total));
+  }));
   function restart(){
     if(body.classList.contains('fmb-guide')){
       try{localStorage.removeItem('vladimir1:markets4you:leader-redirect-ack:v1');}catch{}
@@ -272,6 +302,27 @@ if(standaloneCopy)restoreTransferredReading(standaloneCopy,document.scrollingEle
 const faq=document.querySelector('#faq');
 if(faq){
   const items=[...faq.querySelectorAll('details')];
-  items.forEach(d=>d.querySelector('summary').addEventListener('click',e=>{e.preventDefault();const open=d.open;items.forEach(x=>x.open=false);d.open=!open;}));
-  document.addEventListener('click',e=>{if(!faq.contains(e.target))items.forEach(d=>d.open=false);});
+  function closeQuestions(){
+    const open=items.find(item=>item.open);
+    if(open&&guidePositioner)guidePositioner.prepare(open.querySelector('.answer').offsetHeight);
+    items.forEach(item=>item.open=false);
+  }
+  items.forEach(item=>{
+    const heading=item.querySelector('summary');
+    heading.addEventListener('click',e=>{
+      e.preventDefault();
+      const open=item.open;
+      closeQuestions();
+      item.open=!open;
+      if(!guidePositioner)return;
+      if(open)guidePositioner.hold();
+      else guidePositioner.position(heading);
+    });
+  });
+  document.addEventListener('click',e=>{
+    if(!faq.contains(e.target)&&items.some(item=>item.open)){
+      closeQuestions();
+      guidePositioner?.hold(faq);
+    }
+  });
 }

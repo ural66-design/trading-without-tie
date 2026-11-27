@@ -1,4 +1,4 @@
-import {createItemPositioner} from './fmb-item-position.js?v=2';
+import {createItemPositioner} from './fmb-item-position.js?v=3';
 
 const faq = document.querySelector('#faq');
 const positioner = createItemPositioner(document.querySelector('#faq-scroll-room'),
@@ -17,17 +17,15 @@ faq.addEventListener('click', event => {
   }
 });
 
-faq.addEventListener('toggle', event => {
-  const details = event.target;
-  if (!(details instanceof HTMLDetailsElement)) return;
-  if (!details.open) {
-    if (activeDetails && details.contains(activeDetails)) {
-      activeDetails = null;
-      positioner.hold();
-    }
-    return;
+const disclosures = new MutationObserver(records => {
+  const changed = records.map(record => record.target);
+  const opened = changed.reverse().find(details => details.open && !details.parentElement.closest('details:not([open])'));
+  if (opened) {
+    activeDetails = opened;
+    positioner.position(opened.firstElementChild);
+  } else if (activeDetails && changed.some(details => !details.open && details.contains(activeDetails))) {
+    activeDetails = null;
+    positioner.hold();
   }
-
-  activeDetails = details;
-  positioner.position(details.firstElementChild);
-}, true);
+});
+disclosures.observe(faq, {subtree: true, attributes: true, attributeFilter: ['open']});

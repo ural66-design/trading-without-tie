@@ -80,17 +80,18 @@ export function createItemPositioner(scrollRoom, topInset) {
       if (touchScrolling) return;
       target = element;
       cancelAnimationFrame(frame);
-      // Let disclosure, rendering and typography update the layout before measuring.
       frame = requestAnimationFrame(() => {
-        frame = requestAnimationFrame(() => {
-          frame = undefined;
-          if (!element.getClientRects().length) return;
-          const top = Math.max(0, element.getBoundingClientRect().top + window.scrollY - topInset(element));
-          reserve(Math.max(top, window.scrollY));
-          smoothScroll = !reducedMotion.matches && Math.abs(top - window.scrollY) > 1;
-          window.scrollTo({top, behavior: smoothScroll ? 'smooth' : 'instant'});
-          cleanAfterScroll();
-        });
+        frame = undefined;
+        if (!element.getClientRects().length || target !== element) return;
+        // The optional formatter handles this request synchronously before we measure.
+        const disclosure = element.closest('details,.step') ?? element;
+        disclosure.dispatchEvent(new Event('fmb:format-disclosure', {bubbles: true}));
+        if (target !== element) return;
+        const top = Math.max(0, element.getBoundingClientRect().top + window.scrollY - topInset(element));
+        reserve(Math.max(top, window.scrollY));
+        smoothScroll = !reducedMotion.matches && Math.abs(top - window.scrollY) > 1;
+        window.scrollTo({top, behavior: smoothScroll ? 'smooth' : 'instant'});
+        cleanAfterScroll();
       });
     },
   };

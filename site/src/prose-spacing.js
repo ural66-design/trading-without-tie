@@ -548,7 +548,7 @@ function refreshSpacing(candidates) {
   for(const plan of retried)applySpacing(plan);
   const unsafe=retried.filter(plan=>!preservesLines(plan));
   for(const {block} of unsafe)restoreSpacing(block);
-  if(fontsLoaded)for(const {block,key} of pending)formatted.set(block,key);
+  for(const {block,key} of pending)formatted.set(block,key);
 }
 // Roll back reversible layout trials if a measurement fails mid-pass.
 function safelyRefresh(candidates) {
@@ -566,51 +566,105 @@ function safelyRefresh(candidates) {
 const initialized=Symbol.for('vladimir1.prose-spacing');
 if(!document[initialized]){
   document[initialized]=true;
-  const registered=new Set(blocks),queued=new Set(),widths=new WeakMap();
-  let frame, all=false, idle, nextToPrepare=0, lastScroll=-Infinity;
+  const registered=new Set(blocks),queued=new Set(),required=new Set(),widths=new WeakMap();
+  let frame, idle, resume, nextToPrepare=0, quietUntil=0;
+  let all=false, requiredAll=false, touching=false, loaded=false, idleCost=4;
+  const interacting=()=>touching||performance.now()<quietUntil;
 
-  function queue(candidates){
-    if(candidates)for(const block of candidates)queued.add(block);
-    else all=true;
+  function schedule(){
     if(frame!==undefined)return;
+    if(!requiredAll&&!required.size&&(interacting()||(!all&&!queued.size)))return;
     frame=requestAnimationFrame(()=>{
       frame=undefined;
-      const pending=all?blocks:[...queued];
-      all=false;
-      queued.clear();
-      safelyRefresh(pending);
+      const useBackground=!interacting()||requiredAll;
+      const pending=requiredAll||(useBackground&&all)?blocks:
+        [...new Set(useBackground?[...required,...queued]:required)];
+      for(const block of pending)queued.delete(block);
+      if(useBackground)all=false;
+      requiredAll=false;
+      required.clear();
+      if(pending.length)safelyRefresh(pending);
+      warmHidden();
     });
   }
 
-  function warmHidden(){
-    if(idle!==undefined||nextToPrepare>=blocks.length)return;
-    idle=setTimeout(()=>{
-      const run=deadline=>{
-        idle=undefined;
-        if(frame===undefined&&performance.now()-lastScroll>=200){
-          const end=performance.now()+6;
-          while(nextToPrepare<blocks.length&&performance.now()<end&&deadline.timeRemaining()>1){
-            const block=blocks[nextToPrepare++];
-            if(!prepared.has(block))prepare(block);
-          }
-        }
-        warmHidden();
-      };
-      if('requestIdleCallback' in window)idle=requestIdleCallback(run);
-      else run({timeRemaining:()=>6});
-    },100);
+  function queue(candidates, urgent=false){
+    if(candidates)for(const block of candidates)(urgent?required:queued).add(block);
+    else if(urgent)requiredAll=true;
+    else all=true;
+    schedule();
   }
+
+  function warmHidden(){
+    if(!loaded||interacting()||idle!==undefined||nextToPrepare>=blocks.length)return;
+    const run=deadline=>{
+      idle=undefined;
+      if(interacting())return;
+      if(frame===undefined&&deadline.timeRemaining()>=idleCost){
+        while(nextToPrepare<blocks.length&&prepared.has(blocks[nextToPrepare]))nextToPrepare++;
+        if(nextToPrepare<blocks.length){
+          const start=performance.now();
+          prepare(blocks[nextToPrepare++]);
+          idleCost=Math.max(4, Math.min(20, performance.now()-start+2));
+        }
+      }
+      warmHidden();
+    };
+    if('requestIdleCallback' in window)idle=requestIdleCallback(run);
+    else idle=setTimeout(()=>run({timeRemaining:()=>20}),50);
+  }
+
+  function pauseBackground(){
+    quietUntil=performance.now()+250;
+    clearTimeout(resume);
+    if(!touching)resume=setTimeout(resumeBackground,250);
+  }
+  function resumeBackground(){
+    const remaining=quietUntil-performance.now();
+    if(remaining>0){resume=setTimeout(resumeBackground,remaining);return;}
+    schedule();
+    warmHidden();
+  }
+  window.addEventListener('scroll',pauseBackground,{passive:true});
+  window.addEventListener('wheel',pauseBackground,{passive:true});
+  window.addEventListener('pointerdown',pauseBackground,{passive:true});
+  window.addEventListener('touchstart',()=>{
+    touching=true;
+    pauseBackground();
+  },{passive:true});
+  function endTouch(event){
+    if(event.touches.length)return;
+    touching=false;
+    pauseBackground();
+  }
+  window.addEventListener('touchend',endTouch,{passive:true});
+  window.addEventListener('touchcancel',endTouch,{passive:true});
+
+  function candidatesFor(scope){
+    const candidates=[...scope.querySelectorAll(textBlocks)].filter(block=>registered.has(block));
+    if(registered.has(scope))candidates.unshift(scope);
+    return candidates;
+  }
+  function formatBeforePaint(candidates){
+    for(const block of candidates){queued.delete(block);required.delete(block);}
+    safelyRefresh(candidates);
+  }
+  document.addEventListener('fmb:format-disclosure',event=>{
+    formatBeforePaint(candidatesFor(event.target));
+  });
 
   document.addEventListener('selectionchange',()=>{
     if(deferred.size&&document.getSelection()?.isCollapsed)queue(deferred);
   });
   const observer=new ResizeObserver(entries=>{
-    const changed=[];
+    const changed=[], resized=[];
     for(const {target,borderBoxSize,contentRect} of entries){
       const width=borderBoxSize?.[0]?.inlineSize??contentRect.width;
-      if(width&&widths.get(target)!==width)changed.push(target);
+      const previous=widths.get(target);
+      if(width&&previous!==width)(previous?resized:changed).push(target);
       widths.set(target,width);
     }
+    if(resized.length)queue(resized,true);
     if(changed.length)queue(changed);
   });
   for(const block of blocks)observer.observe(block,{box:'border-box'});
@@ -618,15 +672,19 @@ if(!document[initialized]){
     const shown=new Set();
     for(const {target} of records){
       if(target.hidden||target.matches('details:not([open]),dialog:not([open])'))continue;
-      for(const block of target.querySelectorAll(textBlocks))if(registered.has(block))shown.add(block);
+      for(const block of candidatesFor(target))shown.add(block);
     }
-    if(shown.size)queue(shown);
+    if(shown.size)formatBeforePaint(shown);
   });
   for(const el of document.querySelectorAll('dialog,dialog [data-panel],dialog .legal-copy,#faq details,.step-content,#completion')) {
     visibility.observe(el,{attributes:true,attributeFilter:['open','hidden']});
   }
   queue();
-  warmHidden();
+  function afterPaint(){
+    requestAnimationFrame(()=>{loaded=true;warmHidden();});
+  }
+  if(document.readyState==='complete')afterPaint();
+  else window.addEventListener('load',afterPaint,{once:true});
   document.fonts.ready.then(()=>queue());
   document.fonts.addEventListener('loading',()=>{
     for(const block of document.querySelectorAll('.prose-line-spaced'))hideSpacing(block);
@@ -639,16 +697,15 @@ if(!document[initialized]){
   }
   document.fonts.addEventListener('loadingdone',refreshFonts);
   document.fonts.addEventListener('loadingerror',refreshFonts);
-  window.addEventListener('scroll',()=>{lastScroll=performance.now();},{passive:true});
   let viewportWidth=document.documentElement.clientWidth, pixelRatio=devicePixelRatio;
   window.addEventListener('resize',()=>{
     const width=document.documentElement.clientWidth, ratio=devicePixelRatio;
     if(width===viewportWidth&&ratio===pixelRatio)return;
     viewportWidth=width;
     pixelRatio=ratio;
-    queue();
+    queue(undefined,true);
   });
   for(const feature of ['horizontal-viewport-segments','vertical-viewport-segments']){
-    matchMedia('('+feature+' > 1)').addEventListener('change',()=>queue());
+    matchMedia('('+feature+' > 1)').addEventListener('change',()=>queue(undefined,true));
   }
 }

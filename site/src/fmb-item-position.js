@@ -1,6 +1,6 @@
 export function createItemPositioner(scrollRoom, topInset) {
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  let frame, target, idleTimer, touch;
+  let frame, target, waiting, idleTimer, touch;
   let smoothScroll = false;
   let touchScrolling = false;
 
@@ -15,7 +15,7 @@ export function createItemPositioner(scrollRoom, topInset) {
   function cleanAfterScroll() {
     clearTimeout(idleTimer);
     idleTimer = setTimeout(() => {
-      if (frame !== undefined || touchScrolling) return;
+      if (waiting || frame !== undefined || touchScrolling) return;
       smoothScroll = false;
       if (scrollRoom.offsetHeight) reserve(window.scrollY);
     }, 350);
@@ -23,11 +23,12 @@ export function createItemPositioner(scrollRoom, topInset) {
 
   function cancelPosition() {
     target = null;
+    waiting = null;
     cancelAnimationFrame(frame);
     frame = undefined;
     if (smoothScroll) {
       smoothScroll = false;
-      window.scrollTo({top: window.scrollY, behavior: 'instant'});
+      window.scrollTo({top: window.scrollY, behavior: 'auto'});
     }
     cleanAfterScroll();
   }
@@ -76,23 +77,30 @@ export function createItemPositioner(scrollRoom, topInset) {
       cleanAfterScroll();
     },
     hold,
-    position(element) {
+    position(element, transition) {
       if (touchScrolling) return;
       target = element;
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        frame = undefined;
-        if (!element.getClientRects().length || target !== element) return;
-        // The optional formatter handles this request synchronously before we measure.
-        const disclosure = element.closest('details,.step') ?? element;
-        disclosure.dispatchEvent(new Event('fmb:format-disclosure', {bubbles: true}));
-        if (target !== element) return;
-        const top = Math.max(0, element.getBoundingClientRect().top + window.scrollY - topInset(element));
-        reserve(Math.max(top, window.scrollY));
-        smoothScroll = !reducedMotion.matches && Math.abs(top - window.scrollY) > 1;
-        window.scrollTo({top, behavior: smoothScroll ? 'smooth' : 'instant'});
-        cleanAfterScroll();
-      });
+      frame = undefined;
+      const request = {};
+      waiting = request;
+      function align() {
+        if (waiting !== request) return;
+        waiting = null;
+        frame = requestAnimationFrame(() => {
+          frame = undefined;
+          if (!element.getClientRects().length) return;
+          const top = Math.max(0, element.getBoundingClientRect().top + window.scrollY - topInset(element));
+          reserve(Math.max(top, window.scrollY));
+          if (Math.abs(top - window.scrollY) > 1) {
+            smoothScroll = !reducedMotion.matches;
+            window.scrollTo({top, behavior: smoothScroll ? 'smooth' : 'auto'});
+          }
+          cleanAfterScroll();
+        });
+      }
+      if (transition) transition.then(align, align);
+      else align();
     },
   };
 }

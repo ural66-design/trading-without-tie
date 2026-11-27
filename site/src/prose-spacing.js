@@ -426,23 +426,33 @@ function preservesLines(plan) {
     line.gaps.every(({piece,rect})=>!piece.normal||rect.width<=1.5*piece.normal+.001));
 }
 
-function fitAtoms(block) {
-  const style = getComputedStyle(block);
-  const width = block.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight);
-  if (width <= 0) return;
-  for (const span of block.querySelectorAll(atomic)) {
-    if (span.closest('a[href^="mailto:"]') || span.matches('.typography-address,.address') || span.parentElement.closest(textBlocks)!==block) continue;
-    span.classList.remove('guide-inline-scroll');
-    const oversized = Math.max(span.getBoundingClientRect().width,span.scrollWidth) > width + .5;
+function fitAtoms(blocksToFit) {
+  const atoms = [];
+  for (const {block} of blocksToFit) {
+    const style = getComputedStyle(block);
+    const width = block.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight);
+    if (width <= 0) continue;
+    for (const span of block.querySelectorAll(atomic)) {
+      if (span.closest('a[href^="mailto:"]') || span.matches('.typography-address,.address') || span.parentElement.closest(textBlocks)!==block) continue;
+      atoms.push({span,width});
+    }
+  }
+  for (const {span} of atoms) {
+    if (span.classList.contains('guide-inline-scroll')) span.classList.remove('guide-inline-scroll');
+  }
+  const oversizedAtoms = atoms.map(({span,width}) => Math.max(span.getBoundingClientRect().width,span.scrollWidth) > width + .5);
+  atoms.forEach(({span},index) => {
+    const oversized = oversizedAtoms[index];
     span.classList.toggle('guide-inline-scroll', oversized);
     if (oversized && !span.hasAttribute('tabindex')) { span.tabIndex=0; scrollTabStops.add(span); }
     else if (!oversized && scrollTabStops.has(span)) { span.removeAttribute('tabindex'); scrollTabStops.delete(span); }
-  }
+  });
 }
 
 
 // Keep the original Text nodes so each resize starts with native line breaking.
-const formatted=new WeakMap(),applied=new WeakMap(),deferred=new Set();
+let formatted=new WeakMap();
+const applied=new WeakMap(),deferred=new Set();
 function hideSpacing(block) {
   if(!block.classList.contains('prose-line-spaced'))return;
   block.classList.remove('prose-line-spaced');
@@ -502,8 +512,14 @@ function refreshSpacing(candidates) {
   const pending=[],selection=document.getSelection();
   const selected=selection&&!selection.isCollapsed&&selection.rangeCount?selection.getRangeAt(0):null;
   const fontsLoaded=document.fonts.status==='loaded';
-  for(const block of candidates){
-    if(!block.getClientRects().length||(!block.matches('summary')&&block.closest('details:not([open])')))continue;
+  const visible=[...candidates].filter(block=>{
+    const scope=block.matches('summary')?block.parentElement.parentElement:block;
+    return !scope?.closest('details:not([open])')&&block.getClientRects().length;
+  });
+  for(const block of visible){
+    if(!prepared.has(block)&&!selected?.intersectsNode(block))prepare(block);
+  }
+  for(const block of visible){
     const css=getComputedStyle(block);
     const key=block.getBoundingClientRect().width+'|'+devicePixelRatio+'|'+css.font+'|'+block.textContent;
     if(formatted.get(block)===key)continue;
@@ -521,7 +537,7 @@ function refreshSpacing(candidates) {
     if(applied.has(block))restoreSpacing(block);
     resetTail(block);
   }
-  for(const {block} of pending)fitAtoms(block);
+  fitAtoms(pending);
   const layouts=pending.filter(({eligible})=>eligible).map(({block})=>planSpacing(block,textPieces(block)));
   const plans=improveEndings(layouts).filter(plan=>plan.changes.size);
   for(const plan of plans)applySpacing(plan);
@@ -547,39 +563,92 @@ function safelyRefresh(candidates) {
     console.error(error);
   }
 }
-const checkSpacing=()=>safelyRefresh(blocks);
-
 const initialized=Symbol.for('vladimir1.prose-spacing');
 if(!document[initialized]){
   document[initialized]=true;
+  const registered=new Set(blocks),queued=new Set(),widths=new WeakMap();
+  let frame, all=false, idle, nextToPrepare=0, lastScroll=-Infinity;
+
+  function queue(candidates){
+    if(candidates)for(const block of candidates)queued.add(block);
+    else all=true;
+    if(frame!==undefined)return;
+    frame=requestAnimationFrame(()=>{
+      frame=undefined;
+      const pending=all?blocks:[...queued];
+      all=false;
+      queued.clear();
+      safelyRefresh(pending);
+    });
+  }
+
+  function warmHidden(){
+    if(idle!==undefined||nextToPrepare>=blocks.length)return;
+    idle=setTimeout(()=>{
+      const run=deadline=>{
+        idle=undefined;
+        if(frame===undefined&&performance.now()-lastScroll>=200){
+          const end=performance.now()+6;
+          while(nextToPrepare<blocks.length&&performance.now()<end&&deadline.timeRemaining()>1){
+            const block=blocks[nextToPrepare++];
+            if(!prepared.has(block))prepare(block);
+          }
+        }
+        warmHidden();
+      };
+      if('requestIdleCallback' in window)idle=requestIdleCallback(run);
+      else run({timeRemaining:()=>6});
+    },100);
+  }
+
   document.addEventListener('selectionchange',()=>{
-    if(deferred.size&&document.getSelection()?.isCollapsed)safelyRefresh([...deferred]);
+    if(deferred.size&&document.getSelection()?.isCollapsed)queue(deferred);
   });
-  for(const block of blocks)prepare(block);
   const observer=new ResizeObserver(entries=>{
-    safelyRefresh(entries.map(entry=>entry.target));
+    const changed=[];
+    for(const {target,borderBoxSize,contentRect} of entries){
+      const width=borderBoxSize?.[0]?.inlineSize??contentRect.width;
+      if(width&&widths.get(target)!==width)changed.push(target);
+      widths.set(target,width);
+    }
+    if(changed.length)queue(changed);
   });
   for(const block of blocks)observer.observe(block,{box:'border-box'});
-  const visibility=new MutationObserver(checkSpacing);
-  for(const el of document.querySelectorAll('dialog,dialog [data-panel],dialog .legal-copy,#faq details')) {
+  const visibility=new MutationObserver(records=>{
+    const shown=new Set();
+    for(const {target} of records){
+      if(target.hidden||target.matches('details:not([open]),dialog:not([open])'))continue;
+      for(const block of target.querySelectorAll(textBlocks))if(registered.has(block))shown.add(block);
+    }
+    if(shown.size)queue(shown);
+  });
+  for(const el of document.querySelectorAll('dialog,dialog [data-panel],dialog .legal-copy,#faq details,.step-content,#completion')) {
     visibility.observe(el,{attributes:true,attributeFilter:['open','hidden']});
   }
-  document.fonts.ready.then(checkSpacing);
+  queue();
+  warmHidden();
+  document.fonts.ready.then(()=>queue());
   document.fonts.addEventListener('loading',()=>{
-    for(const block of blocks){
-      hideSpacing(block);
-      formatted.delete(block);
-    }
+    for(const block of document.querySelectorAll('.prose-line-spaced'))hideSpacing(block);
+    formatted=new WeakMap();
   });
-  document.fonts.addEventListener('loadingdone',()=>{
+  function refreshFonts(){
     spaceWidths.clear();
-    for(const block of blocks)formatted.delete(block);
-    checkSpacing();
+    formatted=new WeakMap();
+    queue();
+  }
+  document.fonts.addEventListener('loadingdone',refreshFonts);
+  document.fonts.addEventListener('loadingerror',refreshFonts);
+  window.addEventListener('scroll',()=>{lastScroll=performance.now();},{passive:true});
+  let viewportWidth=document.documentElement.clientWidth, pixelRatio=devicePixelRatio;
+  window.addEventListener('resize',()=>{
+    const width=document.documentElement.clientWidth, ratio=devicePixelRatio;
+    if(width===viewportWidth&&ratio===pixelRatio)return;
+    viewportWidth=width;
+    pixelRatio=ratio;
+    queue();
   });
-  // Viewport geometry is already current here. Waiting for another animation
-  // frame would leave the previous width's justification active during reflow.
-  window.addEventListener('resize',checkSpacing);
   for(const feature of ['horizontal-viewport-segments','vertical-viewport-segments']){
-    matchMedia('('+feature+' > 1)').addEventListener('change',checkSpacing);
+    matchMedia('('+feature+' > 1)').addEventListener('change',()=>queue());
   }
 }

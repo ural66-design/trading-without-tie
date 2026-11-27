@@ -355,7 +355,13 @@ body.fmb-guide.telegram-guide {
   .fmb-guide.telegram-guide .step-label input { margin: 0; }
 }
 
-.fmb-guide[data-page="fmb-faq"] main.panel { padding-block: 4px; }
+.fmb-guide.telegram-guide[data-page="fmb-faq"] {
+  padding-top: max(8px, env(safe-area-inset-top),
+    calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px)));
+  overflow-anchor: none;
+}
+.fmb-guide[data-page="fmb-faq"] main.panel { padding-block: 16px 4px; }
+.fmb-guide[data-page="fmb-faq"] h1 { padding-inline: 9px; }
 .fmb-guide[data-page="fmb-faq"] #faq { margin-top: 0; }
 #faq .faq-topic:last-child, #faq .faq-questions > details:last-child { margin-bottom: 0; }
 .faq-questions { padding: 12px 9px; }

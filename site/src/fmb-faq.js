@@ -1,4 +1,4 @@
-import {createItemPositioner} from './fmb-item-position.js?v=1';
+import {createItemPositioner} from './fmb-item-position.js?v=2';
 
 const faq = document.querySelector('#faq');
 const positioner = createItemPositioner(document.querySelector('#faq-scroll-room'),

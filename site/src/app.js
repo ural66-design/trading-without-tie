@@ -1,5 +1,5 @@
 import {normalise,checkStep,toggleStep,progressSticky} from './state.js?v=20261120fmb';
-import {createItemPositioner} from './fmb-item-position.js?v=1';
+import {createItemPositioner} from './fmb-item-position.js?v=2';
 const body=document.body, page=body.dataset.page,lang=document.documentElement.lang;
 const fmbGuide=page==='guide'&&body.classList.contains('fmb-guide');
 if(page==='guide'&&body.classList.contains('fmb-guide')&&new URLSearchParams(location.search).get('view')==='telegram'){

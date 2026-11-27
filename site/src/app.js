@@ -1,7 +1,6 @@
 import {normalise,checkStep,toggleStep,progressSticky} from './state.js?v=20261120fmb';
 const body=document.body, page=body.dataset.page,lang=document.documentElement.lang;
-const telegramView=new URLSearchParams(location.search).get('view')==='telegram';
-if((page==='guide'||page==='fmb-faq')&&body.classList.contains('fmb-guide')&&telegramView){
+if(page==='guide'&&body.classList.contains('fmb-guide')&&new URLSearchParams(location.search).get('view')==='telegram'){
   body.classList.add('telegram-guide');
 }
 const viewport=document.documentElement;
@@ -67,13 +66,6 @@ let state=readState(null), storageFailed=false, transfer=null;
 try { transfer=JSON.parse(sessionStorage.getItem('vladimir1:transfer'));sessionStorage.removeItem('vladimir1:transfer'); } catch {}
 const isTransfer=transfer?.target===location.pathname&&Date.now()-transfer.time<30000;
 const picker=document.querySelector('.language-picker');
-if(page==='fmb-faq'&&telegramView){
-  picker.querySelectorAll('a').forEach(a=>{
-    const target=new URL(a.href);
-    target.searchParams.set('view','telegram');
-    a.href=target.href;
-  });
-}
 const pickerAnchor=document.createComment('language-picker');
 picker.before(pickerAnchor);
 const originalLanguageLinks=[...picker.querySelectorAll('a')].map(a=>a.href);

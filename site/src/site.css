@@ -43,7 +43,7 @@ h1{font-size:clamp(28px,3vw,32px);line-height:1.2;letter-spacing:-.025em;margin:
 .step-head{display:flex;align-items:center;gap:8px;background:#f0f4f7;padding:16px}.step-toggle{display:flex;align-items:center;gap:12px;flex:1;border:0;background:transparent;padding:0;min-height:48px;text-align:left;font-size:17px;font-weight:600;line-height:1.4;color:#0d2a52}.step-toggle:disabled{color:#687580}.step-number{display:grid;place-items:center;flex:none;width:32px;height:32px;background:#0d2a52;color:white;border-radius:50%;font-size:16px}.complete .step-number{background:#1faf5a}.locked .step-number{background:#8c9eaf}
 .step-label{display:flex;align-items:center;gap:8px;min-height:48px;font-size:14px;cursor:pointer;white-space:nowrap}.step-label input{width:20px;height:20px;accent-color:#1faf5a}
 .step-content{padding:20px}.step-content ol{padding-left:24px;margin:0 0 24px;font-size:16px}.step-content li{padding-left:4px;margin-bottom:12px}.completion{border:1px solid #1faf5a;border-radius:16px;background:#eaf8ee;padding:20px;margin-bottom:16px}.completion h2{font-size:20px}.text-button{border:0;background:none;color:var(--accent);text-decoration:underline;padding:12px 0;font-size:14px;cursor:pointer}
-#faq{margin-top:32px}#faq details{margin-bottom:12px;border:1px solid #d8e0e8;border-radius:12px;overflow:hidden;background:#fff}#faq summary{display:flex;align-items:center;justify-content:space-between;gap:16px;list-style:none;padding:16px;font-size:16px;font-weight:600;background:#f4f6f8}#faq summary::-webkit-details-marker{display:none}.faq-arrow{font-size:12px;transition:transform .2s}#faq details[open] .faq-arrow{transform:rotate(90deg)}.answer{padding:16px;border-top:1px solid #d8e0e8}.answer p{font-size:16px}
+#faq{margin-top:32px}#faq details{margin-bottom:12px;border:1px solid #d8e0e8;border-radius:12px;overflow:hidden;background:#fff}#faq summary{display:flex;align-items:center;justify-content:space-between;gap:16px;list-style:none;padding:16px;font-size:16px;font-weight:600;background:#f4f6f8}#faq summary::-webkit-details-marker{display:none}.faq-arrow{font-size:12px;transition:transform .2s}#faq details[open] > summary .faq-arrow{transform:rotate(90deg)}.answer{padding:16px;border-top:1px solid #d8e0e8}.answer p{font-size:16px}
 .guide-footer{margin-top:32px;display:flex;flex-direction:column;gap:8px;text-align:center;font-size:14px}.guide-footer a{display:inline-block;padding:8px}.guide-footer .text-button{margin:auto}.storage-status{font-size:14px;color:#833a1a;margin:16px 0}
 .legal-page{background:var(--legal-bg);color:var(--legal-text)}.legal-page .panel{background:var(--legal-surface);border-color:var(--legal-border);box-shadow:none}.legal-copy h2{font-size:22px;margin:24px 0 16px}.legal-copy a{color:var(--legal-accent)}.legal-copy p{line-height:1.6}.legal-page .back{margin:24px 0 0;color:var(--legal-accent)}
 .modal-open{overflow:hidden;scrollbar-gutter:stable}dialog{color:#1a1a1a;border:1px solid #d8e0e8;border-radius:24px;padding:24px;max-width:min(480px,calc(100vw - 32px));max-height:85dvh;overflow:auto;background:#fff;box-shadow:0 24px 80px #0d2a5233}dialog::backdrop{background:var(--legal-overlay)}dialog h2{padding-right:32px}.dialog-close{position:absolute;right:8px;top:8px;border:0;background:transparent;color:#375a72;width:44px;height:44px;font-size:28px}.modal-actions{display:grid;gap:12px;margin-top:24px}
@@ -336,8 +336,6 @@ body.fmb-guide.telegram-guide {
     max(20px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
 }
 .fmb-guide.telegram-guide :is(.guide-nav,.language-picker,.legal-language-slot) { display: none; }
-.fmb-guide.telegram-guide[data-page="fmb-faq"] :is(.language-picker,.legal-language-slot) { display: block; }
-.fmb-guide.telegram-guide[data-page="fmb-faq"] main.panel { padding-top: calc(max(16px, env(safe-area-inset-top)) + 52px); }
 
 @media (min-width: 601px) {
   /* Keep the existing mobile guide measurements in wider Telegram windows. */
@@ -356,3 +354,8 @@ body.fmb-guide.telegram-guide {
   }
   .fmb-guide.telegram-guide .step-label input { margin: 0; }
 }
+
+.fmb-guide[data-page="fmb-faq"] main.panel { padding-block: 4px; }
+.fmb-guide[data-page="fmb-faq"] #faq { margin-top: 0; }
+#faq .faq-topic:last-child, #faq .faq-questions > details:last-child { margin-bottom: 0; }
+.faq-questions { padding: 12px 9px; }

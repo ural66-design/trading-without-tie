@@ -569,23 +569,88 @@ if(!document[initialized]){
   const registered=new Set(blocks),queued=new Set(),required=new Set(),widths=new WeakMap();
   let frame, idle, resume, nextToPrepare=0, quietUntil=0;
   let all=false, requiredAll=false, touching=false, loaded=false, idleCost=4;
+  const readingPanel=document.body.matches('.fmb-guide')?document.querySelector('main.panel'):null;
+  const guideHeading=readingPanel?.querySelector('.step-head');
+  let reading, geometryAnchor, correctedY;
   const interacting=()=>touching||performance.now()<quietUntil;
+
+  function anchorTop({block,offset}){
+    if(!block.getClientRects().length)return null;
+    if(offset===undefined)return block.getBoundingClientRect().top;
+    const point=textMap(nodesOf(block)).point(offset);
+    if(!point)return null;
+    const range=document.createRange();
+    range.setStart(point.node,point.offset);
+    range.setEnd(point.node,point.offset+1);
+    return range.getBoundingClientRect().top;
+  }
+
+  function rememberReading(){
+    reading=null;
+    if(!readingPanel||scrollY<1||document.querySelector('dialog[open]'))return;
+    const sticky=readingPanel.querySelector('#progress.sticky');
+    const safeTop=guideHeading?parseFloat(getComputedStyle(guideHeading).scrollMarginTop):
+      parseFloat(getComputedStyle(document.body).paddingTop);
+    const edge=sticky&&sticky.getBoundingClientRect().top<=parseFloat(getComputedStyle(sticky).top)+1?
+      sticky.getBoundingClientRect().bottom:safeTop;
+    const x=readingPanel.getBoundingClientRect().left+readingPanel.clientWidth/2;
+    for(const inset of [8,24,48,80]){
+      const y=edge+inset;
+      const block=document.elementFromPoint(x,y)?.closest('summary,.step-head,h1,h2,h3,p,li');
+      if(!block||!readingPanel.contains(block))continue;
+      const anchor={block,y:scrollY,width:document.documentElement.clientWidth};
+      if(block.matches('p,li')){
+        const caret=document.caretPositionFromPoint?.(x,y)??document.caretRangeFromPoint?.(x,y);
+        const node=caret?.offsetNode??caret?.startContainer, index=caret?.offset??caret?.startOffset;
+        const segment=textMap(nodesOf(block)).segments.find(part=>part.node===node);
+        const char=segment?.offsets.findIndex(value=>value>=index);
+        if(char>=0)anchor.offset=segment.from+char;
+      }
+      anchor.top=anchorTop(anchor);
+      if(anchor.top!==null)reading=anchor;
+      return;
+    }
+  }
+
+  function preserveReading(anchor){
+    if(!anchor||interacting()||(!anchor.widthChanged&&Math.abs(scrollY-anchor.y)>1)||document.querySelector('dialog[open]'))return;
+    const top=anchorTop(anchor);
+    if(top===null||Math.abs(top-anchor.top)<=1)return;
+    const target=scrollY+top-anchor.top;
+    const root=document.scrollingElement;
+    // Leave natural viewport clamping alone near the lower boundary.
+    if(target>=0&&target<=root.scrollHeight-root.clientHeight){
+      window.scrollTo({top:target,behavior:'instant'});
+      correctedY=scrollY;
+    }
+  }
+
+  function widthChanged(){
+    if(!interacting()&&reading)geometryAnchor={...reading,widthChanged:true};
+    queue(undefined,true);
+  }
+
+  function flush(){
+    frame=undefined;
+    const useBackground=!interacting()||requiredAll;
+    const pending=requiredAll||(useBackground&&all)?blocks:
+      [...new Set(useBackground?[...required,...queued]:required)];
+    for(const block of pending)queued.delete(block);
+    if(useBackground)all=false;
+    requiredAll=false;
+    required.clear();
+    const anchor=geometryAnchor;
+    geometryAnchor=null;
+    if(pending.length)safelyRefresh(pending);
+    preserveReading(anchor);
+    if(!interacting())rememberReading();
+    warmHidden();
+  }
 
   function schedule(){
     if(frame!==undefined)return;
     if(!requiredAll&&!required.size&&(interacting()||(!all&&!queued.size)))return;
-    frame=requestAnimationFrame(()=>{
-      frame=undefined;
-      const useBackground=!interacting()||requiredAll;
-      const pending=requiredAll||(useBackground&&all)?blocks:
-        [...new Set(useBackground?[...required,...queued]:required)];
-      for(const block of pending)queued.delete(block);
-      if(useBackground)all=false;
-      requiredAll=false;
-      required.clear();
-      if(pending.length)safelyRefresh(pending);
-      warmHidden();
-    });
+    frame=requestAnimationFrame(flush);
   }
 
   function queue(candidates, urgent=false){
@@ -616,18 +681,32 @@ if(!document[initialized]){
 
   function pauseBackground(){
     quietUntil=performance.now()+250;
+    correctedY=undefined;
+    reading=geometryAnchor=null;
     clearTimeout(resume);
     if(!touching)resume=setTimeout(resumeBackground,250);
   }
   function resumeBackground(){
     const remaining=quietUntil-performance.now();
     if(remaining>0){resume=setTimeout(resumeBackground,remaining);return;}
+    if(!geometryAnchor)rememberReading();
     schedule();
     warmHidden();
   }
-  window.addEventListener('scroll',pauseBackground,{passive:true});
+  window.addEventListener('scroll',()=>{
+    if(correctedY!==undefined&&Math.abs(correctedY-scrollY)<=1){
+      correctedY=undefined;
+      return;
+    }
+    // A resize may move the browser's scroll offset before it dispatches resize.
+    if(!interacting()&&reading&&reading.width!==document.documentElement.clientWidth)return;
+    pauseBackground();
+  },{passive:true});
   window.addEventListener('wheel',pauseBackground,{passive:true});
   window.addEventListener('pointerdown',pauseBackground,{passive:true});
+  window.addEventListener('keydown',event=>{
+    if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(event.key))pauseBackground();
+  });
   window.addEventListener('touchstart',()=>{
     touching=true;
     pauseBackground();
@@ -650,6 +729,7 @@ if(!document[initialized]){
     safelyRefresh(candidates);
   }
   document.addEventListener('fmb:format-disclosure',event=>{
+    reading=geometryAnchor=null;
     formatBeforePaint(candidatesFor(event.target));
   });
 
@@ -671,6 +751,7 @@ if(!document[initialized]){
   const visibility=new MutationObserver(records=>{
     const shown=new Set();
     for(const {target} of records){
+      if(readingPanel?.contains(target))reading=geometryAnchor=null;
       if(target.hidden||target.matches('details:not([open]),dialog:not([open])'))continue;
       for(const block of candidatesFor(target))shown.add(block);
     }
@@ -685,15 +766,34 @@ if(!document[initialized]){
   }
   if(document.readyState==='complete')afterPaint();
   else window.addEventListener('load',afterPaint,{once:true});
-  document.fonts.ready.then(()=>queue());
+  let fontsChanging=document.fonts.status==='loading';
+  if(readingPanel){
+    const fontGeometry=new ResizeObserver(()=>{
+      if(!fontsChanging||interacting()||!reading||reading.width!==document.documentElement.clientWidth)return;
+      // Font metrics can change during layout before the font-set completion callback.
+      preserveReading(reading);
+      rememberReading();
+    });
+    fontGeometry.observe(readingPanel);
+  }
+  if(fontsChanging)document.fonts.ready.then(refreshFonts);
   document.fonts.addEventListener('loading',()=>{
+    fontsChanging=true;
     for(const block of document.querySelectorAll('.prose-line-spaced'))hideSpacing(block);
     formatted=new WeakMap();
+    document.fonts.ready.then(refreshFonts);
   });
   function refreshFonts(){
+    if(!fontsChanging)return;
+    fontsChanging=false;
     spaceWidths.clear();
     formatted=new WeakMap();
-    queue();
+    if(!interacting()&&reading){
+      geometryAnchor=reading;
+      all=true;
+      cancelAnimationFrame(frame);
+      flush();
+    }else queue();
   }
   document.fonts.addEventListener('loadingdone',refreshFonts);
   document.fonts.addEventListener('loadingerror',refreshFonts);
@@ -703,9 +803,9 @@ if(!document[initialized]){
     if(width===viewportWidth&&ratio===pixelRatio)return;
     viewportWidth=width;
     pixelRatio=ratio;
-    queue(undefined,true);
+    widthChanged();
   });
   for(const feature of ['horizontal-viewport-segments','vertical-viewport-segments']){
-    matchMedia('('+feature+' > 1)').addEventListener('change',()=>queue(undefined,true));
+    matchMedia('('+feature+' > 1)').addEventListener('change',widthChanged);
   }
 }

@@ -366,6 +366,36 @@ body.fmb-guide.telegram-guide {
 #faq .faq-topic:last-child, #faq .faq-questions > details:last-child { margin-bottom: 0; }
 .faq-questions { padding: 12px 9px; }
 
+.fmb-guide #faq > .faq-topic {
+  margin-block-end: 16px;
+  border-color: #0B1F3A33;
+  border-radius: 16px;
+}
+.fmb-guide #faq > .faq-topic:last-child { margin-block-end: 0; }
+.fmb-guide #faq > .faq-topic > summary {
+  padding: 15px 14px;
+  border-inline-start: 4px solid #B7E600;
+  background: #e6eef5;
+  font-size: 18px;
+  font-weight: 700;
+}
+.fmb-guide #faq .faq-questions { padding: 10px 10px 10px 14px; }
+.fmb-guide #faq .faq-questions > details {
+  margin-block-end: 7px;
+  border-radius: 9px;
+}
+.fmb-guide #faq .faq-questions > details:last-child { margin-block-end: 0; }
+.fmb-guide #faq .faq-questions > details > summary,
+.fmb-guide #faq > details:not(.faq-topic) > summary {
+  gap: 10px;
+  padding: 11px 10px;
+  font-size: 15px;
+}
+.fmb-guide #faq summary > span:first-child { min-width: 0; }
+.fmb-guide #faq summary > .faq-arrow { flex: none; font-size: 10px; opacity: .7; }
+.fmb-guide #faq > .faq-topic > summary > .faq-arrow { font-size: 14px; opacity: 1; }
+.fmb-guide #faq .answer { padding: 12px 10px; background: #fff; }
+
 .fmb-guide[data-page="guide"] {
   --fmb-guide-scroll-top: max(8px, env(safe-area-inset-top));
   overflow-anchor: none;

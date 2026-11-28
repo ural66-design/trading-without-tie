@@ -334,7 +334,7 @@ body.fmb-guide.telegram-guide {
   padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right))
     max(20px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
 }
-.fmb-guide.telegram-guide :is(main.panel,.progress) { backdrop-filter: none; box-shadow: none; }
+.fmb-guide:is([data-page="guide"],[data-page="fmb-faq"]) :is(main.panel,.progress) { backdrop-filter: none; box-shadow: none; }
 .fmb-guide.telegram-guide :is(.guide-nav,.language-picker,.legal-language-slot) { display: none; }
 
 @media (min-width: 601px) {

@@ -1,30 +1,11 @@
-export function createItemPositioner(scrollRoom, topInset) {
+export function createItemPositioner(topInset) {
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const panels = new Map();
-  let frame, cleanup, touch;
+  let frame, touch;
   let pan = false, dragging = false;
 
-  function reserve(top, shrinking = 0) {
-    const end = scrollRoom.getBoundingClientRect().top + scrollY
-      + parseFloat(getComputedStyle(document.body).paddingBottom);
-    scrollRoom.style.height = Math.max(0, Math.ceil(top + document.documentElement.clientHeight - end + shrinking)) + 'px';
-  }
-
-  function releaseRoom() {
-    clearTimeout(cleanup);
-    cleanup = setTimeout(() => {
-      if (frame === undefined && !dragging && scrollRoom.offsetHeight) reserve(scrollY);
-    }, 350);
-  }
-
-  function cancelPan() {
-    pan = false;
-    releaseRoom();
-  }
-
-  window.addEventListener('scroll', releaseRoom, {passive: true});
   window.addEventListener('wheel', event => {
-    if (event.deltaY && !event.ctrlKey) cancelPan();
+    if (event.deltaY && !event.ctrlKey) pan = false;
   }, {passive: true});
   window.addEventListener('touchstart', event => {
     if (event.touches.length === 1) touch = event.touches[0];
@@ -34,15 +15,13 @@ export function createItemPositioner(scrollRoom, topInset) {
     const point = event.touches[0], dy = Math.abs(point.clientY - touch.clientY);
     if (dy >= 8 && dy >= Math.abs(point.clientX - touch.clientX)) {
       dragging = true;
-      cancelPan();
+      pan = false;
     }
   }, {passive: true});
   function endTouch(event) {
     if (event.touches.length) return;
     touch = undefined;
-    if (!dragging) return;
     dragging = false;
-    releaseRoom();
   }
   window.addEventListener('touchend', endTouch, {passive: true});
   window.addEventListener('touchcancel', endTouch, {passive: true});
@@ -51,7 +30,7 @@ export function createItemPositioner(scrollRoom, topInset) {
     if (!['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) return;
     if (event.target.isContentEditable || event.target.closest?.('select, textarea, input:not([type="checkbox"], [type="radio"], [type="button"])')) return;
     if (event.key === ' ' && event.target.closest?.('input, button, summary, [role="button"]')) return;
-    cancelPan();
+    pan = false;
   });
 
   function finish() {
@@ -62,19 +41,14 @@ export function createItemPositioner(scrollRoom, topInset) {
     panels.clear();
     frame = undefined;
     pan = false;
-    releaseRoom();
   }
 
-  function transition(changes, heading, shrinking = 0) {
+  function transition(changes, heading) {
     cancelAnimationFrame(frame);
     pan = Boolean(heading) && !dragging;
     for (const change of changes) panels.set(change.box, change);
     const items = [...panels.values()];
     for (const item of items) item.start = item.box.getBoundingClientRect().height;
-    const closing = items.reduce((sum, {open, content}) =>
-      sum + (open ? 0 : content.getBoundingClientRect().height), shrinking);
-    reserve(scrollY, closing);
-
     const reduced = motion.matches;
     for (const {box, show, open, start} of items) {
       if (!reduced) box.style.height = start + 'px';
@@ -91,9 +65,12 @@ export function createItemPositioner(scrollRoom, topInset) {
         item.end = box.getBoundingClientRect().height - (open || reduced ? 0 : content.getBoundingClientRect().height);
         box.style.height = item.end + 'px';
       }
-      const to = pan && heading.getClientRects().length ?
-        Math.max(0, heading.getBoundingClientRect().top + scrollY - topInset(heading)) : from;
-      reserve(Math.max(from, to), items.reduce((sum, item) => sum + Math.max(0, item.end - item.start), 0));
+      const scroller = document.scrollingElement;
+      const max = scroller.scrollHeight - scroller.clientHeight;
+      const desired = pan && heading.getClientRects().length ?
+        heading.getBoundingClientRect().top + scrollY - topInset(heading) : from;
+      const to = Math.max(0, Math.min(desired, max));
+      for (const {box, start} of items) box.style.height = start + 'px';
       const duration = reduced ? 0 : 260;
       function paint(now) {
         const time = duration ? Math.min(1, (now - started) / duration) : 1;

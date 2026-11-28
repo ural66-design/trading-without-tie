@@ -1,5 +1,5 @@
 import {normalise,checkStep,toggleStep,progressSticky} from './state.js?v=20261120fmb';
-import {bindFaq, createItemPositioner} from './fmb-item-position.js?v=5';
+import {bindFaq, createItemPositioner} from './fmb-item-position.js?v=6';
 const body=document.body, page=body.dataset.page,lang=document.documentElement.lang;
 const fmbGuide=page==='guide'&&body.classList.contains('fmb-guide');
 if(page==='guide'&&body.classList.contains('fmb-guide')&&new URLSearchParams(location.search).get('view')==='telegram'){
@@ -213,11 +213,8 @@ document.querySelector('[data-open-legal]')?.addEventListener('click',e=>{e.prev
 const faq=document.querySelector('#faq');
 let guidePositioner;
 if(fmbGuide){
-  const room=document.createElement('div');
-  room.setAttribute('aria-hidden','true');
-  body.append(room);
   const progress=document.querySelector('#progress');
-  guidePositioner=createItemPositioner(room, target=>{
+  guidePositioner=createItemPositioner(target=>{
     const margin=parseFloat(getComputedStyle(target).scrollMarginTop);
     return margin+(progress.classList.contains('sticky')?progress.offsetHeight+8:0);
   });
@@ -259,9 +256,7 @@ if(page==='guide'){
         const box=steps[i], content=box.querySelector('.step-content');
         changes.push({box,content,open:i===next.open,show:open=>{content.hidden=!open;}});
       }
-      const shrinking=state.count===total&&next.count<total?
-        document.querySelector('#completion').offsetHeight+document.querySelector('#restart').offsetHeight:0;
-      guidePositioner.transition(changes,destination??stepHeads[next.open],shrinking);
+      guidePositioner.transition(changes,destination??stepHeads[next.open]);
     }
     state=next;save();render(animate);
   }

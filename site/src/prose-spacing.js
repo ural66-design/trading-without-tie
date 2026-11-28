@@ -570,20 +570,26 @@ if(!document[initialized]){
   let frame, idle, resume, nextToPrepare=0, quietUntil=0;
   let all=false, requiredAll=false, touching=false, loaded=false, idleCost=4;
   const interacting=()=>touching||performance.now()<quietUntil;
+  const guide=document.body.matches('.fmb-guide[data-page="guide"]');
+  const inIdle=run=>window.requestIdleCallback?requestIdleCallback(run,{timeout:150}):setTimeout(run,50);
 
   function schedule(){
     if(frame!==undefined)return;
     if(!requiredAll&&!required.size&&(interacting()||(!all&&!queued.size)))return;
-    frame=requestAnimationFrame(()=>{
+    // Keep whole-page background formatting off the guide's first scroll frames.
+    const background=guide&&!requiredAll&&!required.size;
+    frame=(background?inIdle:requestAnimationFrame)(()=>{
       frame=undefined;
       const useBackground=!interacting()||requiredAll;
-      const pending=requiredAll||(useBackground&&all)?blocks:
+      const pending=background?(useBackground?[...queued].slice(0,3):[]):
+        requiredAll||(useBackground&&all)?blocks:
         [...new Set(useBackground?[...required,...queued]:required)];
       for(const block of pending)queued.delete(block);
       if(useBackground)all=false;
       requiredAll=false;
       required.clear();
       if(pending.length)safelyRefresh(pending);
+      if(background&&pending.length&&queued.size)schedule();
       warmHidden();
     });
   }
@@ -591,6 +597,7 @@ if(!document[initialized]){
   function queue(candidates, urgent=false){
     if(candidates)for(const block of candidates)(urgent?required:queued).add(block);
     else if(urgent)requiredAll=true;
+    else if(guide)for(const block of blocks)queued.add(block);
     else all=true;
     schedule();
   }

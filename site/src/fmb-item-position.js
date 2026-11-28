@@ -115,7 +115,12 @@ export function bindFaq(faq, positioner, {closeOutside = false} = {}) {
     const open = !isOpen(box);
     const siblings = open || !positioner ? questions.filter(detail => detail !== box &&
       (!positioner || detail.parentElement === box.parentElement) && isOpen(detail)) : [];
-    apply([...siblings.map(detail => change(detail, false)), change(box, open)], open ? heading : null);
+    const closing = open ? siblings : [...siblings, box];
+    const changes = questions.filter(detail =>
+      closing.includes(detail) || (isOpen(detail) && closing.some(parent => parent.contains(detail)))
+    ).map(detail => change(detail, false));
+    if (open) changes.push(change(box, true));
+    apply(changes, open ? heading : null);
   });
   if (closeOutside) document.addEventListener('click', event => {
     if (faq.contains(event.target)) return;

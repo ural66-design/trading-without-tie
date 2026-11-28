@@ -189,13 +189,12 @@ function prepare(block) {
 }
 
 const context=document.createElement('canvas').getContext('2d');
-const spaceWidths=new Map();
 const lineReserve=.25;
 const spaceReserve=1/16;
 
-function textPieces(block) {
+function textPieces(block, spaceWidths) {
   return nodesOf(block).flatMap(node=>{
-    const fontSpace=node.parentElement.closest('.guide-inline-scroll')?0:normalSpace(node.parentElement);
+    const fontSpace=node.parentElement.closest('.guide-inline-scroll')?0:normalSpace(node.parentElement, spaceWidths);
     const parts=[];
     for(const match of node.data.matchAll(/ +|[^ ]+/g)){
       const start=match.index,end=start+match[0].length;
@@ -205,7 +204,7 @@ function textPieces(block) {
   });
 }
 
-function normalSpace(element) {
+function normalSpace(element, spaceWidths) {
   const font=getComputedStyle(element).font;
   if(!spaceWidths.has(font)){
     context.font=font;
@@ -451,7 +450,7 @@ function fitAtoms(blocksToFit) {
 
 
 // Keep the original Text nodes so each resize starts with native line breaking.
-let formatted=new WeakMap();
+const formatted=new WeakMap();
 const applied=new WeakMap(),deferred=new Set();
 function hideSpacing(block) {
   if(!block.classList.contains('prose-line-spaced'))return;
@@ -511,7 +510,6 @@ function applySpacing({block,pieces,changes}) {
 function refreshSpacing(candidates) {
   const pending=[],selection=document.getSelection();
   const selected=selection&&!selection.isCollapsed&&selection.rangeCount?selection.getRangeAt(0):null;
-  const fontsLoaded=document.fonts.status==='loaded';
   const visible=[...candidates].filter(block=>{
     const scope=block.matches('summary')?block.parentElement.parentElement:block;
     return !scope?.closest('details:not([open])')&&block.getClientRects().length;
@@ -521,7 +519,11 @@ function refreshSpacing(candidates) {
   }
   for(const block of visible){
     const css=getComputedStyle(block);
-    const key=block.getBoundingClientRect().width+'|'+devicePixelRatio+'|'+css.font+'|'+block.textContent;
+    const text=block.textContent;
+    context.font=css.font;
+    const {width,actualBoundingBoxAscent,actualBoundingBoxDescent}=context.measureText(text);
+    const key=JSON.stringify([block.getBoundingClientRect().width,devicePixelRatio,css.font,
+      width,actualBoundingBoxAscent,actualBoundingBoxDescent,text]);
     if(formatted.get(block)===key)continue;
     if(selected?.intersectsNode(block)){
       hideSpacing(block);
@@ -529,7 +531,7 @@ function refreshSpacing(candidates) {
       continue;
     }
     deferred.delete(block);
-    const eligible=fontsLoaded&&block.matches('p,li,blockquote,figcaption,dd,td')&&!block.closest('.home,nav,form,button,code,pre')&&!block.matches(':lang(th)')&&
+    const eligible=block.matches('p,li,blockquote,figcaption,dd,td')&&!block.closest('.home,nav,form,button,code,pre')&&!block.matches(':lang(th)')&&
       !block.querySelector('p,li,blockquote,figcaption,dd,td')&&/^(start|left)$/.test(css.textAlign);
     pending.push({block,key,eligible});
   }
@@ -538,13 +540,14 @@ function refreshSpacing(candidates) {
     resetTail(block);
   }
   fitAtoms(pending);
-  const layouts=pending.filter(({eligible})=>eligible).map(({block})=>planSpacing(block,textPieces(block)));
+  const spaceWidths=new Map();
+  const layouts=pending.filter(({eligible})=>eligible).map(({block})=>planSpacing(block,textPieces(block, spaceWidths)));
   const plans=improveEndings(layouts).filter(plan=>plan.changes.size);
   for(const plan of plans)applySpacing(plan);
   const rejected=plans.filter(plan=>!preservesLines(plan));
   for(const {block} of rejected)restoreSpacing(block);
   // When engine rounding changes a break, retry with more room at the edge.
-  const retried=rejected.map(({block})=>planSpacing(block,textPieces(block),true)).filter(plan=>plan.changes.size);
+  const retried=rejected.map(({block})=>planSpacing(block,textPieces(block, spaceWidths),true)).filter(plan=>plan.changes.size);
   for(const plan of retried)applySpacing(plan);
   const unsafe=retried.filter(plan=>!preservesLines(plan));
   for(const {block} of unsafe)restoreSpacing(block);
@@ -566,153 +569,51 @@ function safelyRefresh(candidates) {
 const initialized=Symbol.for('vladimir1.prose-spacing');
 if(!document[initialized]){
   document[initialized]=true;
-  const registered=new Set(blocks),queued=new Set(),required=new Set(),widths=new WeakMap();
-  let frame, idle, resume, nextToPrepare=0, quietUntil=0;
-  let all=false, requiredAll=false, touching=false, loaded=false, idleCost=4;
-  const interacting=()=>touching||performance.now()<quietUntil;
-  const guide=document.body.matches('.fmb-guide[data-page="guide"]');
-  const inIdle=run=>window.requestIdleCallback?requestIdleCallback(run,{timeout:150}):setTimeout(run,50);
-
-  function schedule(){
-    if(frame!==undefined)return;
-    if(!requiredAll&&!required.size&&(interacting()||(!all&&!queued.size)))return;
-    // Keep whole-page background formatting off the guide's first scroll frames.
-    const background=guide&&!requiredAll&&!required.size;
-    frame=(background?inIdle:requestAnimationFrame)(()=>{
-      frame=undefined;
-      const useBackground=!interacting()||requiredAll;
-      const pending=background?(useBackground?[...queued].slice(0,3):[]):
-        requiredAll||(useBackground&&all)?blocks:
-        [...new Set(useBackground?[...required,...queued]:required)];
-      for(const block of pending)queued.delete(block);
-      if(useBackground)all=false;
-      requiredAll=false;
-      required.clear();
-      if(pending.length)safelyRefresh(pending);
-      if(background&&pending.length&&queued.size)schedule();
-      warmHidden();
-    });
-  }
-
-  function queue(candidates, urgent=false){
-    if(candidates)for(const block of candidates)(urgent?required:queued).add(block);
-    else if(urgent)requiredAll=true;
-    else if(guide)for(const block of blocks)queued.add(block);
-    else all=true;
-    schedule();
-  }
-
-  function warmHidden(){
-    if(!loaded||interacting()||idle!==undefined||nextToPrepare>=blocks.length)return;
-    const run=deadline=>{
-      idle=undefined;
-      if(interacting())return;
-      if(frame===undefined&&deadline.timeRemaining()>=idleCost){
-        while(nextToPrepare<blocks.length&&prepared.has(blocks[nextToPrepare]))nextToPrepare++;
-        if(nextToPrepare<blocks.length){
-          const start=performance.now();
-          prepare(blocks[nextToPrepare++]);
-          idleCost=Math.max(4, Math.min(20, performance.now()-start+2));
-        }
-      }
-      warmHidden();
-    };
-    if('requestIdleCallback' in window)idle=requestIdleCallback(run);
-    else idle=setTimeout(()=>run({timeRemaining:()=>20}),50);
-  }
-
-  function pauseBackground(){
-    quietUntil=performance.now()+250;
-    clearTimeout(resume);
-    if(!touching)resume=setTimeout(resumeBackground,250);
-  }
-  function resumeBackground(){
-    const remaining=quietUntil-performance.now();
-    if(remaining>0){resume=setTimeout(resumeBackground,remaining);return;}
-    schedule();
-    warmHidden();
-  }
-  window.addEventListener('scroll',pauseBackground,{passive:true});
-  window.addEventListener('wheel',pauseBackground,{passive:true});
-  window.addEventListener('pointerdown',pauseBackground,{passive:true});
-  window.addEventListener('touchstart',()=>{
-    touching=true;
-    pauseBackground();
-  },{passive:true});
-  function endTouch(event){
-    if(event.touches.length)return;
-    touching=false;
-    pauseBackground();
-  }
-  window.addEventListener('touchend',endTouch,{passive:true});
-  window.addEventListener('touchcancel',endTouch,{passive:true});
-
-  function candidatesFor(scope){
-    const candidates=[...scope.querySelectorAll(textBlocks)].filter(block=>registered.has(block));
-    if(registered.has(scope))candidates.unshift(scope);
-    return candidates;
-  }
-  function formatBeforePaint(candidates){
-    for(const block of candidates){queued.delete(block);required.delete(block);}
-    safelyRefresh(candidates);
-  }
+  const registered=new Set(blocks),widths=new WeakMap();
+  safelyRefresh(blocks);
 
   document.addEventListener('selectionchange',()=>{
-    if(deferred.size&&document.getSelection()?.isCollapsed)queue(deferred);
+    if(deferred.size&&document.getSelection()?.isCollapsed)safelyRefresh(deferred);
   });
   const observer=new ResizeObserver(entries=>{
-    const changed=[], resized=[];
+    const changed=[];
     for(const {target,borderBoxSize,contentRect} of entries){
       const width=borderBoxSize?.[0]?.inlineSize??contentRect.width;
-      const previous=widths.get(target);
-      if(width&&previous!==width)(previous?resized:changed).push(target);
+      if(width&&width!==widths.get(target))changed.push(target);
       widths.set(target,width);
     }
-    if(resized.length)queue(resized,true);
-    if(changed.length)queue(changed);
+    if(changed.length)safelyRefresh(changed);
   });
   for(const block of blocks)observer.observe(block,{box:'border-box'});
+
+  // Disclosures become measurable in the mutation microtask before the next paint.
   const visibility=new MutationObserver(records=>{
     const shown=new Set();
     for(const {target} of records){
       if(target.hidden||target.matches('details:not([open]),dialog:not([open])'))continue;
-      for(const block of candidatesFor(target))shown.add(block);
+      if(registered.has(target))shown.add(target);
+      for(const block of target.querySelectorAll(textBlocks)){
+        if(registered.has(block))shown.add(block);
+      }
     }
-    if(shown.size)formatBeforePaint(shown);
+    if(shown.size)safelyRefresh(shown);
   });
-  for(const el of document.querySelectorAll('dialog,dialog [data-panel],dialog .legal-copy,#faq details,.step-content,#completion')) {
+  for(const el of document.querySelectorAll('dialog,dialog [data-panel],dialog .legal-copy,#faq details,.step-content,#completion')){
     visibility.observe(el,{attributes:true,attributeFilter:['open','hidden']});
   }
-  queue();
-  function afterPaint(){
-    requestAnimationFrame(()=>{loaded=true;warmHidden();});
-  }
-  if(document.readyState==='complete')afterPaint();
-  else window.addEventListener('load',afterPaint,{once:true});
-  let fontsChanging=document.fonts.status==='loading';
-  document.fonts.addEventListener('loading',()=>{
-    fontsChanging=true;
-    for(const block of document.querySelectorAll('.prose-line-spaced'))hideSpacing(block);
-    formatted=new WeakMap();
+
+  const familyName=name=>name.trim().replace(/^['"]|['"]$/g,'').toLowerCase();
+  document.fonts.addEventListener('loadingdone',event=>{
+    const families=new Set(event.fontfaces.map(face=>familyName(face.family)));
+    if(!families.size)return;
+    const affected=blocks.filter(block=>block.getClientRects().length&&
+      getComputedStyle(block).fontFamily.split(',').some(name=>families.has(familyName(name))));
+    if(affected.length)safelyRefresh(affected);
   });
-  function refreshFonts(){
-    if(!fontsChanging)return;
-    fontsChanging=false;
-    spaceWidths.clear();
-    formatted=new WeakMap();
-    queue();
-  }
-  document.fonts.addEventListener('loadingdone',refreshFonts);
-  document.fonts.addEventListener('loadingerror',refreshFonts);
-  let viewportWidth=document.documentElement.clientWidth, pixelRatio=devicePixelRatio;
+  let pixelRatio=devicePixelRatio;
   window.addEventListener('resize',()=>{
-    const width=document.documentElement.clientWidth, ratio=devicePixelRatio;
-    if(width===viewportWidth&&ratio===pixelRatio)return;
-    viewportWidth=width;
-    pixelRatio=ratio;
-    queue(undefined,true);
+    if(pixelRatio===devicePixelRatio)return;
+    pixelRatio=devicePixelRatio;
+    safelyRefresh(blocks);
   });
-  for(const feature of ['horizontal-viewport-segments','vertical-viewport-segments']){
-    matchMedia('('+feature+' > 1)').addEventListener('change',()=>queue(undefined,true));
-  }
 }

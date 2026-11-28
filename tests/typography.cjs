@@ -549,7 +549,8 @@ async function main(){
           const total=route.startsWith('t-capital/')?3:4;
           assert.equal(await p.locator('#progress-count').textContent(),'1 / '+total);
           await p.locator('#faq summary').first().click();assert.equal(await p.locator('#faq details[open]').count(),1);
-          await p.locator('#faq summary').first().click();assert.equal(await p.locator('#faq details[open]').count(),0);
+          await p.locator('#faq summary').first().click();
+          await p.locator('#faq details[open]').waitFor({state:'detached'});
           await p.locator('[data-open-legal]').click();await p.locator('dialog[open]').waitFor();await p.keyboard.press('Escape');await p.locator('dialog[open]').waitFor({state:'hidden'});
           flows.push(current);
         }

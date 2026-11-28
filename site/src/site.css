@@ -368,23 +368,22 @@ body.fmb-guide.telegram-guide {
 
 .fmb-guide #faq > .faq-topic {
   margin-block-end: 16px;
-  border-color: #0B1F3A33;
+  border: 0;
   border-radius: 16px;
 }
 .fmb-guide #faq > .faq-topic:last-child { margin-block-end: 0; }
 .fmb-guide #faq > .faq-topic > summary {
   padding: 15px 14px;
+  border: 1px solid #0B1F3A33;
   border-inline-start: 4px solid #B7E600;
   background: #e6eef5;
   font-size: 18px;
   font-weight: 700;
 }
-.fmb-guide #faq .faq-questions { padding: 10px 10px 10px 14px; }
+.fmb-guide #faq .faq-questions { padding: 10px 0; }
 .fmb-guide #faq .faq-questions > details {
-  margin-block-end: 7px;
   border-radius: 9px;
 }
-.fmb-guide #faq .faq-questions > details:last-child { margin-block-end: 0; }
 .fmb-guide #faq .faq-questions > details > summary,
 .fmb-guide #faq > details:not(.faq-topic) > summary {
   gap: 10px;
